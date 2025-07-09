@@ -1,0 +1,107 @@
+---
+alwaysApply: true
+---
+DevToolsHub is designed for:
+
+- Application developers
+- QA engineers
+- Web scrapers
+- API testers
+- Frontend/UI/UX developers
+
+It simplifies workflows by combining popular developer web tools into one extendable platform with a modular plugin structure.
+
+## 🧱 Tech Stack
+
+| Layer         | Technology                       |
+|--------------|----------------------------------|
+| Frontend     | Next.js 14 App Router + ShadCN UI|
+| Styling      | Tailwind CSS + Radix UI          |
+| Backend/API  | Next.js Server Actions / Routes  |
+| Auth         | Supabase Auth (Google & GitHub)  |
+| DB           | Supabase Postgres + Row Level Security |
+| Storage      | Supabase Storage (for images/files) |
+| Deployment   | Vercel (Recommended)             |
+
+## 📁 Project Structure
+
+```bash
+.
+├── app/                        # Next.js App Router structure
+│   ├── (auth)/                # Auth routes (sign-in, callback)
+│   ├── tools/                 # Tool modules (JSON, Regex, etc.)
+│   │   ├── json-formatter/
+│   │   ├── regex-tester/
+│   │   └── ...more
+│   ├── dashboard/             # User dashboard/home
+│   └── layout.tsx            # App layout and providers
+├── components/               # Shared UI components (buttons, headers)
+├── lib/                      # Client helpers, Supabase client
+├── db/                       # Supabase schemas + utils (optional)
+├── styles/                   # Tailwind and global styles
+├── middleware.ts             # Auth middleware
+├── utils/                    # Utility functions (e.g., validators)
+├── shadcn.config.ts          # ShadCN component config
+└── tailwind.config.ts        # Tailwind CSS config
+
+ Features
+🧩 Modular plugin architecture for tools
+
+🔐 Secure login via Supabase Auth (Google & GitHub OAuth)
+
+🌈 Modern UI with ShadCN and Tailwind
+
+🔄 Real-time Supabase database and updates
+
+⚡ Fast, Server Actions / Edge-Ready architecture
+
+Planned Tool Modules (Plugin System)
+Each tool is a pluggable Next.js route with its own UI and API logic. Some planned tools:
+
+Tool	Path
+JSON Formatter	/tools/json-formatter
+RegEx Tester	/tools/regex-tester
+JWT Decoder	/tools/jwt-decoder
+Image Compressor	/tools/image-compressor
+XPath/CSS Selector	/tools/xpath-tester
+Epoch Converter	/tools/timestamp
+UUID Generator	/tools/uuid
+Base64 Encode/Decode	/tools/base64
+Lorem Ipsum Generator	/tools/lorem-ipsum
+Markdown Previewer	/tools/markdown
+
+Each plugin should export:
+A page component (page.tsx)
+Any local lib/ functions
+A small config (tool.config.ts) for metadata
+
+Best Practices
+Use app/ directory and Next.js 14 Server Components by default
+Use Tailwind and Radix primitives via ShadCN UI for consistent styling
+Create reusable components in components/ui/
+Keep each tool modular and lazily loaded
+Secure tool access behind Supabase Auth
+Store minimal metadata per user/tool in Supabase
+
+🔐 Authentication
+Supabase Auth handles sign-in with:
+Google OAuth
+GitHub OAuth
+User sessions are handled using Supabase client and middleware for route protection.
+
+🔌 Adding a New Tool Module
+To add a new tool:
+
+mkdir -p app/tools/my-tool
+touch app/tools/my-tool/page.tsx
+touch app/tools/my-tool/tool.config.ts
+
+// page.tsx (example)
+export default function MyToolPage() {
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold">My Awesome Tool</h1>
+      {/* Tool UI here */}
+    </div>
+  );
+}
