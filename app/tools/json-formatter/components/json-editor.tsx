@@ -42,6 +42,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Tooltip } from "@/components/ui/tooltip"
 import { UpgradeModal } from "@/components/shared/upgrade-modal"
+import { ErrorBoundary } from "@/components/shared/error-boundary"
+import { LoadingOverlay, Spinner } from "@/components/ui/progress"
+import { useToast } from "@/components/ui/toast"
 import { JsonSnippet, DEFAULT_CATEGORIES } from "@/lib/types/snippets"
 import { SnippetsService } from "@/lib/services/snippets"
 
@@ -103,6 +106,7 @@ interface ValidationResult {
 }
 
 export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
+  const { toast } = useToast()
   const [jsonContent, setJsonContent] = useState('')
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -130,6 +134,11 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
   const [snippetsService] = useState(() => new SnippetsService())
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [upgradeFeature, setUpgradeFeature] = useState<string>('')
+  const [operationProgress, setOperationProgress] = useState<{ show: boolean; message: string; progress?: number }>({
+    show: false,
+    message: '',
+    progress: undefined
+  })
 
   // Detect theme preference
   useEffect(() => {
@@ -505,16 +514,40 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
     return obj
   }
 
-  // Show toast notification (placeholder - would implement with actual toast library)
-  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    console.log(`${type.toUpperCase()}: ${message}`)
-    // TODO: Implement with actual toast component
+  // Show toast notification
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
+    toast({
+      type,
+      title: message,
+      duration: type === 'error' ? 6000 : 4000
+    })
+  }
+
+  // Show progress for long operations
+  const showProgress = (message: string, progress?: number) => {
+    setOperationProgress({ show: true, message, progress })
+  }
+
+  const hideProgress = () => {
+    setOperationProgress({ show: false, message: '', progress: undefined })
   }
 
   // Show upgrade modal for premium features
   const showUpgrade = (feature: string) => {
     setUpgradeFeature(feature)
     setShowUpgradeModal(true)
+  }
+
+  // Edge case handling for large JSON
+  const isLargeJson = (content: string) => content.length > 50000
+  const isVeryLargeJson = (content: string) => content.length > 200000
+
+  const handleLargeJsonWarning = (content: string) => {
+    if (isVeryLargeJson(content)) {
+      showToast('Very large JSON detected - some operations may be slow', 'warning')
+    } else if (isLargeJson(content)) {
+      showToast('Large JSON detected - consider using smaller files for better performance', 'info')
+    }
   }
 
   // JSON operation functions
@@ -798,15 +831,27 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
     setIsLoading(true)
     setUploadError(null)
+    
+    // Show progress for large files
+    if (file.size > 1024 * 1024) {
+      showProgress('Processing large file...', 0)
+    }
 
     const reader = new FileReader()
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string
         
+        if (file.size > 1024 * 1024) {
+          showProgress('Loading content...', 75)
+        }
+        
         // Always load the content - let validation system show any JSON errors
         setJsonContent(content)
         setUploadError(null) // Clear any previous upload errors
+        
+        // Check for large JSON and show performance warning
+        handleLargeJsonWarning(content)
         
         // Switch to editor mode when uploading files so users can edit
         if (showTreeView) {
@@ -818,19 +863,23 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
           JSON.parse(content)
           showToast(`Successfully loaded valid JSON from ${file.name}`, 'success')
         } catch {
-          showToast(`Loaded ${file.name} - use repair button to fix JSON errors`, 'success')
+          showToast(`Loaded ${file.name} - use repair button to fix JSON errors`, 'warning')
         }
       } catch (error) {
-        setUploadError('Failed to read file content')
-        showToast('Failed to read file', 'error')
+        const errorMessage = error instanceof Error ? error.message : 'Failed to read file content'
+        setUploadError(errorMessage)
+        showToast(`Failed to read file: ${errorMessage}`, 'error')
       } finally {
         setIsLoading(false)
+        hideProgress()
       }
     }
     reader.onerror = () => {
-      setUploadError('Failed to read file')
-      showToast('Failed to read file', 'error')
+      const errorMessage = 'Failed to read file'
+      setUploadError(errorMessage)
+      showToast(errorMessage, 'error')
       setIsLoading(false)
+      hideProgress()
     }
     reader.readAsText(file)
   }, [isPremiumUser, showToast])
@@ -954,6 +1003,8 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
     try {
       setIsLoading(true)
+      showProgress('Preparing conversion...', 0)
+      
       let parsed: any
       let converted = ''
       
@@ -965,9 +1016,13 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
         return
       }
 
+      showProgress(`Converting to ${targetFormat.toUpperCase()}...`, 25)
+
       switch (targetFormat) {
         case 'xml':
+          showProgress('Loading XML converter...', 50)
           const xmlJs = await import('xml-js')
+          showProgress('Converting to XML...', 75)
           converted = xmlJs.json2xml(jsonContent, { compact: true, spaces: 2 })
           break
         
@@ -995,11 +1050,15 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       setConvertedContent(converted)
       setConversionMode(targetFormat)
       setShowConversionPanel(true)
+      showProgress('Finalizing conversion...', 100)
       showToast(`Successfully converted to ${targetFormat.toUpperCase()}`, 'success')
     } catch (error) {
-      showToast(`Failed to convert to ${targetFormat}: ${(error as Error).message}`, 'error')
+      const errorMessage = error instanceof Error ? error.message : `Failed to convert to ${targetFormat}`
+      showToast(`Conversion failed: ${errorMessage}`, 'error')
+      console.error('Conversion error:', error)
     } finally {
       setIsLoading(false)
+      hideProgress()
     }
   }, [jsonContent, isPremiumUser, showToast])
 
@@ -1113,8 +1172,16 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       return
     }
 
+    // Check snippet size
+    if (jsonContent.length > 100000) {
+      showToast('Snippet is too large (max 100KB)', 'error')
+      return
+    }
+
     try {
       setIsLoading(true)
+      showProgress('Saving snippet...', 50)
+      
       await snippetsService.createSnippet(userId!, {
         name: saveDialogData.name.trim(),
         category: saveDialogData.category,
@@ -1127,9 +1194,12 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       setSaveDialogData({ name: '', category: 'general', description: '' })
       loadSnippets() // Refresh the list
     } catch (error) {
-      showToast('Failed to save snippet', 'error')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save snippet'
+      showToast(`Save failed: ${errorMessage}`, 'error')
+      console.error('Save snippet error:', error)
     } finally {
       setIsLoading(false)
+      hideProgress()
     }
   }
 
@@ -1222,7 +1292,23 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
   }, [jsonContent, showTreeView])
 
   return (
-    <Card>
+    <ErrorBoundary
+      onError={(error, errorInfo) => {
+        console.error('JSON Editor Error:', error, errorInfo)
+        toast({
+          type: 'error',
+          title: 'An unexpected error occurred',
+          description: 'Please try refreshing the page or contact support if the problem persists.',
+          duration: 8000
+        })
+      }}
+    >
+      <LoadingOverlay
+        isLoading={operationProgress.show}
+        message={operationProgress.message}
+        progress={operationProgress.progress}
+      >
+        <Card>
       {/* Action Toolbar */}
       <div className="px-4 pt-4 pb-3 border-b">
         <div className="flex flex-wrap gap-2">
@@ -1934,6 +2020,8 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
         feature={upgradeFeature}
         context="json-formatter"
       />
-    </Card>
+        </Card>
+      </LoadingOverlay>
+    </ErrorBoundary>
   )
 } 
