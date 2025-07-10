@@ -2,7 +2,8 @@ import { getToolById } from "@/lib/tools"
 import { authServer } from "@/lib/auth"
 import { FileJson, Crown, CheckCircle } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { JsonEditor } from "./components/json-editor"
+import { Button } from "@/components/ui/button"
+import { JsonFormatterClient } from "./components/json-formatter-client"
 
 export default async function JsonFormatterPage() {
   const tool = getToolById('json-formatter')
@@ -28,7 +29,7 @@ export default async function JsonFormatterPage() {
       </div>
 
       {/* Main Editor Area */}
-      <JsonEditor isPremiumUser={isPremiumUser} userId={user?.id} />
+      <JsonFormatterClient isPremiumUser={isPremiumUser} userId={user?.id} />
 
       {/* Feature Overview - Only show for free users */}
       {!isPremiumUser && (

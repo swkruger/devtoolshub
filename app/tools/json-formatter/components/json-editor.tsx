@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import dynamic from "next/dynamic"
 import { 
   Copy, 
@@ -105,9 +105,88 @@ interface ValidationResult {
   }
 }
 
+// Performance monitoring utility
+const usePerformanceMonitor = () => {
+  const performanceRef = useRef<{ [key: string]: number }>({})
+  
+  const startTimer = useCallback((operation: string) => {
+    performanceRef.current[operation] = Date.now()
+  }, [])
+  
+  const endTimer = useCallback((operation: string, showWarning: boolean = false) => {
+    const startTime = performanceRef.current[operation]
+    if (!startTime) return 0
+    
+    const duration = Date.now() - startTime
+    delete performanceRef.current[operation]
+    
+    if (showWarning && duration > 2000) {
+      return { duration, isVeryLarge: duration > 5000 }
+    }
+    
+    return { duration, isVeryLarge: false }
+  }, [])
+  
+  return { startTimer, endTimer }
+}
+
+// Debounced content hook for performance optimization
+const useDebouncedContent = (initialContent: string, delay: number = 300) => {
+  const [content, setContent] = useState(initialContent)
+  const [debouncedContent, setDebouncedContent] = useState(initialContent)
+  const [isTyping, setIsTyping] = useState(false)
+  
+  useEffect(() => {
+    if (content !== debouncedContent) {
+      setIsTyping(true)
+      const timeoutId = setTimeout(() => {
+        setDebouncedContent(content)
+        setIsTyping(false)
+      }, delay)
+      
+      return () => clearTimeout(timeoutId)
+    }
+  }, [content, debouncedContent, delay])
+  
+  return { content, debouncedContent, setContent, isTyping }
+}
+
+// Memory monitoring utility
+const useMemoryMonitor = () => {
+  const checkMemoryUsage = useCallback(() => {
+    if ('memory' in performance) {
+      const memInfo = (performance as any).memory
+      const usedMB = memInfo.usedJSHeapSize / (1024 * 1024)
+      const totalMB = memInfo.totalJSHeapSize / (1024 * 1024)
+      const limitMB = memInfo.jsHeapSizeLimit / (1024 * 1024)
+      
+      return {
+        used: usedMB,
+        total: totalMB,
+        limit: limitMB,
+        percentage: (usedMB / limitMB) * 100
+      }
+    }
+    return null
+  }, [])
+  
+  const isMemoryHigh = useCallback(() => {
+    const memInfo = checkMemoryUsage()
+    return memInfo ? memInfo.percentage > 80 : false
+  }, [checkMemoryUsage])
+  
+  return { checkMemoryUsage, isMemoryHigh }
+}
+
 export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
   const { toast } = useToast()
-  const [jsonContent, setJsonContent] = useState('')
+  
+  // Performance monitoring and optimization hooks
+  const { startTimer, endTimer } = usePerformanceMonitor()
+  const { checkMemoryUsage, isMemoryHigh } = useMemoryMonitor()
+  const { content: jsonContent, debouncedContent: debouncedJsonContent, setContent: setJsonContent, isTyping } = useDebouncedContent('')
+  
+  // State variables (keeping all existing state)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [validation, setValidation] = useState<ValidationResult>({ isValid: true })
@@ -391,15 +470,33 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
     }
   }, [])
 
-  // Debounced validation effect
+  // Optimized validation effect - now using debounced content
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const result = validateJson(jsonContent)
-      setValidation(result)
-    }, 300) // 300ms debounce
-
-    return () => clearTimeout(timeoutId)
-  }, [jsonContent, validateJson])
+    if (!debouncedJsonContent.trim()) {
+      setValidation({ isValid: true })
+      return
+    }
+    
+    // Check if content is too large for validation
+    if (debouncedJsonContent.length > 1000000) { // 1MB limit for validation
+      setValidation({ 
+        isValid: false, 
+        error: 'Content too large for real-time validation',
+        tip: 'Use Format button to validate and format large JSON files'
+      })
+      return
+    }
+    
+    startTimer('validation')
+    const result = validateJson(debouncedJsonContent)
+    const timing = endTimer('validation', true)
+    
+    if (timing && typeof timing === 'object' && timing.isVeryLarge) {
+      showToast('Large JSON - validation may be slow', 'warning')
+    }
+    
+    setValidation(result)
+  }, [debouncedJsonContent, validateJson, startTimer, endTimer])
 
   // Update editor annotations and markers when validation changes
   useEffect(() => {
@@ -550,6 +647,35 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
     }
   }
 
+  // Enhanced operation wrapper with performance monitoring
+  const performOperation = async (operationName: string, operation: () => void | Promise<void>) => {
+    try {
+      setIsLoading(true)
+      
+      // Check memory before operation
+      if (isMemoryHigh()) {
+        showToast('High memory usage detected - operation may be slow', 'warning')
+      }
+      
+      startTimer(operationName)
+      await operation()
+      const timing = endTimer(operationName, true)
+      
+      if (timing && typeof timing === 'object') {
+        if (timing.isVeryLarge) {
+          showToast(`Operation completed in ${(timing.duration / 1000).toFixed(1)}s - consider using smaller files`, 'warning')
+        } else if (timing.duration > 1000) {
+          showToast(`Operation completed in ${(timing.duration / 1000).toFixed(1)}s`, 'info')
+        }
+      }
+      
+    } catch (error) {
+      showToast(`Operation failed: ${(error as Error).message}`, 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   // JSON operation functions
   const handleFormat = () => {
     if (!jsonContent.trim()) {
@@ -557,17 +683,14 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       return
     }
 
-    try {
-      setIsLoading(true)
+    handleLargeJsonWarning(jsonContent)
+    
+    performOperation('format', () => {
       const parsed = JSON.parse(jsonContent)
       const formatted = JSON.stringify(parsed, null, 2)
       setJsonContent(formatted)
       showToast('JSON formatted successfully')
-    } catch (error) {
-      showToast('Invalid JSON: ' + (error as Error).message, 'error')
-    } finally {
-      setIsLoading(false)
-    }
+    })
   }
 
   const handleCompact = () => {
@@ -576,17 +699,14 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       return
     }
 
-    try {
-      setIsLoading(true)
+    handleLargeJsonWarning(jsonContent)
+    
+    performOperation('compact', () => {
       const parsed = JSON.parse(jsonContent)
       const compacted = JSON.stringify(parsed)
       setJsonContent(compacted)
       showToast('JSON compacted successfully')
-    } catch (error) {
-      showToast('Invalid JSON: ' + (error as Error).message, 'error')
-    } finally {
-      setIsLoading(false)
-    }
+    })
   }
 
   const handleSortAsc = () => {
@@ -595,18 +715,15 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       return
     }
 
-    try {
-      setIsLoading(true)
+    handleLargeJsonWarning(jsonContent)
+    
+    performOperation('sort-asc', () => {
       const parsed = JSON.parse(jsonContent)
       const sorted = sortObjectKeys(parsed, true)
       const formatted = JSON.stringify(sorted, null, 2)
       setJsonContent(formatted)
       showToast('JSON keys sorted alphabetically (A-Z)')
-    } catch (error) {
-      showToast('Invalid JSON: ' + (error as Error).message, 'error')
-    } finally {
-      setIsLoading(false)
-    }
+    })
   }
 
   const handleSortDesc = () => {
@@ -615,18 +732,15 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       return
     }
 
-    try {
-      setIsLoading(true)
+    handleLargeJsonWarning(jsonContent)
+    
+    performOperation('sort-desc', () => {
       const parsed = JSON.parse(jsonContent)
       const sorted = sortObjectKeys(parsed, false)
       const formatted = JSON.stringify(sorted, null, 2)
       setJsonContent(formatted)
       showToast('JSON keys sorted alphabetically (Z-A)')
-    } catch (error) {
-      showToast('Invalid JSON: ' + (error as Error).message, 'error')
-    } finally {
-      setIsLoading(false)
-    }
+    })
   }
 
   const handleCopy = async () => {
@@ -716,9 +830,9 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       return
     }
 
-    try {
-      setIsLoading(true)
-      
+    handleLargeJsonWarning(jsonContent)
+    
+    performOperation('repair', () => {
       // First, check if JSON is already valid
       try {
         JSON.parse(jsonContent)
@@ -796,11 +910,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
         setJsonContent(repairedJson)
         showToast('JSON partially repaired, but still contains errors. Please check manually.', 'error')
       }
-    } catch (error) {
-      showToast('Failed to repair JSON: ' + (error as Error).message, 'error')
-    } finally {
-      setIsLoading(false)
-    }
+    })
   }
   
   // Premium feature placeholders
@@ -1276,20 +1386,155 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
 
 
-  // Update tree data when JSON content changes
+  // Keyboard shortcuts implementation
   useEffect(() => {
-    if (!showTreeView || !jsonContent.trim()) {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Don't trigger shortcuts when user is typing in input fields
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement ||
+        event.target instanceof HTMLSelectElement ||
+        (event.target as any)?.contentEditable === 'true'
+      ) {
+        return
+      }
+
+      const { ctrlKey, shiftKey, key } = event
+      
+      // Handle F1 for help (not requiring Ctrl)
+      if (key === 'F1') {
+        event.preventDefault()
+        // Trigger help panel open event
+        const helpEvent = new CustomEvent('json-formatter-help', { detail: { action: 'open' } })
+        window.dispatchEvent(helpEvent)
+        return
+      }
+      
+      if (ctrlKey) {
+        switch (key.toLowerCase()) {
+          case 'f':
+            event.preventDefault()
+            handleFormat()
+            break
+          case 'm':
+            event.preventDefault()
+            handleCompact()
+            break
+          case 'r':
+            event.preventDefault()
+            handleRepair()
+            break
+          case 'l':
+            event.preventDefault()
+            handleLoadSample()
+            break
+          case 's':
+            if (shiftKey) {
+              event.preventDefault()
+              handleSortAsc()
+            }
+            // Don't prevent default Ctrl+S (browser save) - let it work normally
+            break
+          case 'a':
+            if (shiftKey) {
+              event.preventDefault()
+              handleSortDesc()
+            }
+            break
+          case 'o':
+            event.preventDefault()
+            if (isPremiumUser) {
+              handleUpload()
+            } else {
+              showUpgrade('File Upload')
+            }
+            break
+          default:
+            break
+        }
+      }
+      
+      // Handle Alt key combinations to avoid browser conflicts
+      if (event.altKey) {
+        switch (key.toLowerCase()) {
+          case 's':
+            event.preventDefault()
+            if (isPremiumUser) {
+              handleSaveSnippet()
+            } else {
+              showUpgrade('Save Snippet')
+            }
+            break
+          case 'l':
+            event.preventDefault()
+            if (isPremiumUser && snippets.length > 0) {
+              setShowLoadDialog(true)
+            } else if (!isPremiumUser) {
+              showUpgrade('Load Snippets')
+            } else {
+              showToast('No saved snippets found', 'info')
+            }
+            break
+          case 'd':
+            event.preventDefault()
+            if (isPremiumUser) {
+              handleDownload()
+            } else {
+              showUpgrade('File Download')
+            }
+            break
+          case 't':
+            event.preventDefault()
+            if (isPremiumUser) {
+              toggleTreeView()
+            } else {
+              showUpgrade('Tree View')
+            }
+            break
+          case 'c':
+            event.preventDefault()
+            handleCopy()
+            break
+          default:
+            break
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+      }, [isPremiumUser, showTreeView, snippets, handleFormat, handleCompact, handleRepair, handleCopy, handleSortAsc, handleSaveSnippet, handleUpload, handleDownload, toggleTreeView, showUpgrade, showToast])
+
+  // Optimized tree data update - using debounced content and performance monitoring
+  useEffect(() => {
+    if (!showTreeView || !debouncedJsonContent.trim()) {
       setTreeData(null)
       return
     }
     
+    // Skip tree view for very large JSON to prevent performance issues
+    if (debouncedJsonContent.length > 500000) { // 500KB limit for tree view
+      setTreeData(null)
+      showToast('JSON too large for tree view - use smaller files for tree visualization', 'warning')
+      return
+    }
+    
     try {
-      const parsed = JSON.parse(jsonContent)
+      startTimer('tree-parsing')
+      const parsed = JSON.parse(debouncedJsonContent)
+      const timing = endTimer('tree-parsing', true)
+      
+      if (timing && typeof timing === 'object' && timing.isVeryLarge) {
+        showToast('Large JSON - tree view may be slow to render', 'warning')
+      }
+      
       setTreeData(parsed)
     } catch (error) {
       setTreeData(null)
     }
-  }, [jsonContent, showTreeView])
+  }, [debouncedJsonContent, showTreeView, startTimer, endTimer])
 
   return (
     <ErrorBoundary
@@ -1311,10 +1556,18 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
         <Card>
       {/* Action Toolbar */}
       <div className="px-4 pt-4 pb-3 border-b">
+        {/* Performance indicator */}
+        {isTyping && (
+          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-2">
+            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            Validating...
+          </div>
+        )}
+        
         <div className="flex flex-wrap gap-2">
           {/* Basic Operations Group */}
           <div className="flex flex-wrap gap-1">
-            <Tooltip content="Format and beautify JSON with proper indentation">
+            <Tooltip content="Format and beautify JSON with proper indentation (Ctrl+F)">
               <Button
                 onClick={handleFormat}
                 disabled={isLoading}
@@ -1327,7 +1580,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
               </Button>
             </Tooltip>
             
-            <Tooltip content="Minify JSON by removing whitespace">
+            <Tooltip content="Minify JSON by removing whitespace (Ctrl+M)">
               <Button
                 onClick={handleCompact}
                 disabled={isLoading}
@@ -1340,7 +1593,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
               </Button>
             </Tooltip>
             
-            <Tooltip content="Copy JSON content to clipboard">
+            <Tooltip content="Copy JSON content to clipboard (Alt+C)">
               <Button
                 onClick={handleCopy}
                 disabled={isLoading || !jsonContent}
@@ -1359,7 +1612,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
           {/* Sort Operations Group */}
           <div className="flex flex-wrap gap-1">
-            <Tooltip content="Sort object keys alphabetically (A to Z)">
+            <Tooltip content="Sort object keys alphabetically (A to Z) (Ctrl+Shift+S)">
               <Button
                 onClick={handleSortAsc}
                 disabled={isLoading}
@@ -1372,7 +1625,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
               </Button>
             </Tooltip>
             
-            <Tooltip content="Sort object keys reverse alphabetically (Z to A)">
+            <Tooltip content="Sort object keys reverse alphabetically (Z to A) (Ctrl+Shift+A)">
               <Button
                 onClick={handleSortDesc}
                 disabled={isLoading}
@@ -1385,7 +1638,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
               </Button>
             </Tooltip>
             
-            <Tooltip content="Fix common JSON syntax errors and formatting issues">
+            <Tooltip content="Fix common JSON syntax errors and formatting issues (Ctrl+R)">
               <Button
                 onClick={handleRepair}
                 disabled={isLoading}
@@ -1404,7 +1657,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
           {/* Sample Data Group */}
           <div className="flex flex-wrap gap-1">
-            <Tooltip content="Load sample JSON data to test with">
+            <Tooltip content="Load sample JSON data to test with (Ctrl+L)">
               <Button
                 onClick={handleLoadSample}
                 disabled={isLoading}
@@ -1436,7 +1689,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
           {/* Premium Features Group */}
           <div className="flex flex-wrap gap-1">
-            <Tooltip content={isPremiumUser ? "Upload JSON or text files (up to 5MB)" : "Upload files - Premium feature"}>
+            <Tooltip content={isPremiumUser ? "Upload JSON or text files (up to 5MB) (Ctrl+O)" : "Upload files - Premium feature (Ctrl+O)"}>
               <Button
                 onClick={handleUpload}
                 disabled={!isPremiumUser || isLoading}
@@ -1454,7 +1707,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
               </Button>
             </Tooltip>
             
-            <Tooltip content={isPremiumUser ? "Download JSON content as a file" : "Download files - Premium feature"}>
+            <Tooltip content={isPremiumUser ? "Download JSON content as a file (Alt+D)" : "Download files - Premium feature (Alt+D)"}>
               <Button
                 onClick={handleDownload}
                 disabled={!isPremiumUser || isLoading || !jsonContent}
@@ -1508,7 +1761,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
               </DropdownMenu>
             </Tooltip>
             
-            <Tooltip content={isPremiumUser ? "Save JSON as a reusable snippet" : "Save snippets - Premium feature"}>
+            <Tooltip content={isPremiumUser ? "Save JSON as a reusable snippet (Alt+S)" : "Save snippets - Premium feature (Alt+S)"}>
               <Button
                 onClick={handleSaveSnippet}
                 disabled={!isPremiumUser || isLoading || !jsonContent || !userId}
@@ -1526,7 +1779,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
               </Button>
             </Tooltip>
             
-            <Tooltip content={isPremiumUser ? "Load a saved JSON snippet" : "Load snippets - Premium feature"}>
+            <Tooltip content={isPremiumUser ? "Load a saved JSON snippet (Alt+L)" : "Load snippets - Premium feature (Alt+L)"}>
               <Button
                 onClick={() => setShowLoadDialog(true)}
                 disabled={!isPremiumUser || isLoading || !userId || snippets.length === 0}
@@ -1544,7 +1797,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
               </Button>
             </Tooltip>
             
-            <Tooltip content={isPremiumUser ? (showTreeView ? "Switch back to editor mode" : "View JSON as interactive tree") : "Tree visualization - Premium feature"}>
+            <Tooltip content={isPremiumUser ? (showTreeView ? "Switch back to editor mode (Alt+T)" : "View JSON as interactive tree (Alt+T)") : "Tree visualization - Premium feature (Alt+T)"}>
               <Button
                 onClick={toggleTreeView}
                 disabled={!isPremiumUser || isLoading || !jsonContent}
@@ -1765,17 +2018,55 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
           )}
         </div>
         
-        {/* Cursor Position or Tree View Help */}
-        {showTreeView ? (
-          treeData && (
-            <div className="mt-2 text-xs text-muted-foreground text-center">
-              Click arrows to expand/collapse nodes • Switch back to editor to modify JSON
+        {/* Performance Status */}
+        {debouncedJsonContent && (
+          <div className="mt-2 px-3 py-2 bg-gray-50 dark:bg-gray-800/50 border rounded-md">
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+              <div className="flex items-center gap-4">
+                <span>Size: {(debouncedJsonContent.length / 1024).toFixed(1)} KB</span>
+                {isLargeJson(debouncedJsonContent) && (
+                  <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                    <AlertCircle className="w-3 h-3" />
+                    Large JSON - operations may be slower
+                  </span>
+                )}
+                {isVeryLargeJson(debouncedJsonContent) && (
+                  <span className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                    <AlertCircle className="w-3 h-3" />
+                    Very large JSON - consider using smaller files
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {showTreeView ? (
+                  treeData && (
+                    <span className="text-center">
+                      Click arrows to expand/collapse nodes • Switch back to editor to modify JSON
+                    </span>
+                  )
+                ) : (
+                  <span>Line {cursorPosition.line}, Column {cursorPosition.column}</span>
+                )}
+              </div>
             </div>
-          )
-        ) : (
-          <div className="mt-2 text-xs text-muted-foreground text-right">
-            Line {cursorPosition.line}, Column {cursorPosition.column}
           </div>
+        )}
+
+        {/* Cursor Position or Tree View Help - Legacy support */}
+        {!debouncedJsonContent && (
+          <>
+            {showTreeView ? (
+              treeData && (
+                <div className="mt-2 text-xs text-muted-foreground text-center">
+                  Click arrows to expand/collapse nodes • Switch back to editor to modify JSON
+                </div>
+              )
+            ) : (
+              <div className="mt-2 text-xs text-muted-foreground text-right">
+                Line {cursorPosition.line}, Column {cursorPosition.column}
+              </div>
+            )}
+          </>
         )}
         
         {/* Validation Status */}

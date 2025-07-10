@@ -209,6 +209,370 @@ Execute SQL files directly in Supabase SQL Editor or use Supabase CLI.
 - **File Organization**: Feature-based directory structure
 - **Imports**: Use `@/` path aliases for clean imports
 
+## 🏗️ Tool Development Guidelines
+
+*Use these guidelines when developing new tools to ensure consistency, quality, and maintainability.*
+
+### 📐 Architecture Patterns
+
+#### Component Structure
+Each tool should follow this component organization:
+
+```bash
+app/tools/[tool-name]/
+├── page.tsx                    # Server component wrapper
+├── components/
+│   ├── [tool-name]-client.tsx  # Main client component
+│   ├── [tool-name]-editor.tsx  # Core editor/input component
+│   ├── help-panel.tsx         # Help documentation
+│   ├── enhanced-tooltip.tsx   # Rich tooltips
+│   └── keyboard-shortcuts.tsx # Keyboard shortcuts
+├── hooks/
+│   ├── use-[tool-name].tsx    # Core tool logic
+│   └── use-keyboard-shortcuts.tsx # Keyboard shortcuts
+├── lib/
+│   ├── [tool-name]-utils.ts   # Utility functions
+│   └── [tool-name]-types.ts   # TypeScript types
+└── tool.config.ts             # Tool configuration
+```
+
+#### Single Responsibility Components
+- **Main Component**: Layout and state management
+- **Editor Component**: Core tool functionality
+- **Help Panel**: Documentation and examples
+- **Tooltip Component**: Rich contextual help
+- **Hooks**: Business logic and side effects
+
+### 🎨 Design Principles
+
+#### Consistent UI Framework
+```tsx
+// Standard tool layout pattern
+<div className="container mx-auto px-4 py-8">
+  <div className="mb-8">
+    <h1 className="text-3xl font-bold mb-2">{tool.name}</h1>
+    <p className="text-muted-foreground">{tool.description}</p>
+  </div>
+  
+  <div className="grid gap-6">
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle>Tool Interface</CardTitle>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setShowHelp(!showHelp)}
+          >
+            <HelpCircle className="h-4 w-4 mr-2" />
+            Help
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {/* Tool content */}
+      </CardContent>
+    </Card>
+  </div>
+</div>
+```
+
+#### Button Toolbar Standards
+```tsx
+// Standard button toolbar pattern
+<div className="flex flex-wrap gap-2 mb-4">
+  <div className="flex gap-2">
+    {/* Primary actions */}
+    <Button onClick={handlePrimaryAction}>
+      <Icon className="h-4 w-4 mr-2" />
+      Primary Action
+    </Button>
+  </div>
+  
+  <div className="flex gap-2">
+    {/* Secondary actions */}
+    <Button variant="outline" onClick={handleSecondaryAction}>
+      <Icon className="h-4 w-4 mr-2" />
+      Secondary Action
+    </Button>
+  </div>
+  
+  <div className="flex gap-2 ml-auto">
+    {/* Utility actions */}
+    <Button variant="ghost" size="sm" onClick={handleUtility}>
+      <Icon className="h-4 w-4" />
+    </Button>
+  </div>
+</div>
+```
+
+### 💎 Premium Feature Integration
+
+#### Visual Premium Indicators
+```tsx
+// Premium feature pattern
+<EnhancedTooltip
+  content={
+    <div>
+      <p>Premium Feature</p>
+      <p className="text-sm text-muted-foreground">
+        Upgrade to access this feature
+      </p>
+    </div>
+  }
+  showPremiumBadge={!isPremium}
+>
+  <Button 
+    disabled={!isPremium}
+    onClick={handlePremiumAction}
+  >
+    {!isPremium && <Crown className="h-4 w-4 mr-2" />}
+    Premium Action
+  </Button>
+</EnhancedTooltip>
+```
+
+#### Premium Feature Behavior
+- **FREE users**: Show disabled button with crown icon
+- **PREMIUM users**: Show enabled button without crown icon
+- **Upgrade prompts**: Use toast notifications with clear CTA
+- **Consistent messaging**: "This feature requires a premium plan"
+
+### 📚 Documentation Standards
+
+#### Help Panel Structure
+Every tool must include a comprehensive help panel with:
+
+```tsx
+// Help panel tabs structure
+<Tabs defaultValue="examples">
+  <TabsList className="grid w-full grid-cols-4">
+    <TabsTrigger value="examples">Examples</TabsTrigger>
+    <TabsTrigger value="shortcuts">Shortcuts</TabsTrigger>
+    <TabsTrigger value="tips">Tips</TabsTrigger>
+    <TabsTrigger value="accessibility">Accessibility</TabsTrigger>
+  </TabsList>
+  
+  <TabsContent value="examples">
+    {/* 3-5 practical examples */}
+  </TabsContent>
+  
+  <TabsContent value="shortcuts">
+    {/* All keyboard shortcuts */}
+  </TabsContent>
+  
+  <TabsContent value="tips">
+    {/* Usage tips and best practices */}
+  </TabsContent>
+  
+  <TabsContent value="accessibility">
+    {/* Accessibility features */}
+  </TabsContent>
+</Tabs>
+```
+
+#### Enhanced Tooltips
+```tsx
+// Rich tooltip pattern
+<EnhancedTooltip
+  content={
+    <div>
+      <div className="font-semibold mb-1">Action Name</div>
+      <div className="text-sm text-muted-foreground mb-2">
+        Description of what this action does
+      </div>
+      <div className="text-xs bg-muted px-2 py-1 rounded">
+        Keyboard: Ctrl+K
+      </div>
+    </div>
+  }
+  examples={[
+    "Example 1: Basic usage",
+    "Example 2: Advanced usage"
+  ]}
+  tips={[
+    "Tip 1: Performance optimization",
+    "Tip 2: Best practices"
+  ]}
+>
+  <Button>Action</Button>
+</EnhancedTooltip>
+```
+
+### ⌨️ Keyboard Shortcuts Standards
+
+#### Required Shortcuts
+Every tool must implement these categories:
+
+```tsx
+// Standard keyboard shortcuts
+const shortcuts = {
+  // Core actions (F1-F12)
+  'F1': { action: 'toggleHelp', description: 'Toggle help panel' },
+  
+  // Primary actions (Ctrl+Letter)
+  'Ctrl+L': { action: 'loadSample', description: 'Load sample data' },
+  'Ctrl+R': { action: 'clearEditor', description: 'Clear/reset editor' },
+  
+  // Secondary actions (Ctrl+Shift+Letter)
+  'Ctrl+Shift+F': { action: 'formatContent', description: 'Format content' },
+  'Ctrl+Shift+C': { action: 'compactContent', description: 'Compact content' },
+  
+  // Utility actions (Alt+Letter)
+  'Alt+C': { action: 'copyContent', description: 'Copy to clipboard' },
+  'Alt+D': { action: 'downloadFile', description: 'Download file' },
+  'Alt+S': { action: 'saveSnippet', description: 'Save snippet' },
+  'Alt+L': { action: 'loadSnippet', description: 'Load snippet' },
+  
+  // Premium actions (Ctrl+Alt+Letter)
+  'Ctrl+Alt+U': { action: 'uploadFile', description: 'Upload file', premium: true },
+  'Ctrl+Alt+T': { action: 'toggleTree', description: 'Toggle tree view', premium: true }
+};
+```
+
+#### Keyboard Shortcut Implementation
+```tsx
+// Keyboard shortcuts hook pattern
+const useKeyboardShortcuts = (handlers: ShortcutHandlers) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = `${e.ctrlKey ? 'Ctrl+' : ''}${e.shiftKey ? 'Shift+' : ''}${e.altKey ? 'Alt+' : ''}${e.key}`;
+      
+      if (shortcuts[key]) {
+        e.preventDefault();
+        handlers[shortcuts[key].action]?.();
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handlers]);
+};
+```
+
+### ♿ Accessibility Standards
+
+#### Required Accessibility Features
+```tsx
+// Accessibility implementation
+<div
+  role="region"
+  aria-label="Tool interface"
+  aria-describedby="tool-description"
+>
+  <div id="tool-description" className="sr-only">
+    {tool.description}
+  </div>
+  
+  <Button
+    aria-label="Format JSON content"
+    aria-describedby="format-help"
+    onClick={handleFormat}
+  >
+    <Icon className="h-4 w-4" aria-hidden="true" />
+    Format
+  </Button>
+  
+  <div id="format-help" className="sr-only">
+    Formats and beautifies JSON with proper indentation
+  </div>
+</div>
+```
+
+#### Screen Reader Support
+- **ARIA labels**: Descriptive labels for all interactive elements
+- **Role attributes**: Proper semantic roles for complex components
+- **Live regions**: Announce dynamic content changes
+- **Skip links**: Navigation shortcuts for keyboard users
+
+### 🎯 Performance Standards
+
+#### Loading States
+```tsx
+// Loading state pattern
+{isLoading ? (
+  <div className="flex items-center justify-center p-8">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+    <span className="ml-2">Processing...</span>
+  </div>
+) : (
+  <ToolContent />
+)}
+```
+
+#### Debounced Operations
+```tsx
+// Debounced validation pattern
+const debouncedValidate = useCallback(
+  debounce((content: string) => {
+    try {
+      JSON.parse(content);
+      setErrors([]);
+    } catch (error) {
+      setErrors([error.message]);
+    }
+  }, 300),
+  []
+);
+```
+
+### 🧪 Testing Standards
+
+#### Component Testing
+```tsx
+// Test structure for each tool
+describe('ToolName', () => {
+  it('renders correctly', () => {
+    render(<ToolName />);
+    expect(screen.getByText('Tool Name')).toBeInTheDocument();
+  });
+  
+  it('handles basic functionality', () => {
+    // Test core features
+  });
+  
+  it('handles premium features correctly', () => {
+    // Test premium feature gates
+  });
+  
+  it('implements keyboard shortcuts', () => {
+    // Test keyboard shortcuts
+  });
+  
+  it('meets accessibility requirements', () => {
+    // Test accessibility features
+  });
+});
+```
+
+### 📋 Quality Checklist
+
+Before marking a tool as complete, verify:
+
+- [ ] **Architecture**: Follows component structure standards
+- [ ] **UI/UX**: Consistent with design principles
+- [ ] **Premium Features**: Proper visual indicators and behavior
+- [ ] **Documentation**: Complete help panel with all tabs
+- [ ] **Keyboard Shortcuts**: All required shortcuts implemented
+- [ ] **Accessibility**: ARIA labels and screen reader support
+- [ ] **Performance**: Loading states and debounced operations
+- [ ] **Testing**: Unit tests covering core functionality
+- [ ] **Responsive**: Works on mobile and desktop
+- [ ] **Error Handling**: Graceful error boundaries and messaging
+
+### 📝 Development Workflow
+
+1. **Planning**: Define tool requirements and feature matrix
+2. **Setup**: Create folder structure and configuration
+3. **Core Implementation**: Build basic functionality
+4. **UI/UX**: Implement design standards
+5. **Premium Features**: Add premium feature gates
+6. **Documentation**: Create comprehensive help system
+7. **Accessibility**: Implement ARIA and keyboard support
+8. **Testing**: Write unit tests and manual testing
+9. **Optimization**: Add performance improvements
+10. **Review**: Complete quality checklist
+
 ## 🚦 Available Scripts
 
 ```bash
