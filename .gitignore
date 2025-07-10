@@ -34,3 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# test and development files
+**/test/
+**/*.test.*
+**/*.spec.*
+TEST_REPORT.md
+run-tests.js
