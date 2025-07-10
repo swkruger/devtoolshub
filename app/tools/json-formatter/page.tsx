@@ -32,46 +32,49 @@ export default async function JsonFormatterPage() {
 
       {/* Feature Overview - Only show for free users */}
       {!isPremiumUser && (
-        <div className="mt-12">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Upgrade to Premium
+        <div className="mt-8">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full mb-3">
+              <Crown className="w-6 h-6 text-white" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              Unlock Premium Features
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Unlock advanced features and enhanced functionality
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              Enhance your JSON workflow with powerful premium tools
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Free Features */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
-                  <CheckCircle className="w-5 h-5" />
-                  Free Features
+            <Card className="border-green-200 dark:border-green-800">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400 text-base">
+                  <CheckCircle className="w-4 h-4" />
+                  What You Get Now
                 </CardTitle>
-                <CardDescription>
-                  Available to all users at no cost
+                <CardDescription className="text-xs">
+                  Your current free plan includes
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm">
+              <CardContent className="pt-0">
+                <ul className="space-y-1.5 text-xs">
                   {tool.features.free.map((feature, index) => (
                     <li key={index} className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                      <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
                       {feature}
                     </li>
                   ))}
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
                     Sort object keys alphabetically
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
                     Repair malformed JSON
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
                     Load sample data
                   </li>
                 </ul>
@@ -79,37 +82,50 @@ export default async function JsonFormatterPage() {
             </Card>
 
             {/* Premium Features */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
-                  <Crown className="w-5 h-5" />
-                  Premium Features
+            <Card className="border-amber-200 dark:border-amber-800 bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400 text-base">
+                  <Crown className="w-4 h-4" />
+                  Premium Upgrade
                 </CardTitle>
-                <CardDescription>
-                  Enhanced functionality for premium users
+                <CardDescription className="text-xs">
+                  Unlock these powerful features
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm">
+              <CardContent className="pt-0 space-y-3">
+                <ul className="space-y-1.5 text-xs">
                   {tool.features.premium?.map((feature, index) => (
                     <li key={index} className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+                      <Crown className="w-3 h-3 text-amber-500 flex-shrink-0" />
                       {feature}
                     </li>
                   ))}
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                    Convert JSON to XML/CSV/YAML
+                    <Crown className="w-3 h-3 text-amber-500 flex-shrink-0" />
+                    Convert JSON to XML/CSV/YAML/JS
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                    Interactive JSON tree view
+                    <Crown className="w-3 h-3 text-amber-500 flex-shrink-0" />
+                    Interactive JSON tree visualization
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                    Save/retrieve snippets online
+                    <Crown className="w-3 h-3 text-amber-500 flex-shrink-0" />
+                    Save unlimited snippets online
                   </li>
                 </ul>
+                
+                <div className="pt-2 border-t border-amber-200 dark:border-amber-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-amber-600 dark:text-amber-400">Starting at</span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-lg font-bold text-amber-700 dark:text-amber-400">$9</span>
+                      <span className="text-xs text-amber-600 dark:text-amber-500">/month</span>
+                    </div>
+                  </div>
+                  <button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-medium text-xs py-2 px-4 rounded-md transition-all duration-200 hover:shadow-md">
+                    Upgrade to Premium
+                  </button>
+                </div>
               </CardContent>
             </Card>
           </div>

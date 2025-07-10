@@ -41,6 +41,7 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu"
 import { Tooltip } from "@/components/ui/tooltip"
+import { UpgradeModal } from "@/components/shared/upgrade-modal"
 import { JsonSnippet, DEFAULT_CATEGORIES } from "@/lib/types/snippets"
 import { SnippetsService } from "@/lib/services/snippets"
 
@@ -127,6 +128,8 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
   })
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [snippetsService] = useState(() => new SnippetsService())
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [upgradeFeature, setUpgradeFeature] = useState<string>('')
 
   // Detect theme preference
   useEffect(() => {
@@ -508,6 +511,12 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
     // TODO: Implement with actual toast component
   }
 
+  // Show upgrade modal for premium features
+  const showUpgrade = (feature: string) => {
+    setUpgradeFeature(feature)
+    setShowUpgradeModal(true)
+  }
+
   // JSON operation functions
   const handleFormat = () => {
     if (!jsonContent.trim()) {
@@ -828,7 +837,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
   const handleUpload = () => {
     if (!isPremiumUser) {
-      showToast('File upload requires premium membership', 'error')
+      showUpgrade('File Upload')
       return
     }
     
@@ -846,7 +855,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
   const handleDownload = () => {
     if (!isPremiumUser) {
-      showToast('File download requires premium membership', 'error')
+      showUpgrade('File Download')
       return
     }
 
@@ -934,7 +943,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
   // Conversion functions
   const convertJson = useCallback(async (targetFormat: string) => {
     if (!isPremiumUser) {
-      showToast('Format conversion requires premium membership', 'error')
+      showUpgrade('Format Conversion')
       return
     }
 
@@ -996,7 +1005,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
   const convertToJson = useCallback(async (sourceFormat: string, content: string) => {
     if (!isPremiumUser) {
-      showToast('Format conversion requires premium membership', 'error')
+      showUpgrade('Format Conversion')
       return
     }
 
@@ -1073,7 +1082,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
   const handleSaveSnippet = () => {
     if (!isPremiumUser) {
-      showToast('Snippet management requires premium membership', 'error')
+      showUpgrade('Snippet Management')
       return
     }
     
@@ -1172,7 +1181,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
   // Tree view functions
   const toggleTreeView = () => {
     if (!isPremiumUser) {
-      showToast('Tree visualization is a premium feature', 'error')
+      showUpgrade('Tree Visualization')
       return
     }
 
@@ -1347,11 +1356,15 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
                 disabled={!isPremiumUser || isLoading}
                 size="sm"
                 variant="outline"
-                className="flex items-center gap-2 relative"
+                className={`flex items-center gap-2 relative transition-all duration-200 ${
+                  !isPremiumUser 
+                    ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
+                    : 'hover:shadow-sm'
+                }`}
               >
                 <Upload className="w-4 h-4" />
                 Upload
-                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
               </Button>
             </Tooltip>
             
@@ -1361,11 +1374,15 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
                 disabled={!isPremiumUser || isLoading || !jsonContent}
                 size="sm"
                 variant="outline"
-                className="flex items-center gap-2 relative"
+                className={`flex items-center gap-2 relative transition-all duration-200 ${
+                  !isPremiumUser 
+                    ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
+                    : 'hover:shadow-sm'
+                }`}
               >
                 <Download className="w-4 h-4" />
                 Download
-                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
               </Button>
             </Tooltip>
             
@@ -1376,12 +1393,16 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
                     disabled={!isPremiumUser || isLoading || !jsonContent}
                     size="sm"
                     variant="outline"
-                    className="flex items-center gap-2 relative"
+                    className={`flex items-center gap-2 relative transition-all duration-200 ${
+                      !isPremiumUser 
+                        ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
+                        : 'hover:shadow-sm'
+                    }`}
                   >
                     <RefreshCw className="w-4 h-4" />
                     Convert
                     <ChevronDown className="w-3 h-3" />
-                    {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+                    {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
@@ -1407,11 +1428,15 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
                 disabled={!isPremiumUser || isLoading || !jsonContent || !userId}
                 size="sm"
                 variant="outline"
-                className="flex items-center gap-2 relative"
+                className={`flex items-center gap-2 relative transition-all duration-200 ${
+                  !isPremiumUser 
+                    ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
+                    : 'hover:shadow-sm'
+                }`}
               >
                 <Save className="w-4 h-4" />
                 Save
-                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
               </Button>
             </Tooltip>
             
@@ -1421,11 +1446,15 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
                 disabled={!isPremiumUser || isLoading || !userId || snippets.length === 0}
                 size="sm"
                 variant="outline"
-                className="flex items-center gap-2 relative"
+                className={`flex items-center gap-2 relative transition-all duration-200 ${
+                  !isPremiumUser 
+                    ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
+                    : 'hover:shadow-sm'
+                }`}
               >
                 <FolderOpen className="w-4 h-4" />
                 Load
-                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
               </Button>
             </Tooltip>
             
@@ -1435,11 +1464,15 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
                 disabled={!isPremiumUser || isLoading || !jsonContent}
                 size="sm"
                 variant={showTreeView ? "default" : "outline"}
-                className="flex items-center gap-2 relative"
+                className={`flex items-center gap-2 relative transition-all duration-200 ${
+                  !isPremiumUser 
+                    ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
+                    : 'hover:shadow-sm'
+                }`}
               >
                 <TreePine className="w-4 h-4" />
                 {showTreeView ? 'Show Editor' : 'Tree View'}
-                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
               </Button>
             </Tooltip>
           </div>
@@ -1893,6 +1926,14 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
           </Card>
         </div>
       )}
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        feature={upgradeFeature}
+        context="json-formatter"
+      />
     </Card>
   )
 } 
