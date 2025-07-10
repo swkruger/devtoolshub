@@ -1,13 +1,4 @@
 {
-  "version": 2,
-  "buildCommand": "npm run build",
-  "framework": "nextjs",
-  "regions": ["iad1"],
-  "functions": {
-    "app/**/*.ts": {
-      "maxDuration": 30
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
@@ -30,25 +21,5 @@
         }
       ]
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/dashboard",
-      "permanent": false
-    }
-  ],
-  "ignore": [
-    "**/test/**",
-    "**/*.test.*",
-    "**/*.spec.*",
-    "**/TEST_REPORT.md",
-    "**/run-tests.js"
   ]
 } 
