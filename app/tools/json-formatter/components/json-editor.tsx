@@ -16,10 +16,45 @@ import {
   Crown,
   AlertCircle,
   CheckCircle,
-  Info
+  Info,
+  X,
+  ChevronDown,
+  TreePine,
+  Search,
+  Expand,
+  Shrink,
+  FolderOpen,
+  Star,
+  StarOff,
+  Trash2,
+  Edit3,
+  Plus
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from "@/components/ui/dropdown-menu"
+import { Tooltip } from "@/components/ui/tooltip"
+import { JsonSnippet, DEFAULT_CATEGORIES } from "@/lib/types/snippets"
+import { SnippetsService } from "@/lib/services/snippets"
+
+// Dynamic import for react-json-tree to avoid SSR issues
+const JSONTree = dynamic(
+  async () => {
+    const { JSONTree } = await import("react-json-tree")
+    return JSONTree
+  }, 
+  { 
+    ssr: false,
+    loading: () => <div className="h-[200px] flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">Loading tree view...</div>
+  }
+)
 
 // Dynamic import for AceEditor to avoid SSR issues
 const AceEditor = dynamic(
@@ -29,6 +64,9 @@ const AceEditor = dynamic(
     // Import ace modules after react-ace is loaded
     if (typeof window !== 'undefined') {
       await import("ace-builds/src-noconflict/mode-json")
+      await import("ace-builds/src-noconflict/mode-xml")
+      await import("ace-builds/src-noconflict/mode-yaml")
+      await import("ace-builds/src-noconflict/mode-javascript")
       await import("ace-builds/src-noconflict/theme-github") 
       await import("ace-builds/src-noconflict/theme-monokai")
       await import("ace-builds/src-noconflict/ext-language_tools")
@@ -42,8 +80,11 @@ const AceEditor = dynamic(
   }
 )
 
+
+
 interface JsonEditorProps {
   isPremiumUser: boolean
+  userId?: string
 }
 
 interface ValidationResult {
@@ -60,7 +101,7 @@ interface ValidationResult {
   }
 }
 
-export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
+export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
   const [jsonContent, setJsonContent] = useState('')
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -69,6 +110,23 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
   const [cursorPosition, setCursorPosition] = useState({ line: 1, column: 1 })
   const [isDragOver, setIsDragOver] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [conversionMode, setConversionMode] = useState<string | null>(null)
+  const [convertedContent, setConvertedContent] = useState('')
+  const [showConversionPanel, setShowConversionPanel] = useState(false)
+  const [showTreeView, setShowTreeView] = useState(false)
+  const [treeData, setTreeData] = useState<any>(null)
+  
+  // Snippet management state
+  const [snippets, setSnippets] = useState<JsonSnippet[]>([])
+  const [showSaveDialog, setShowSaveDialog] = useState(false)
+  const [showLoadDialog, setShowLoadDialog] = useState(false)
+  const [saveDialogData, setSaveDialogData] = useState({
+    name: '',
+    category: 'general',
+    description: ''
+  })
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [snippetsService] = useState(() => new SnippetsService())
 
   // Detect theme preference
   useEffect(() => {
@@ -618,45 +676,73 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
 
     try {
       setIsLoading(true)
+      
+      // First, check if JSON is already valid
+      try {
+        JSON.parse(jsonContent)
+        // If it's already valid, just format it nicely
+        const parsed = JSON.parse(jsonContent)
+        const formatted = JSON.stringify(parsed, null, 2)
+        setJsonContent(formatted)
+        setUploadError(null)
+        showToast('JSON is already valid - reformatted for readability!')
+        return
+      } catch {
+        // JSON is invalid, proceed with repair
+      }
+
       let repairedJson = jsonContent
 
-      // 1. Replace single quotes with double quotes (but preserve strings)
-      repairedJson = repairedJson.replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, '$1"$2":')
-      repairedJson = repairedJson.replace(/:\s*'([^']*)'/g, ': "$1"')
-      
-      // 2. Remove trailing commas
-      repairedJson = repairedJson.replace(/,(\s*[}\]])/g, '$1')
-      
-      // 3. Remove comments (single line and multi-line)
+      // 1. Remove comments (single line and multi-line)
       repairedJson = repairedJson.replace(/\/\*[\s\S]*?\*\//g, '')
       repairedJson = repairedJson.replace(/\/\/.*$/gm, '')
       
-      // 4. Remove JSONP wrapper (if present)
+      // 2. Remove JSONP wrapper (if present)
       repairedJson = repairedJson.replace(/^\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(\s*/, '')
       repairedJson = repairedJson.replace(/\s*\)\s*;?\s*$/, '')
       
-      // 5. Fix control characters in strings
-      repairedJson = repairedJson.replace(/[\x00-\x1F\x7F]/g, (match) => {
-        switch (match) {
-          case '\n': return '\\n'
-          case '\r': return '\\r'
-          case '\t': return '\\t'
-          case '\b': return '\\b'
-          case '\f': return '\\f'
-          default: return '' // Remove other control characters
-        }
+      // 3. Fix control characters ONLY inside string literals (between quotes)
+      repairedJson = repairedJson.replace(/"([^"\\]*)"/g, (match, content) => {
+        const fixed = content.replace(/[\x00-\x1F\x7F]/g, (char: string) => {
+          switch (char) {
+            case '\n': return '\\n'
+            case '\r': return '\\r'
+            case '\t': return '\\t'
+            case '\b': return '\\b'
+            case '\f': return '\\f'
+            default: return '' // Remove other control characters
+          }
+        })
+        return '"' + fixed + '"'
       })
       
-      // 6. Fix unescaped quotes in strings (basic attempt)
-      repairedJson = repairedJson.replace(/"([^"\\]*)\\?"([^"]*)"([^"\\]*)"/g, '"$1\\"$2\\"$3"')
+      // 4. Fix smart quotes and other Unicode quotes to standard ASCII quotes
+      // Replace various types of quotes with standard double quotes
+      repairedJson = repairedJson.replace(/[""'']/g, '"')
+      repairedJson = repairedJson.replace(/['']/g, "'")
       
-      // 7. Add missing quotes around property names that don't have them
-      repairedJson = repairedJson.replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, '$1"$2":')
+      // 5. Replace single quotes with double quotes for string values
+      repairedJson = repairedJson.replace(/:\s*'([^']*)'/g, ': "$1"')
       
-      // 8. Remove extra whitespace and clean up
-      repairedJson = repairedJson.trim()
+      // 6. Fix property names with wrong quotes or add missing quotes
+      repairedJson = repairedJson.replace(/([{,]\s*)([""''`]?)([a-zA-Z_$][a-zA-Z0-9_$]*)([""''`]?)\s*:/g, (match, prefix, startQuote, propName, endQuote) => {
+        // Always use proper double quotes for property names
+        return prefix + '"' + propName + '":'
+      })
       
-      // 8. Try to parse and format to validate
+      // 7. Handle unquoted property names (fallback)
+      repairedJson = repairedJson.replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, (match, prefix, propName) => {
+        // Check if the property name is already properly quoted
+        if (match.includes('"' + propName + '"')) {
+          return match
+        }
+        return prefix + '"' + propName + '":'
+      })
+      
+      // 6. Remove trailing commas
+      repairedJson = repairedJson.replace(/,(\s*[}\]])/g, '$1')
+      
+      // 7. Try to parse and format to validate
       try {
         const parsed = JSON.parse(repairedJson)
         const formatted = JSON.stringify(parsed, null, 2)
@@ -683,9 +769,14 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
       return
     }
 
-    // Validate file type
-    if (!file.name.toLowerCase().endsWith('.json') && file.type !== 'application/json') {
-      setUploadError('Please upload a valid JSON file (.json)')
+    // Validate file type - accept JSON and text files
+    const validExtensions = ['.json', '.txt']
+    const validTypes = ['application/json', 'text/plain', 'text/json']
+    const hasValidExtension = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
+    const hasValidType = validTypes.includes(file.type)
+    
+    if (!hasValidExtension && !hasValidType) {
+      setUploadError('Please upload a JSON or text file (.json, .txt)')
       return
     }
 
@@ -703,13 +794,26 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string
-        // Validate JSON
-        JSON.parse(content)
+        
+        // Always load the content - let validation system show any JSON errors
         setJsonContent(content)
-        showToast(`Successfully loaded ${file.name}`, 'success')
+        setUploadError(null) // Clear any previous upload errors
+        
+        // Switch to editor mode when uploading files so users can edit
+        if (showTreeView) {
+          setShowTreeView(false)
+        }
+        
+        // Check if it's valid JSON for the success message
+        try {
+          JSON.parse(content)
+          showToast(`Successfully loaded valid JSON from ${file.name}`, 'success')
+        } catch {
+          showToast(`Loaded ${file.name} - use repair button to fix JSON errors`, 'success')
+        }
       } catch (error) {
-        setUploadError('Invalid JSON file content')
-        showToast('Failed to parse JSON file', 'error')
+        setUploadError('Failed to read file content')
+        showToast('Failed to read file', 'error')
       } finally {
         setIsLoading(false)
       }
@@ -730,7 +834,7 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
     
     const input = document.createElement('input')
     input.type = 'file'
-    input.accept = '.json,application/json'
+    input.accept = '.json,.txt,application/json,text/plain'
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0]
       if (file) {
@@ -747,27 +851,42 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
     }
 
     if (!jsonContent.trim()) {
-      showToast('No JSON content to download', 'error')
+      showToast('No content to download', 'error')
       return
     }
 
     try {
-      // Validate JSON before download
-      JSON.parse(jsonContent)
+      // Check if JSON is valid to determine file type and message
+      let isValidJson = false
+      let fileExtension = '.txt'
+      let mimeType = 'text/plain'
       
-      const blob = new Blob([jsonContent], { type: 'application/json' })
+      try {
+        JSON.parse(jsonContent)
+        isValidJson = true
+        fileExtension = '.json'
+        mimeType = 'application/json'
+      } catch {
+        // Content is not valid JSON, download as text file
+      }
+      
+      const blob = new Blob([jsonContent], { type: mimeType })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `formatted-json-${new Date().toISOString().split('T')[0]}.json`
+      a.download = `json-editor-content-${new Date().toISOString().split('T')[0]}${fileExtension}`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
       
-      showToast('JSON file downloaded successfully', 'success')
+      if (isValidJson) {
+        showToast('Valid JSON file downloaded successfully', 'success')
+      } else {
+        showToast('Content downloaded as text file (invalid JSON)', 'success')
+      }
     } catch (error) {
-      showToast('Cannot download invalid JSON', 'error')
+      showToast('Failed to download file', 'error')
     }
   }
 
@@ -797,195 +916,540 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
     setIsDragOver(false)
 
     const files = Array.from(e.dataTransfer.files)
-    const jsonFile = files.find(file => 
-      file.name.toLowerCase().endsWith('.json') || file.type === 'application/json'
-    )
+    const validFile = files.find(file => {
+      const validExtensions = ['.json', '.txt']
+      const validTypes = ['application/json', 'text/plain', 'text/json']
+      const hasValidExtension = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
+      const hasValidType = validTypes.includes(file.type)
+      return hasValidExtension || hasValidType
+    })
 
-    if (jsonFile) {
-      handleFileUpload(jsonFile)
+    if (validFile) {
+      handleFileUpload(validFile)
     } else {
-      setUploadError('Please drop a valid JSON file')
+      setUploadError('Please drop a JSON or text file (.json, .txt)')
     }
   }, [handleFileUpload])
 
-  const handleConvert = () => console.log('Convert format (Premium)')
-  const handleSaveSnippet = () => console.log('Save snippet (Premium)')
+  // Conversion functions
+  const convertJson = useCallback(async (targetFormat: string) => {
+    if (!isPremiumUser) {
+      showToast('Format conversion requires premium membership', 'error')
+      return
+    }
+
+    if (!jsonContent.trim()) {
+      showToast('No content to convert', 'error')
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      let parsed: any
+      let converted = ''
+      
+      // Parse JSON first
+      try {
+        parsed = JSON.parse(jsonContent)
+      } catch (error) {
+        showToast('Invalid JSON - please fix errors before converting', 'error')
+        return
+      }
+
+      switch (targetFormat) {
+        case 'xml':
+          const xmlJs = await import('xml-js')
+          converted = xmlJs.json2xml(jsonContent, { compact: true, spaces: 2 })
+          break
+        
+        case 'csv':
+          const json2csv = await import('json2csv')
+          // Handle arrays vs single objects
+          const data = Array.isArray(parsed) ? parsed : [parsed]
+          converted = json2csv.parse(data)
+          break
+        
+        case 'yaml':
+          const jsYaml = await import('js-yaml')
+          converted = jsYaml.dump(parsed, { indent: 2 })
+          break
+        
+        case 'javascript':
+          // Convert to JavaScript object literal
+          converted = `const data = ${JSON.stringify(parsed, null, 2)};`
+          break
+        
+        default:
+          throw new Error('Unsupported format')
+      }
+
+      setConvertedContent(converted)
+      setConversionMode(targetFormat)
+      setShowConversionPanel(true)
+      showToast(`Successfully converted to ${targetFormat.toUpperCase()}`, 'success')
+    } catch (error) {
+      showToast(`Failed to convert to ${targetFormat}: ${(error as Error).message}`, 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [jsonContent, isPremiumUser, showToast])
+
+  const convertToJson = useCallback(async (sourceFormat: string, content: string) => {
+    if (!isPremiumUser) {
+      showToast('Format conversion requires premium membership', 'error')
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      let jsonResult: any
+
+      switch (sourceFormat) {
+        case 'xml':
+          const xmlJs = await import('xml-js')
+          const xmlOptions = { compact: true, spaces: 2 }
+          jsonResult = xmlJs.xml2json(content, xmlOptions)
+          break
+        
+        case 'yaml':
+          const jsYaml = await import('js-yaml')
+          jsonResult = jsYaml.load(content)
+          break
+        
+        case 'javascript':
+          // Extract JavaScript object - basic approach
+          const jsCode = content.replace(/^const\s+\w+\s*=\s*/, '').replace(/;$/, '')
+          jsonResult = eval(`(${jsCode})`)
+          break
+        
+        default:
+          throw new Error('Unsupported source format')
+      }
+
+      const formattedJson = JSON.stringify(jsonResult, null, 2)
+      setJsonContent(formattedJson)
+      setShowConversionPanel(false)
+      showToast(`Successfully converted from ${sourceFormat.toUpperCase()} to JSON`, 'success')
+    } catch (error) {
+      showToast(`Failed to convert from ${sourceFormat}: ${(error as Error).message}`, 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [isPremiumUser, showToast])
+
+  const closeConversionPanel = () => {
+    setShowConversionPanel(false)
+    setConversionMode(null)
+    setConvertedContent('')
+  }
+
+  const getConversionMode = (format: string) => {
+    switch (format) {
+      case 'xml': return 'xml'
+      case 'yaml': return 'yaml'
+      case 'javascript': return 'javascript'
+      case 'csv': return 'text'
+      default: return 'text'
+    }
+  }
+
+  // Load snippets on component mount
+  useEffect(() => {
+    if (userId && isPremiumUser) {
+      loadSnippets()
+    }
+  }, [userId, isPremiumUser])
+
+  const loadSnippets = async () => {
+    if (!userId) return
+    
+    try {
+      const userSnippets = await snippetsService.getUserSnippets(userId)
+      setSnippets(userSnippets)
+    } catch (error) {
+      showToast('Failed to load snippets', 'error')
+    }
+  }
+
+  const handleSaveSnippet = () => {
+    if (!isPremiumUser) {
+      showToast('Snippet management requires premium membership', 'error')
+      return
+    }
+    
+    if (!userId) {
+      showToast('Please sign in to save snippets', 'error')
+      return
+    }
+
+    if (!jsonContent.trim()) {
+      showToast('No content to save', 'error')
+      return
+    }
+
+    // Validate JSON before saving
+    try {
+      JSON.parse(jsonContent)
+    } catch (error) {
+      showToast('Cannot save invalid JSON - please fix errors first', 'error')
+      return
+    }
+
+    setShowSaveDialog(true)
+  }
+
+  const handleSaveDialogSubmit = async () => {
+    if (!saveDialogData.name.trim()) {
+      showToast('Please enter a name for the snippet', 'error')
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      await snippetsService.createSnippet(userId!, {
+        name: saveDialogData.name.trim(),
+        category: saveDialogData.category,
+        content: jsonContent,
+        description: saveDialogData.description.trim() || undefined
+      })
+      
+      showToast('Snippet saved successfully')
+      setShowSaveDialog(false)
+      setSaveDialogData({ name: '', category: 'general', description: '' })
+      loadSnippets() // Refresh the list
+    } catch (error) {
+      showToast('Failed to save snippet', 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleLoadSnippet = (snippet: JsonSnippet) => {
+    setJsonContent(snippet.content)
+    setShowLoadDialog(false)
+    
+    // Switch to editor mode if in tree view
+    if (showTreeView) {
+      setShowTreeView(false)
+    }
+    
+    showToast(`Loaded snippet: ${snippet.name}`)
+  }
+
+  const handleDeleteSnippet = async (snippetId: string) => {
+    try {
+      await snippetsService.deleteSnippet(snippetId)
+      showToast('Snippet deleted successfully')
+      loadSnippets() // Refresh the list
+    } catch (error) {
+      showToast('Failed to delete snippet', 'error')
+    }
+  }
+
+  const handleToggleFavorite = async (snippet: JsonSnippet) => {
+    try {
+      await snippetsService.updateSnippet(snippet.id, {
+        is_favorite: !snippet.is_favorite
+      })
+      loadSnippets() // Refresh the list
+      showToast(snippet.is_favorite ? 'Removed from favorites' : 'Added to favorites')
+    } catch (error) {
+      showToast('Failed to update favorite status', 'error')
+    }
+  }
+
+  const getFilteredSnippets = () => {
+    if (selectedCategory === 'all') return snippets
+    if (selectedCategory === 'favorites') return snippets.filter(s => s.is_favorite)
+    return snippets.filter(s => s.category === selectedCategory)
+  }
+
+  const getAvailableCategories = () => {
+    const usedCategories = Array.from(new Set(snippets.map(s => s.category)))
+    return [...DEFAULT_CATEGORIES, ...usedCategories.filter(cat => !DEFAULT_CATEGORIES.includes(cat as any))]
+  }
+
+  // Tree view functions
+  const toggleTreeView = () => {
+    if (!isPremiumUser) {
+      showToast('Tree visualization is a premium feature', 'error')
+      return
+    }
+
+    const newShowTreeView = !showTreeView
+    setShowTreeView(newShowTreeView)
+    
+    if (newShowTreeView && jsonContent.trim()) {
+      try {
+        const parsed = JSON.parse(jsonContent)
+        setTreeData(parsed)
+        showToast('Switched to tree view mode')
+      } catch (error) {
+        setTreeData(null)
+        showToast('Invalid JSON - fix errors to view tree structure', 'error')
+      }
+    } else if (!newShowTreeView) {
+      showToast('Switched to editor mode')
+    } else if (newShowTreeView && !jsonContent.trim()) {
+      showToast('Add JSON content to see tree visualization', 'error')
+    }
+  }
+
+
+
+  // Update tree data when JSON content changes
+  useEffect(() => {
+    if (!showTreeView || !jsonContent.trim()) {
+      setTreeData(null)
+      return
+    }
+    
+    try {
+      const parsed = JSON.parse(jsonContent)
+      setTreeData(parsed)
+    } catch (error) {
+      setTreeData(null)
+    }
+  }, [jsonContent, showTreeView])
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>JSON Editor</CardTitle>
-        <CardDescription>
-          Paste your JSON data below to format, validate, and manipulate it
-        </CardDescription>
-      </CardHeader>
-      
       {/* Action Toolbar */}
-      <div className="px-6 pb-4">
-        <div className="flex flex-wrap gap-3">
+      <div className="px-4 pt-4 pb-3 border-b">
+        <div className="flex flex-wrap gap-2">
           {/* Basic Operations Group */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              onClick={handleFormat}
-              disabled={isLoading}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Format
-            </Button>
+          <div className="flex flex-wrap gap-1">
+            <Tooltip content="Format and beautify JSON with proper indentation">
+              <Button
+                onClick={handleFormat}
+                disabled={isLoading}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Format
+              </Button>
+            </Tooltip>
             
-            <Button
-              onClick={handleCompact}
-              disabled={isLoading}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <Minimize2 className="w-4 h-4" />
-              Compact
-            </Button>
+            <Tooltip content="Minify JSON by removing whitespace">
+              <Button
+                onClick={handleCompact}
+                disabled={isLoading}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Minimize2 className="w-4 h-4" />
+                Compact
+              </Button>
+            </Tooltip>
             
-            <Button
-              onClick={handleCopy}
-              disabled={isLoading || !jsonContent}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <Copy className="w-4 h-4" />
-              Copy
-            </Button>
+            <Tooltip content="Copy JSON content to clipboard">
+              <Button
+                onClick={handleCopy}
+                disabled={isLoading || !jsonContent}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Copy className="w-4 h-4" />
+                Copy
+              </Button>
+            </Tooltip>
           </div>
 
           {/* Divider */}
-          <div className="hidden sm:block w-px bg-border h-8 self-center"></div>
+          <div className="hidden sm:block w-px bg-border h-8 self-center mx-1"></div>
 
           {/* Sort Operations Group */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              onClick={handleSortAsc}
-              disabled={isLoading}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <ArrowUpDown className="w-4 h-4" />
-              Sort A-Z
-            </Button>
+          <div className="flex flex-wrap gap-1">
+            <Tooltip content="Sort object keys alphabetically (A to Z)">
+              <Button
+                onClick={handleSortAsc}
+                disabled={isLoading}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <ArrowUpDown className="w-4 h-4" />
+                Sort A-Z
+              </Button>
+            </Tooltip>
             
-            <Button
-              onClick={handleSortDesc}
-              disabled={isLoading}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <ArrowDownUp className="w-4 h-4" />
-              Sort Z-A
-            </Button>
+            <Tooltip content="Sort object keys reverse alphabetically (Z to A)">
+              <Button
+                onClick={handleSortDesc}
+                disabled={isLoading}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <ArrowDownUp className="w-4 h-4" />
+                Sort Z-A
+              </Button>
+            </Tooltip>
             
-            <Button
-              onClick={handleRepair}
-              disabled={isLoading}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <Wrench className="w-4 h-4" />
-              Repair
-            </Button>
+            <Tooltip content="Fix common JSON syntax errors and formatting issues">
+              <Button
+                onClick={handleRepair}
+                disabled={isLoading}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Wrench className="w-4 h-4" />
+                Repair
+              </Button>
+            </Tooltip>
           </div>
 
           {/* Divider */}
-          <div className="hidden sm:block w-px bg-border h-8 self-center"></div>
+          <div className="hidden sm:block w-px bg-border h-8 self-center mx-1"></div>
 
           {/* Sample Data Group */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              onClick={handleLoadSample}
-              disabled={isLoading}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <FileText className="w-4 h-4" />
-              Sample
-            </Button>
+          <div className="flex flex-wrap gap-1">
+            <Tooltip content="Load sample JSON data to test with">
+              <Button
+                onClick={handleLoadSample}
+                disabled={isLoading}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <FileText className="w-4 h-4" />
+                Sample
+              </Button>
+            </Tooltip>
             
-            <Button
-              onClick={handleClear}
-              disabled={isLoading || !jsonContent}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Clear
-            </Button>
+            <Tooltip content="Clear all content from the editor">
+              <Button
+                onClick={handleClear}
+                disabled={isLoading || !jsonContent}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Clear
+              </Button>
+            </Tooltip>
           </div>
 
           {/* Divider */}
-          <div className="hidden sm:block w-px bg-border h-8 self-center"></div>
+          <div className="hidden sm:block w-px bg-border h-8 self-center mx-1"></div>
 
           {/* Premium Features Group */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              onClick={handleUpload}
-              disabled={!isPremiumUser || isLoading}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2 relative"
-            >
-              <Upload className="w-4 h-4" />
-              Upload
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
-            </Button>
+          <div className="flex flex-wrap gap-1">
+            <Tooltip content={isPremiumUser ? "Upload JSON or text files (up to 5MB)" : "Upload files - Premium feature"}>
+              <Button
+                onClick={handleUpload}
+                disabled={!isPremiumUser || isLoading}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2 relative"
+              >
+                <Upload className="w-4 h-4" />
+                Upload
+                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+              </Button>
+            </Tooltip>
             
-            <Button
-              onClick={handleDownload}
-              disabled={!isPremiumUser || isLoading || !jsonContent}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2 relative"
-            >
-              <Download className="w-4 h-4" />
-              Download
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
-            </Button>
+            <Tooltip content={isPremiumUser ? "Download JSON content as a file" : "Download files - Premium feature"}>
+              <Button
+                onClick={handleDownload}
+                disabled={!isPremiumUser || isLoading || !jsonContent}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2 relative"
+              >
+                <Download className="w-4 h-4" />
+                Download
+                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+              </Button>
+            </Tooltip>
             
-            <Button
-              onClick={handleConvert}
-              disabled={!isPremiumUser || isLoading || !jsonContent}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2 relative"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Convert
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
-            </Button>
+            <Tooltip content={isPremiumUser ? "Convert JSON to other formats (XML, CSV, YAML, JS)" : "Format conversion - Premium feature"}>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    disabled={!isPremiumUser || isLoading || !jsonContent}
+                    size="sm"
+                    variant="outline"
+                    className="flex items-center gap-2 relative"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Convert
+                    <ChevronDown className="w-3 h-3" />
+                    {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem onClick={() => convertJson('xml')}>
+                    JSON → XML
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => convertJson('csv')}>
+                    JSON → CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => convertJson('yaml')}>
+                    JSON → YAML
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => convertJson('javascript')}>
+                    JSON → JS Object
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </Tooltip>
             
-            <Button
-              onClick={handleSaveSnippet}
-              disabled={!isPremiumUser || isLoading || !jsonContent}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2 relative"
-            >
-              <Save className="w-4 h-4" />
-              Save
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
-            </Button>
+            <Tooltip content={isPremiumUser ? "Save JSON as a reusable snippet" : "Save snippets - Premium feature"}>
+              <Button
+                onClick={handleSaveSnippet}
+                disabled={!isPremiumUser || isLoading || !jsonContent || !userId}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2 relative"
+              >
+                <Save className="w-4 h-4" />
+                Save
+                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+              </Button>
+            </Tooltip>
+            
+            <Tooltip content={isPremiumUser ? "Load a saved JSON snippet" : "Load snippets - Premium feature"}>
+              <Button
+                onClick={() => setShowLoadDialog(true)}
+                disabled={!isPremiumUser || isLoading || !userId || snippets.length === 0}
+                size="sm"
+                variant="outline"
+                className="flex items-center gap-2 relative"
+              >
+                <FolderOpen className="w-4 h-4" />
+                Load
+                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+              </Button>
+            </Tooltip>
+            
+            <Tooltip content={isPremiumUser ? (showTreeView ? "Switch back to editor mode" : "View JSON as interactive tree") : "Tree visualization - Premium feature"}>
+              <Button
+                onClick={toggleTreeView}
+                disabled={!isPremiumUser || isLoading || !jsonContent}
+                size="sm"
+                variant={showTreeView ? "default" : "outline"}
+                className="flex items-center gap-2 relative"
+              >
+                <TreePine className="w-4 h-4" />
+                {showTreeView ? 'Show Editor' : 'Tree View'}
+                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1" />}
+              </Button>
+            </Tooltip>
           </div>
         </div>
       </div>
       
-      <CardContent>
+            <CardContent className="p-4">
         {/* Upload Error Display */}
         {uploadError && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <div className="mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
               <span className="text-sm text-red-700 dark:text-red-300">{uploadError}</span>
@@ -1001,70 +1465,199 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
           </div>
         )}
 
-        <div 
-          className={`border rounded-lg overflow-hidden relative transition-colors ${
-            isDragOver 
-              ? 'border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
-              : 'border-border'
-          }`}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
-          {isDragOver && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-blue-50/90 dark:bg-blue-900/90 border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-lg">
-              <div className="text-center">
-                <Upload className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-                <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                  Drop JSON file here
-                </p>
-                <p className="text-xs text-blue-600 dark:text-blue-400">
-                  {isPremiumUser ? 'Up to 5MB supported' : 'Premium required for file upload'}
-                </p>
+
+
+        <div className={`${showConversionPanel ? 'grid grid-cols-1 lg:grid-cols-2 gap-4' : ''}`}>
+          {/* JSON Editor or Tree View */}
+          <div 
+            className={`border rounded-lg overflow-hidden relative transition-colors ${
+              isDragOver 
+                ? 'border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                : 'border-border'
+            }`}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          >
+            {showConversionPanel && (
+              <div className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b text-sm font-medium">
+                {showTreeView ? 'JSON Tree View' : 'JSON Editor'}
               </div>
+            )}
+            {isDragOver && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-blue-50/90 dark:bg-blue-900/90 border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-lg">
+                <div className="text-center">
+                  <Upload className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                    Drop JSON or text file here
+                  </p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400">
+                    {isPremiumUser ? 'Up to 5MB supported (.json, .txt)' : 'Premium required for file upload'}
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            {showTreeView ? (
+              /* Tree View */
+              <div className="h-[400px] bg-white dark:bg-gray-900 relative">
+                {treeData ? (
+                  <div className="h-full overflow-auto p-4" style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                  }}>
+                    <JSONTree
+                      data={treeData}
+                      theme={{
+                        scheme: isDarkMode ? 'monokai' : 'github',
+                        base00: isDarkMode ? '#272822' : '#ffffff', // Background
+                        base01: isDarkMode ? '#383830' : '#f6f8fa', // Lighter background
+                        base02: isDarkMode ? '#49483e' : '#f0f2f5', // Selection background  
+                        base03: isDarkMode ? '#75715e' : '#6a737d', // Comments
+                        base04: isDarkMode ? '#a59f85' : '#959da5', // Dark foreground
+                        base05: isDarkMode ? '#f8f8f2' : '#24292e', // Default foreground
+                        base06: isDarkMode ? '#f5f4f1' : '#1b1f23', // Light foreground
+                        base07: isDarkMode ? '#f9f8f5' : '#1c2022', // Lightest foreground
+                        base08: isDarkMode ? '#f92672' : '#d73a49', // Variables, XML Tags, Markup Link Text
+                        base09: isDarkMode ? '#fd971f' : '#e36209', // Integers, Boolean, Constants
+                        base0A: isDarkMode ? '#f4bf75' : '#b08800', // Classes, Markup Bold, Search Text Background
+                        base0B: isDarkMode ? '#a6e22e' : '#22863a', // Strings, Inherited Class, Markup Code
+                        base0C: isDarkMode ? '#a1efe4' : '#032f62', // Support, Regular Expressions, Escape Characters
+                        base0D: isDarkMode ? '#66d9ef' : '#0969da', // Functions, Methods, Attribute IDs, Headings
+                        base0E: isDarkMode ? '#ae81ff' : '#6f42c1', // Keywords, Storage, Selector, Markup Italic
+                        base0F: isDarkMode ? '#cc6633' : '#e1732a'  // Deprecated, Opening/Closing Embedded Language Tags
+                      }}
+                      invertTheme={false}
+                    />
+                  </div>
+                ) : (
+                  <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
+                    {jsonContent.trim() ? (
+                      <div className="text-center">
+                        <AlertCircle className="w-12 h-12 mx-auto mb-3 text-red-500" />
+                        <p className="text-lg font-medium mb-1">Invalid JSON</p>
+                        <p className="text-sm">Tree view not available</p>
+                        <p className="text-xs mt-2 text-muted-foreground">Fix JSON errors to see tree visualization</p>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <TreePine className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                        <p className="text-lg font-medium mb-1">No JSON Content</p>
+                        <p className="text-sm">Add JSON content to see tree visualization</p>
+                        <p className="text-xs mt-2 text-muted-foreground">Switch back to editor to paste or load JSON data</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* JSON Editor */
+              <AceEditor
+                mode="json"
+                theme={isDarkMode ? "monokai" : "github"}
+                value={jsonContent}
+                onChange={setJsonContent}
+                onLoad={handleEditorLoad}
+                onCursorChange={(selection) => {
+                  setCursorPosition({
+                    line: selection.cursor.row + 1,
+                    column: selection.cursor.column + 1
+                  })
+                }}
+                name="json-editor"
+                editorProps={{ $blockScrolling: true }}
+                width="100%"
+                height="400px"
+                fontSize={14}
+                showPrintMargin={true}
+                showGutter={true}
+                highlightActiveLine={true}
+                setOptions={{
+                  enableBasicAutocompletion: true,
+                  enableLiveAutocompletion: true,
+                  enableSnippets: false,
+                  showLineNumbers: true,
+                  tabSize: 2,
+                  wrap: true,
+                  printMargin: 80,
+                }}
+                placeholder="Paste your JSON here..."
+                style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                }}
+              />
+            )}
+          </div>
+
+          {/* Converted Content Editor */}
+          {showConversionPanel && (
+            <div className="border rounded-lg overflow-hidden">
+              <div className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b flex items-center justify-between">
+                <span className="text-sm font-medium">
+                  {conversionMode?.toUpperCase()} Output
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={() => convertToJson(conversionMode!, convertedContent)}
+                    size="sm"
+                    variant="outline"
+                    className="text-xs h-6 px-2"
+                  >
+                    Convert Back to JSON
+                  </Button>
+                  <Button
+                    onClick={closeConversionPanel}
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 w-6 p-0 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </div>
+              </div>
+              <AceEditor
+                mode={getConversionMode(conversionMode!)}
+                theme={isDarkMode ? "monokai" : "github"}
+                value={convertedContent}
+                onChange={setConvertedContent}
+                name="converted-editor"
+                editorProps={{ $blockScrolling: true }}
+                width="100%"
+                height="400px"
+                fontSize={14}
+                showPrintMargin={true}
+                showGutter={true}
+                highlightActiveLine={true}
+                readOnly={false}
+                setOptions={{
+                  enableBasicAutocompletion: true,
+                  enableLiveAutocompletion: true,
+                  enableSnippets: false,
+                  showLineNumbers: true,
+                  tabSize: 2,
+                  wrap: true,
+                  printMargin: 80,
+                }}
+                style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                }}
+              />
             </div>
           )}
-          <AceEditor
-              mode="json"
-              theme={isDarkMode ? "monokai" : "github"}
-              value={jsonContent}
-              onChange={setJsonContent}
-              onLoad={handleEditorLoad}
-              onCursorChange={(selection) => {
-                setCursorPosition({
-                  line: selection.cursor.row + 1,
-                  column: selection.cursor.column + 1
-                })
-              }}
-              name="json-editor"
-              editorProps={{ $blockScrolling: true }}
-              width="100%"
-              height="400px"
-              fontSize={14}
-              showPrintMargin={true}
-              showGutter={true}
-              highlightActiveLine={true}
-              setOptions={{
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true,
-                enableSnippets: false,
-                showLineNumbers: true,
-                tabSize: 2,
-                wrap: true,
-                printMargin: 80,
-              }}
-              placeholder="Paste your JSON here..."
-              style={{
-                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-              }}
-            />
         </div>
         
-        {/* Cursor Position */}
-        <div className="mt-2 text-xs text-muted-foreground text-right">
-          Line {cursorPosition.line}, Column {cursorPosition.column}
-        </div>
+        {/* Cursor Position or Tree View Help */}
+        {showTreeView ? (
+          treeData && (
+            <div className="mt-2 text-xs text-muted-foreground text-center">
+              Click arrows to expand/collapse nodes • Switch back to editor to modify JSON
+            </div>
+          )
+        ) : (
+          <div className="mt-2 text-xs text-muted-foreground text-right">
+            Line {cursorPosition.line}, Column {cursorPosition.column}
+          </div>
+        )}
         
         {/* Validation Status */}
         <div className="mt-4">
@@ -1111,7 +1704,195 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
             </div>
           )}
         </div>
+
+        
       </CardContent>
+
+      {/* Save Snippet Dialog */}
+      {showSaveDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md mx-4">
+            <CardHeader>
+              <CardTitle>Save JSON Snippet</CardTitle>
+              <CardDescription>
+                Save your JSON content for future use
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Name *</label>
+                <Input
+                  placeholder="Enter snippet name..."
+                  value={saveDialogData.name}
+                  onChange={(e) => setSaveDialogData(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-2 block">Category</label>
+                <select
+                  className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
+                  value={saveDialogData.category}
+                  onChange={(e) => setSaveDialogData(prev => ({ ...prev, category: e.target.value }))}
+                >
+                  {getAvailableCategories().map(category => (
+                    <option key={category} value={category}>
+                      {category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ')}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-2 block">Description (optional)</label>
+                <textarea
+                  className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm min-h-[80px] resize-none"
+                  placeholder="Add a description..."
+                  value={saveDialogData.description}
+                  onChange={(e) => setSaveDialogData(prev => ({ ...prev, description: e.target.value }))}
+                />
+              </div>
+              
+              <div className="flex gap-2 pt-4">
+                <Button
+                  onClick={() => setShowSaveDialog(false)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveDialogSubmit}
+                  disabled={isLoading || !saveDialogData.name.trim()}
+                  className="flex-1"
+                >
+                  {isLoading ? 'Saving...' : 'Save Snippet'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Load Snippet Dialog */}
+      {showLoadDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col">
+            <CardHeader>
+              <CardTitle>Load JSON Snippet</CardTitle>
+              <CardDescription>
+                Choose a saved snippet to load into the editor
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-hidden">
+              {/* Category Filter */}
+              <div className="mb-4">
+                <label className="text-sm font-medium mb-2 block">Filter by category</label>
+                <select
+                  className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="all">All Snippets ({snippets.length})</option>
+                  <option value="favorites">
+                    Favorites ({snippets.filter(s => s.is_favorite).length})
+                  </option>
+                  {getAvailableCategories().map(category => {
+                    const count = snippets.filter(s => s.category === category).length
+                    if (count === 0) return null
+                    return (
+                      <option key={category} value={category}>
+                        {category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ')} ({count})
+                      </option>
+                    )
+                  })}
+                </select>
+              </div>
+
+              {/* Snippets List */}
+              <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                {getFilteredSnippets().length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <FolderOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>No snippets found</p>
+                    {selectedCategory !== 'all' && (
+                      <p className="text-sm">Try selecting a different category</p>
+                    )}
+                  </div>
+                ) : (
+                  getFilteredSnippets().map(snippet => (
+                    <div
+                      key={snippet.id}
+                      className="border rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-sm truncate">{snippet.name}</h4>
+                            {snippet.is_favorite && (
+                              <Star className="w-3 h-3 text-amber-500 flex-shrink-0" />
+                            )}
+                            <span className="text-xs text-muted-foreground bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                              {snippet.category.replace('-', ' ')}
+                            </span>
+                          </div>
+                          {snippet.description && (
+                            <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                              {snippet.description}
+                            </p>
+                          )}
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(snippet.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1 ml-2">
+                          <Button
+                            onClick={() => handleToggleFavorite(snippet)}
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0"
+                          >
+                            {snippet.is_favorite ? (
+                              <Star className="w-3 h-3 text-amber-500" />
+                            ) : (
+                              <StarOff className="w-3 h-3" />
+                            )}
+                          </Button>
+                          <Button
+                            onClick={() => handleDeleteSnippet(snippet.id)}
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0 text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            onClick={() => handleLoadSnippet(snippet)}
+                            size="sm"
+                            className="h-6 text-xs px-2"
+                          >
+                            Load
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              
+              <div className="flex gap-2 pt-4 border-t">
+                <Button
+                  onClick={() => setShowLoadDialog(false)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </Card>
   )
 } 

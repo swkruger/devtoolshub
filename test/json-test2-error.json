@@ -14,7 +14,7 @@
           }
         },
         "preferences": {
-          "theme": "dark",
+          "theme": dark,
           "notifications": true,
           "language": "en"
         },
