@@ -66,6 +66,9 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [validation, setValidation] = useState<ValidationResult>({ isValid: true })
   const [editorRef, setEditorRef] = useState<any>(null)
+  const [cursorPosition, setCursorPosition] = useState({ line: 1, column: 1 })
+  const [isDragOver, setIsDragOver] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
 
   // Detect theme preference
   useEffect(() => {
@@ -94,6 +97,20 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
     
     const lineContent = lines[errorLine - 1] // Convert to 0-based index
     const startCol = Math.max(0, errorCol - 1) // Convert to 0-based index
+    
+    // For control character errors, highlight just the problematic character
+    if (startCol < lineContent.length) {
+      const char = lineContent[startCol]
+      // Check if it's a control character
+      if (char && (char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127)) {
+        return {
+          startRow: errorLine - 1,
+          startCol: startCol,
+          endRow: errorLine - 1,
+          endCol: startCol + 1
+        }
+      }
+    }
     
     // Find the start of the current token by looking backwards
     let tokenStart = startCol
@@ -125,7 +142,7 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
       }
     } else {
       // Single character token or whitespace - highlight just one char
-      tokenEnd = Math.min(tokenStart + 1, lineContent.length)
+      tokenEnd = Math.min(startCol + 1, lineContent.length)
     }
     
     return {
@@ -133,6 +150,50 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
       startCol: tokenStart,
       endRow: errorLine - 1,
       endCol: tokenEnd
+    }
+  }
+
+  // Helper function to search for error text in content and find its position
+  const findErrorTextPosition = (content: string, errorText: string) => {
+    let index = content.indexOf(errorText)
+    
+    // If exact match not found, try partial matches for truncated error text
+    if (index === -1 && errorText.length > 3) {
+      // Try progressively shorter versions of the error text
+      for (let i = errorText.length - 1; i > 3; i--) {
+        const partialText = errorText.substring(0, i)
+        index = content.indexOf(partialText)
+        if (index !== -1) {
+          errorText = partialText
+          break
+        }
+      }
+    }
+    
+    if (index === -1) return null
+    
+    // Convert index to line/column
+    const beforeText = content.substring(0, index)
+    const lines = beforeText.split('\n')
+    const line = lines.length
+    const column = lines[lines.length - 1].length + 1
+    
+    // Find the end of the problematic token for better highlighting
+    let endIndex = index + errorText.length
+    // Extend to include more context if it looks like an incomplete value
+    if (content[endIndex] && !/[\s,\]}]/.test(content[endIndex])) {
+      while (endIndex < content.length && !/[\s,\]}]/.test(content[endIndex])) {
+        endIndex++
+      }
+    }
+    
+    return {
+      line,
+      column,
+      startRow: line - 1,
+      startCol: lines[lines.length - 1].length,
+      endRow: line - 1,
+      endCol: lines[lines.length - 1].length + (endIndex - index)
     }
   }
 
@@ -153,27 +214,77 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
       let range: any = undefined
 
       // Extract line and column from error message if available
-      const positionMatch = errorMessage.match(/at position (\d+)|line (\d+) column (\d+)/)
+      // Try different position patterns
+      let positionMatch = errorMessage.match(/line (\d+) column (\d+)/)
       if (positionMatch) {
-        if (positionMatch[1]) {
-          // Convert position to line/column
+        line = parseInt(positionMatch[1])
+        column = parseInt(positionMatch[2])
+      } else {
+        // Fallback to position-based calculation
+        positionMatch = errorMessage.match(/at position (\d+)/)
+        if (positionMatch) {
           const position = parseInt(positionMatch[1])
           const lines = content.substring(0, position).split('\n')
           line = lines.length
           column = lines[lines.length - 1].length + 1
-        } else if (positionMatch[2] && positionMatch[3]) {
-          line = parseInt(positionMatch[2])
-          column = parseInt(positionMatch[3])
         }
       }
 
-      // Calculate the error range for highlighting
+      // Calculate the error range for highlighting if we have position
       if (line && column) {
         range = findErrorRange(content, line, column)
       }
 
+      // If position still not found, try to extract error text snippet and search for it
+      if (!line || !column) {
+        let errorText = null;
+        
+        // Try multiple patterns to extract the problematic text
+        // Pattern 1: ..."text"... (general snippet)
+        const snippetMatch = errorMessage.match(/\.\.\.(.+?)\.\.\./);
+        if (snippetMatch) {
+          errorText = snippetMatch[1].trim();
+          // Remove surrounding quotes if they exist
+          if (errorText.startsWith('"') && errorText.endsWith('"')) {
+            errorText = errorText.slice(1, -1);
+          }
+        }
+        
+        // Pattern 2: Look for incomplete strings like "email": john.doe@
+        if (!errorText) {
+          const incompleteMatch = errorMessage.match(/"([^"]+)":\s*([^"\s]+)/);
+          if (incompleteMatch) {
+            errorText = `"${incompleteMatch[1]}": ${incompleteMatch[2]}`;
+          }
+        }
+        
+        // Pattern 3: Simple quoted text extraction
+        if (!errorText) {
+          const quotedMatch = errorMessage.match(/"([^"]+)"/);
+          if (quotedMatch) {
+            errorText = quotedMatch[1];
+          }
+        }
+        
+                 if (errorText && errorText.length > 1) {
+           const textPosition = findErrorTextPosition(content, errorText);
+           if (textPosition) {
+             line = textPosition.line;
+             column = textPosition.column;
+             range = {
+               startRow: textPosition.startRow,
+               startCol: textPosition.startCol,
+               endRow: textPosition.endRow,
+               endCol: textPosition.endCol
+             };
+           }
+                  }
+       }
+
       // Provide helpful tips for common JSON errors
-      if (errorMessage.includes('Unexpected token')) {
+      if (errorMessage.includes('Bad control character')) {
+        tip = "Invalid character in string. Escape special characters like \\n, \\t, \\r, or remove control characters"
+      } else if (errorMessage.includes('Unexpected token')) {
         if (errorMessage.includes("'")) {
           tip = "Use double quotes (\") instead of single quotes (') for strings"
         } else if (errorMessage.includes('Unexpected end of JSON input')) {
@@ -189,6 +300,12 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
         tip = "Property names must be strings enclosed in double quotes"
       } else if (errorMessage.includes('Unexpected string')) {
         tip = "Check for missing commas between object properties or array elements"
+      } else if (errorMessage.includes('Unterminated string')) {
+        tip = "String is not properly closed. Make sure all strings end with a closing quote"
+      } else if (errorMessage.includes('Invalid escape')) {
+        tip = "Invalid escape sequence. Use proper escapes like \\\\, \\\", \\n, \\t, \\r, \\/"
+      } else if (errorMessage.includes('Invalid character')) {
+        tip = "Invalid character detected. Remove or escape special characters in strings"
       } else {
         tip = "Common fixes: use double quotes, remove trailing commas, escape special characters"
       }
@@ -483,11 +600,13 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
     }
     
     setJsonContent(JSON.stringify(sampleData, null, 2))
+    setUploadError(null) // Clear any upload errors
     showToast('Sample JSON data loaded')
   }
 
   const handleClear = () => {
     setJsonContent('')
+    setUploadError(null) // Clear any upload errors
     showToast('Editor cleared')
   }
 
@@ -516,13 +635,25 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
       repairedJson = repairedJson.replace(/^\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(\s*/, '')
       repairedJson = repairedJson.replace(/\s*\)\s*;?\s*$/, '')
       
-      // 5. Fix unescaped quotes in strings (basic attempt)
+      // 5. Fix control characters in strings
+      repairedJson = repairedJson.replace(/[\x00-\x1F\x7F]/g, (match) => {
+        switch (match) {
+          case '\n': return '\\n'
+          case '\r': return '\\r'
+          case '\t': return '\\t'
+          case '\b': return '\\b'
+          case '\f': return '\\f'
+          default: return '' // Remove other control characters
+        }
+      })
+      
+      // 6. Fix unescaped quotes in strings (basic attempt)
       repairedJson = repairedJson.replace(/"([^"\\]*)\\?"([^"]*)"([^"\\]*)"/g, '"$1\\"$2\\"$3"')
       
-      // 6. Add missing quotes around property names that don't have them
+      // 7. Add missing quotes around property names that don't have them
       repairedJson = repairedJson.replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, '$1"$2":')
       
-      // 7. Remove extra whitespace and clean up
+      // 8. Remove extra whitespace and clean up
       repairedJson = repairedJson.trim()
       
       // 8. Try to parse and format to validate
@@ -530,6 +661,7 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
         const parsed = JSON.parse(repairedJson)
         const formatted = JSON.stringify(parsed, null, 2)
         setJsonContent(formatted)
+        setUploadError(null) // Clear any upload errors
         showToast('JSON repaired and formatted successfully!')
       } catch {
         // If still invalid, at least return the attempted repair
@@ -544,8 +676,138 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
   }
   
   // Premium feature placeholders
-  const handleUpload = () => console.log('Upload file (Premium)')
-  const handleDownload = () => console.log('Download file (Premium)')
+  // File upload functionality
+  const handleFileUpload = useCallback((file: File) => {
+    if (!isPremiumUser) {
+      showToast('File upload requires premium membership', 'error')
+      return
+    }
+
+    // Validate file type
+    if (!file.name.toLowerCase().endsWith('.json') && file.type !== 'application/json') {
+      setUploadError('Please upload a valid JSON file (.json)')
+      return
+    }
+
+    // Validate file size (5MB limit for premium, 1MB for free)
+    const maxSize = isPremiumUser ? 5 * 1024 * 1024 : 1024 * 1024 // 5MB for premium, 1MB for free
+    if (file.size > maxSize) {
+      setUploadError(`File size exceeds ${isPremiumUser ? '5MB' : '1MB'} limit`)
+      return
+    }
+
+    setIsLoading(true)
+    setUploadError(null)
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string
+        // Validate JSON
+        JSON.parse(content)
+        setJsonContent(content)
+        showToast(`Successfully loaded ${file.name}`, 'success')
+      } catch (error) {
+        setUploadError('Invalid JSON file content')
+        showToast('Failed to parse JSON file', 'error')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    reader.onerror = () => {
+      setUploadError('Failed to read file')
+      showToast('Failed to read file', 'error')
+      setIsLoading(false)
+    }
+    reader.readAsText(file)
+  }, [isPremiumUser, showToast])
+
+  const handleUpload = () => {
+    if (!isPremiumUser) {
+      showToast('File upload requires premium membership', 'error')
+      return
+    }
+    
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.json,application/json'
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) {
+        handleFileUpload(file)
+      }
+    }
+    input.click()
+  }
+
+  const handleDownload = () => {
+    if (!isPremiumUser) {
+      showToast('File download requires premium membership', 'error')
+      return
+    }
+
+    if (!jsonContent.trim()) {
+      showToast('No JSON content to download', 'error')
+      return
+    }
+
+    try {
+      // Validate JSON before download
+      JSON.parse(jsonContent)
+      
+      const blob = new Blob([jsonContent], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `formatted-json-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      
+      showToast('JSON file downloaded successfully', 'success')
+    } catch (error) {
+      showToast('Cannot download invalid JSON', 'error')
+    }
+  }
+
+  // Drag and drop handlers
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragOver(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.currentTarget === e.target) {
+      setIsDragOver(false)
+    }
+  }, [])
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragOver(false)
+
+    const files = Array.from(e.dataTransfer.files)
+    const jsonFile = files.find(file => 
+      file.name.toLowerCase().endsWith('.json') || file.type === 'application/json'
+    )
+
+    if (jsonFile) {
+      handleFileUpload(jsonFile)
+    } else {
+      setUploadError('Please drop a valid JSON file')
+    }
+  }, [handleFileUpload])
+
   const handleConvert = () => console.log('Convert format (Premium)')
   const handleSaveSnippet = () => console.log('Save snippet (Premium)')
 
@@ -721,13 +983,60 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
       </div>
       
       <CardContent>
-        <div className="border rounded-lg overflow-hidden">
-                      <AceEditor
+        {/* Upload Error Display */}
+        {uploadError && (
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+              <span className="text-sm text-red-700 dark:text-red-300">{uploadError}</span>
+              <Button
+                onClick={() => setUploadError(null)}
+                size="sm"
+                variant="ghost"
+                className="ml-auto h-auto p-1 text-red-600 hover:text-red-800"
+              >
+                ×
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <div 
+          className={`border rounded-lg overflow-hidden relative transition-colors ${
+            isDragOver 
+              ? 'border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+              : 'border-border'
+          }`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+          {isDragOver && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-blue-50/90 dark:bg-blue-900/90 border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-lg">
+              <div className="text-center">
+                <Upload className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                  Drop JSON file here
+                </p>
+                <p className="text-xs text-blue-600 dark:text-blue-400">
+                  {isPremiumUser ? 'Up to 5MB supported' : 'Premium required for file upload'}
+                </p>
+              </div>
+            </div>
+          )}
+          <AceEditor
               mode="json"
               theme={isDarkMode ? "monokai" : "github"}
               value={jsonContent}
               onChange={setJsonContent}
               onLoad={handleEditorLoad}
+              onCursorChange={(selection) => {
+                setCursorPosition({
+                  line: selection.cursor.row + 1,
+                  column: selection.cursor.column + 1
+                })
+              }}
               name="json-editor"
               editorProps={{ $blockScrolling: true }}
               width="100%"
@@ -750,6 +1059,11 @@ export function JsonEditor({ isPremiumUser }: JsonEditorProps) {
                 fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
               }}
             />
+        </div>
+        
+        {/* Cursor Position */}
+        <div className="mt-2 text-xs text-muted-foreground text-right">
+          Line {cursorPosition.line}, Column {cursorPosition.column}
         </div>
         
         {/* Validation Status */}
