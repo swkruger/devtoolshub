@@ -58,7 +58,7 @@ export default function NewUserNotificationEmail({
               </Text>
 
               <Text style={welcomeText}>
-                Thank you for signing up! We're excited to have you on board at DevToolsHub.
+                Thank you for signing up! We&apos;re excited to have you on board at DevToolsHub.
               </Text>
 
               <Text style={welcomeText}>
