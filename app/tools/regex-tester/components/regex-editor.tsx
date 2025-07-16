@@ -1337,7 +1337,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                     </Button>
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    Use $1, $2 for capture groups • $& for entire match • $` and $' for before/after
+                    Use $1, $2 for capture groups • $& for entire match • $&grave; and $&apos; for before/after
                   </div>
                 </div>
 
@@ -1422,7 +1422,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                         #{index + 1}
                       </span>
                       <span className="font-mono font-medium text-lg bg-yellow-100 px-2 py-1 rounded">
-                        "{match.match}"
+                        &quot;{match.match}&quot;
                       </span>
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -1441,7 +1441,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                               ${groupIndex + 1}
                             </span>
                             <span className="font-mono bg-gray-100 px-2 py-1 rounded">
-                              "{group || '(empty)'}"
+                              &quot;{group || `(empty)`}&quot;
                             </span>
                           </div>
                         ))}
@@ -1460,7 +1460,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                               {name}
                             </span>
                             <span className="font-mono bg-gray-100 px-2 py-1 rounded">
-                              "{value || '(empty)'}"
+                              &quot;{value || `(empty)`}&quot;
                             </span>
                           </div>
                         ))}

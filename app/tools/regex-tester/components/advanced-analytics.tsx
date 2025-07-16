@@ -88,7 +88,7 @@ export function AdvancedAnalytics({
     }
 
     const matchStrings = matches.map(m => m.match)
-    const uniqueMatchStrings = [...new Set(matchStrings)]
+    const uniqueMatchStrings = Array.from(new Set(matchStrings))
     const matchLengths = matchStrings.map(m => m.length)
     const totalMatchedChars = matchLengths.reduce((sum, len) => sum + len, 0)
 
@@ -120,7 +120,7 @@ export function AdvancedAnalytics({
 
         captureGroupStats.push({
           groupIndex: i,
-          groupValues: [...new Set(groupValues)],
+          groupValues: Array.from(new Set(groupValues)),
           uniqueValues: new Set(groupValues).size,
           mostCommon: mostCommonEntry[0],
           frequency: mostCommonEntry[1]

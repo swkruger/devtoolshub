@@ -327,7 +327,7 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
                     <ul className="text-sm text-muted-foreground space-y-2">
                       <li>• Use specific character classes instead of . when possible</li>
                       <li>• Avoid excessive backtracking with nested quantifiers</li>
-                      <li>• Use non-capturing groups (?:) when you don't need the match</li>
+                      <li>• Use non-capturing groups (?:) when you don&apos;t need the match</li>
                       <li>• Be careful with .* and .+ - they can be slow on large text</li>
                     </ul>
                   </CardContent>
