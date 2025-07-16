@@ -47,17 +47,17 @@ export const toolsConfig: Record<string, ToolConfig> = {
   'regex-tester': {
     id: 'regex-tester',
     name: 'Regex Tester',
-    description: 'Test regular expressions with live pattern matching and explanations',
+    description: 'Test regular expressions with live pattern matching, multi-language support, and advanced debugging features. The best regex testing tool for developers.',
     shortDescription: 'Test regex patterns with live matching',
     icon: Search,
     emoji: '🔍',
     isPremium: false,
     category: 'text',
-    tags: ['regex', 'pattern', 'match', 'test'],
+    tags: ['regex', 'pattern', 'match', 'test', 'javascript', 'python', 'java'],
     path: '/tools/regex-tester',
     features: {
-      free: ['Test regex patterns', 'Live matching', 'Match highlighting'],
-      premium: ['Match group explanations', 'Regex library', 'Pattern suggestions']
+      free: ['JavaScript regex testing', 'Real-time pattern matching', 'Match highlighting', 'Basic flags support', 'Sample patterns', 'Match details with groups'],
+      premium: ['Multi-language engines (Python, Java, Go, PHP, C#)', 'Pattern explanations & breakdown', 'Regex visualization diagrams', 'Pattern library (100+ examples)', 'Save & manage patterns', 'Performance metrics', 'ReDoS detection', 'Replace functionality', 'File upload testing']
     }
   },
   'jwt-decoder': {
