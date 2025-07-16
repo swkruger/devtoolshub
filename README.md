@@ -245,35 +245,84 @@ app/tools/[tool-name]/
 
 ### 🎨 Design Principles
 
+#### UI Consistency Standards
+**All tools must follow these layout patterns to maintain a cohesive user experience:**
+
+**Page Header Pattern (Current Standard):**
+```tsx
+// Compact header layout - DO USE THIS
+<div className="container mx-auto px-4 py-4 max-w-7xl">
+  <div className="flex items-center gap-3 mb-4">
+    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/20">
+      <ToolIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+    </div>
+    <div>
+      <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        {tool.name}
+      </h1>
+    </div>
+  </div>
+  {/* Tool content */}
+</div>
+```
+
+**Card Header Pattern:**
+```tsx
+// Clean card headers without redundant titles
+<Card>
+  <CardHeader className="pb-4">
+    {/* Avoid duplicate tool titles */}
+    {/* Keep headers minimal or remove entirely */}
+  </CardHeader>
+  <CardContent>
+    {/* Main tool interface */}
+  </CardContent>
+</Card>
+```
+
+**Input Group Patterns:**
+```tsx
+// Related inputs should be grouped horizontally when space allows
+<div className="flex gap-3">
+  <div className="flex-1">
+    <Input placeholder="Main input" />
+  </div>
+  <div className="flex items-center gap-2 min-w-0">
+    <span className="text-sm text-muted-foreground whitespace-nowrap">Option:</span>
+    <select className="min-w-[120px]">
+      <option>Choice</option>
+    </select>
+  </div>
+</div>
+```
+
+**❌ Avoid These Patterns:**
+- Large tool headers with redundant titles (e.g., "JSON Formatter" in both page header and card header)
+- Vertical layouts when horizontal grouping makes more sense
+- Inconsistent spacing and typography scales
+- Different button toolbar patterns between tools
+
 #### Consistent UI Framework
 ```tsx
 // Standard tool layout pattern
-<div className="container mx-auto px-4 py-8">
-  <div className="mb-8">
-    <h1 className="text-3xl font-bold mb-2">{tool.name}</h1>
-    <p className="text-muted-foreground">{tool.description}</p>
+<div className="container mx-auto px-4 py-4 max-w-7xl">
+  {/* Compact header only */}
+  <div className="flex items-center gap-3 mb-4">
+    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/20">
+      <ToolIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+    </div>
+    <div>
+      <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        {tool.name}
+      </h1>
+    </div>
   </div>
   
-  <div className="grid gap-6">
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>Tool Interface</CardTitle>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setShowHelp(!showHelp)}
-          >
-            <HelpCircle className="h-4 w-4 mr-2" />
-            Help
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {/* Tool content */}
-      </CardContent>
-    </Card>
-  </div>
+  {/* Main tool interface */}
+  <ToolClientComponent />
+  
+  {/* Premium feature overview for free users */}
+  {!isPremiumUser && <PremiumFeatureCards />}
 </div>
 ```
 
@@ -551,6 +600,12 @@ Before marking a tool as complete, verify:
 
 - [ ] **Architecture**: Follows component structure standards
 - [ ] **UI/UX**: Consistent with design principles
+- [ ] **UI Consistency**: Matches established layout patterns
+  - [ ] Uses compact header pattern (text-xl, py-4)
+  - [ ] Avoids redundant titles in card headers
+  - [ ] Groups related inputs horizontally when appropriate
+  - [ ] Follows button toolbar standards
+  - [ ] Consistent spacing and typography scales
 - [ ] **Premium Features**: Proper visual indicators and behavior
 - [ ] **Documentation**: Complete help panel with all tabs
 - [ ] **Keyboard Shortcuts**: All required shortcuts implemented
@@ -566,12 +621,13 @@ Before marking a tool as complete, verify:
 2. **Setup**: Create folder structure and configuration
 3. **Core Implementation**: Build basic functionality
 4. **UI/UX**: Implement design standards
-5. **Premium Features**: Add premium feature gates
-6. **Documentation**: Create comprehensive help system
-7. **Accessibility**: Implement ARIA and keyboard support
-8. **Testing**: Write unit tests and manual testing
-9. **Optimization**: Add performance improvements
-10. **Review**: Complete quality checklist
+5. **Consistency Check**: Compare with JSON Formatter and Regex Tester layouts
+6. **Premium Features**: Add premium feature gates
+7. **Documentation**: Create comprehensive help system
+8. **Accessibility**: Implement ARIA and keyboard support
+9. **Testing**: Write unit tests and manual testing
+10. **Optimization**: Add performance improvements
+11. **Review**: Complete quality checklist
 
 ## 🚦 Available Scripts
 
