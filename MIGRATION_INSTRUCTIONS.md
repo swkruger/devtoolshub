@@ -54,3 +54,37 @@ If you encounter errors:
 2. Check that the `users` table exists (from migration 001)
 3. Verify the `update_updated_at_column()` function exists
 4. Contact support if issues persist 
+
+### 3. Environment Variables
+
+Add these to your `.env.local` file:
+
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# App Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Email Service (Resend)
+RESEND_API_KEY=your_resend_api_key
+FROM_EMAIL=your_verified_sender_email@yourdomain.com
+
+# Optional: Site verification (for production)
+GOOGLE_SITE_VERIFICATION=your_google_verification_code
+YANDEX_VERIFICATION=your_yandex_verification_code
+YAHOO_SITE_VERIFICATION=your_yahoo_verification_code
+```
+
+#### Email Service Setup (Resend)
+
+1. **Create Resend Account**: Sign up at [resend.com](https://resend.com)
+2. **Get API Key**: Go to API Keys section and create a new key
+3. **Add Domain**: Add and verify your domain for email sending
+4. **Set FROM_EMAIL**: Use a verified email address from your domain
+
+**For Development**: You can use the default `onboarding@resend.dev` as FROM_EMAIL for testing.
+
+**For Production**: You must verify your own domain and use an email from that domain. 

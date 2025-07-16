@@ -113,6 +113,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 - **User Profiles**: Automatic profile creation with plan management
 - **Route Protection**: Middleware-based auth for protected routes
 - **Premium Plans**: Free/Premium user tiers with feature gating
+- **Email Notifications**: Automated signup notifications and welcome emails
 
 ### 🛠 Tool System
 **Modular Architecture**: Each tool is a pluggable Next.js route with its own UI and logic.
@@ -135,6 +136,13 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 - **Dark/Light Mode**: Theme switching (coming soon)
 - **Modern UI**: ShadCN components with Tailwind CSS
 - **Accessibility**: WCAG compliant with keyboard navigation
+
+### 📧 Email System
+- **Resend Integration**: Modern email API for reliable delivery
+- **New User Notifications**: Automatic admin notifications for signups
+- **Welcome Emails**: Branded welcome messages for new users
+- **React Email Templates**: Professional, responsive email designs
+- **Email Testing**: Built-in test endpoints for development
 
 ## 🔧 Development
 
@@ -200,6 +208,28 @@ touch db/rollbacks/002_rollback_my_migration.sql
 
 **Running Migrations:**
 Execute SQL files directly in Supabase SQL Editor or use Supabase CLI.
+
+### Email Service Testing
+
+**Test Email Functionality:**
+
+```bash
+# Send basic test email
+curl -X POST http://localhost:3000/api/test-email \
+  -H "Content-Type: application/json" \
+  -d '{"testType": "basic"}'
+
+# Send test new user notification
+curl -X POST http://localhost:3000/api/test-email \
+  -H "Content-Type: application/json" \
+  -d '{"testType": "new-user"}'
+```
+
+**Setup Requirements:**
+1. Create Resend account at [resend.com](https://resend.com)
+2. Get API key from Resend dashboard
+3. Add `RESEND_API_KEY` to `.env.local`
+4. Set `FROM_EMAIL` (use `onboarding@resend.dev` for testing)
 
 ### Code Style & Best Practices
 
@@ -655,6 +685,9 @@ npm run db:generate  # Generate TypeScript types from Supabase
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key | ✅ |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key | ✅ |
 | `NEXT_PUBLIC_APP_URL` | Application base URL | ✅ |
+| `RESEND_API_KEY` | Resend email service API key | ✅ |
+| `FROM_EMAIL` | Verified sender email address | ⚠️ |
+| `GOOGLE_SITE_VERIFICATION` | Google Search Console verification | ❌ |
 
 ## 🚀 Deployment
 

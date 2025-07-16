@@ -1,6 +1,7 @@
 import { createSupabaseClient, type User } from './supabase'
 import { createSupabaseServerClient } from './supabase-server'
 import { redirect } from 'next/navigation'
+import { sendNewUserNotification, sendWelcomeEmail } from '@/lib/email'
 
 // Client-side auth functions
 export const authClient = {
@@ -128,6 +129,15 @@ export const authClient = {
         picture: authUser.user_metadata?.picture
       })
 
+      // Check if this is a new user (profile doesn't exist yet)
+      const { data: existingProfile } = await supabase
+        .from('users')
+        .select('id, created_at')
+        .eq('id', authUser.id)
+        .single()
+
+      const isNewUser = !existingProfile
+
       // Extract user data from auth user
       const userData = {
         email: authUser.email!,
@@ -143,7 +153,8 @@ export const authClient = {
 
       console.log('💾 Updating profile with:', {
         name: userData.name,
-        avatar_url: userData.avatar_url
+        avatar_url: userData.avatar_url,
+        isNewUser
       })
 
       // Update user profile (RLS allows this since we have proper session)
@@ -164,6 +175,35 @@ export const authClient = {
         name: data.name,
         avatar_url: data.avatar_url
       })
+
+      // Send email notifications for new users
+      if (isNewUser && data) {
+        console.log('🎉 New user detected, sending notifications...')
+        
+        // Determine signup method from auth provider
+        const signupMethod = authUser.app_metadata?.provider === 'google' ? 'google' : 'github'
+        
+        const newUserData = {
+          id: data.id,
+          email: data.email,
+          name: data.name,
+          avatar_url: data.avatar_url,
+          plan: data.plan || 'free',
+          created_at: data.created_at || new Date().toISOString(),
+          signup_method: signupMethod as 'google' | 'github'
+        }
+
+        // Send notification to admin (don't await to avoid slowing down signup)
+        sendNewUserNotification(newUserData).catch(error => {
+          console.error('Failed to send new user notification:', error)
+        })
+
+        // Send welcome email to user (optional, also don't await)
+        sendWelcomeEmail(newUserData).catch(error => {
+          console.error('Failed to send welcome email:', error)
+        })
+      }
+
       return data
 
     } catch (error) {
