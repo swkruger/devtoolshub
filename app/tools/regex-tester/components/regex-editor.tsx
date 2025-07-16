@@ -16,12 +16,28 @@ import {
   FileText,
   RefreshCw,
   Zap,
-  ZapOff
+  ZapOff,
+  Brain,
+  BookOpen,
+  Replace,
+  Eye,
+  EyeOff,
+  Upload,
+  BarChart3,
+  Workflow
 } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
 import { getRegexEngine, COMMON_PATTERNS } from '../lib/regex-engines'
 import type { RegexLanguage, RegexMatch } from '../lib/regex-engines'
 import { EnhancedTooltip, tooltipConfigs } from './enhanced-tooltip'
+import { analyzePattern } from '../lib/pattern-analyzer'
+import type { PatternAnalysis } from '../lib/pattern-analyzer'
+import { PatternExplanation } from './pattern-explanation'
+import { PatternLibrary } from './pattern-library'
+import type { PatternLibraryItem } from '../lib/comprehensive-patterns'
+import { BulkTesting } from './bulk-testing'
+import { AdvancedAnalytics } from './advanced-analytics'
+import { RegexVisualizer } from './regex-visualizer'
 
 // Dynamic import for AceEditor to avoid SSR issues
 const AceEditor = dynamic(
@@ -81,6 +97,15 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
   const [liveTesting, setLiveTesting] = useState(false)
   const [isLiveTesting, setIsLiveTesting] = useState(false)
   const [currentLine, setCurrentLine] = useState(0)
+  const [showExplanation, setShowExplanation] = useState(false)
+  const [patternAnalysis, setPatternAnalysis] = useState<PatternAnalysis | null>(null)
+  const [showPatternLibrary, setShowPatternLibrary] = useState(false)
+  const [showReplaceMode, setShowReplaceMode] = useState(false)
+  const [replaceText, setReplaceText] = useState('')
+  const [replaceResults, setReplaceResults] = useState<string | null>(null)
+  const [showBulkTesting, setShowBulkTesting] = useState(false)
+  const [showAdvancedAnalytics, setShowAdvancedAnalytics] = useState(false)
+  const [showRegexVisualizer, setShowRegexVisualizer] = useState(false)
   
   // Refs for ace editor
   const aceEditorRef = useRef<any>(null)
@@ -89,6 +114,17 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
   // Debounced values for live testing
   const debouncedPattern = useDebounce(pattern, 500)
   const debouncedTestText = useDebounce(testText, 300)
+
+  // Close explanation and reset replace results when pattern changes
+  useEffect(() => {
+    if (showExplanation) {
+      setShowExplanation(false)
+      setPatternAnalysis(null)
+    }
+    if (replaceResults !== null) {
+      setReplaceResults(null)
+    }
+  }, [pattern, testText])
 
   // Detect dark mode (match JSON formatter logic exactly)
   useEffect(() => {
@@ -497,13 +533,236 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
     setMatches([])
     setCurrentLine(0)
     clearMarkers()
-    
+  }
+
+  const explainPattern = useCallback(() => {
+    if (!isPremiumUser) {
+      toast({
+        type: 'warning',
+        title: 'Premium Feature',
+        description: 'Pattern explanations require a premium plan'
+      })
+      return
+    }
+
+    if (!pattern) {
+      toast({
+        type: 'warning',
+        title: 'No pattern',
+        description: 'Please enter a regex pattern to explain'
+      })
+      return
+    }
+
+    try {
+      // Ensure we're using the most current pattern
+      const currentPattern = pattern.trim()
+      
+      const analysis = analyzePattern(currentPattern)
+      setPatternAnalysis(analysis)
+      setShowExplanation(true)
+      
+      toast({
+        type: 'success',
+        title: 'Pattern analyzed',
+        description: `Analyzing "${currentPattern.slice(0, 30)}${currentPattern.length > 30 ? '...' : ''}" - Found ${analysis.components.length} components`
+      })
+    } catch (error) {
+      toast({
+        type: 'error',
+        title: 'Analysis failed',
+        description: 'Unable to analyze the pattern'
+      })
+    }
+  }, [pattern, isPremiumUser, toast])
+
+  const loadPatternFromLibrary = useCallback((patternItem: PatternLibraryItem) => {
+    setPattern(patternItem.pattern)
+    setTestText(patternItem.testText)
+    setFlags(patternItem.flags)
+    setLanguage('javascript') // Most patterns are JavaScript compatible
+    setError(null)
+    setMatches([])
+    setCurrentLine(0)
+    clearMarkers()
+
     toast({
       type: 'success',
-      title: 'Language changed',
-      description: `Switched to ${getRegexEngine(newLanguage).getLanguageName()}`
+      title: 'Pattern loaded from library',
+      description: `Loaded "${patternItem.name}" pattern`
     })
-  }
+  }, [toast, clearMarkers])
+
+  const openPatternLibrary = useCallback(() => {
+    if (!isPremiumUser) {
+      toast({
+        type: 'warning',
+        title: 'Premium Feature',
+        description: 'Pattern library access requires a premium plan'
+      })
+      return
+    }
+
+    setShowPatternLibrary(true)
+  }, [isPremiumUser, toast])
+
+  const openBulkTesting = useCallback(() => {
+    if (!isPremiumUser) {
+      toast({
+        type: 'warning',
+        title: 'Premium Feature',
+        description: 'Bulk testing requires a premium plan'
+      })
+      return
+    }
+
+    if (!pattern) {
+      toast({
+        type: 'warning',
+        title: 'No pattern',
+        description: 'Please enter a regex pattern before starting bulk testing'
+      })
+      return
+    }
+
+    setShowBulkTesting(true)
+  }, [isPremiumUser, pattern, toast])
+
+  const openAdvancedAnalytics = useCallback(() => {
+    if (!isPremiumUser) {
+      toast({
+        type: 'warning',
+        title: 'Premium Feature',
+        description: 'Advanced analytics requires a premium plan'
+      })
+      return
+    }
+
+    if (matches.length === 0) {
+      toast({
+        type: 'warning',
+        title: 'No matches',
+        description: 'Please test your pattern first to generate analytics'
+      })
+      return
+    }
+
+    setShowAdvancedAnalytics(true)
+  }, [isPremiumUser, matches.length, toast])
+
+  const openRegexVisualizer = useCallback(() => {
+    if (!isPremiumUser) {
+      toast({
+        type: 'warning',
+        title: 'Premium Feature',
+        description: 'Regex visualization requires a premium plan'
+      })
+      return
+    }
+
+    if (!pattern) {
+      toast({
+        type: 'warning',
+        title: 'No pattern',
+        description: 'Please enter a regex pattern to visualize'
+      })
+      return
+    }
+
+    setShowRegexVisualizer(true)
+  }, [isPremiumUser, pattern, toast])
+
+  const toggleReplaceMode = useCallback(() => {
+    if (!isPremiumUser) {
+      toast({
+        type: 'warning',
+        title: 'Premium Feature',
+        description: 'Replace functionality requires a premium plan'
+      })
+      return
+    }
+
+    setShowReplaceMode(prev => !prev)
+    if (!showReplaceMode) {
+      setReplaceText('')
+      setReplaceResults(null)
+    }
+  }, [isPremiumUser, showReplaceMode, toast])
+
+  const performReplace = useCallback((replaceAll: boolean = false) => {
+    if (!isPremiumUser) {
+      toast({
+        type: 'warning',
+        title: 'Premium Feature',
+        description: 'Replace functionality requires a premium plan'
+      })
+      return
+    }
+
+    if (!pattern || !testText) {
+      toast({
+        type: 'warning',
+        title: 'Missing input',
+        description: 'Please enter both a pattern and test text to replace'
+      })
+      return
+    }
+
+    try {
+      const engine = getRegexEngine(language)
+      const testResult = engine.test(pattern, testText, flags)
+      
+      if (!testResult.isValid) {
+        toast({
+          type: 'error',
+          title: 'Invalid pattern',
+          description: testResult.error || 'Pattern validation failed'
+        })
+        return
+      }
+
+      if (testResult.matches.length === 0) {
+        setReplaceResults(testText)
+        toast({
+          type: 'info',
+          title: 'No matches found',
+          description: 'No text was replaced as no matches were found'
+        })
+        return
+      }
+
+      // Perform replacement using JavaScript RegExp
+      const regex = new RegExp(pattern, replaceAll ? flags.join('') : flags.filter(f => f !== 'g').join(''))
+      const replacedText = testText.replace(regex, replaceText)
+      
+      setReplaceResults(replacedText)
+      
+      const replacementCount = testResult.matches.length
+      toast({
+        type: 'success',
+        title: 'Replacement completed',
+        description: `Replaced ${replaceAll ? replacementCount : 1} occurrence${replacementCount !== 1 ? 's' : ''}`
+      })
+    } catch (error) {
+      toast({
+        type: 'error',
+        title: 'Replace failed',
+        description: 'An error occurred during replacement'
+      })
+    }
+  }, [isPremiumUser, pattern, testText, language, flags, replaceText, toast])
+
+  const copyReplaceResults = useCallback(() => {
+    if (replaceResults) {
+      navigator.clipboard.writeText(replaceResults).then(() => {
+        toast({
+          type: 'success',
+          title: 'Copied to clipboard',
+          description: 'Replace results copied to clipboard'
+        })
+      })
+    }
+  }, [replaceResults, toast])
 
   const toggleFlag = (flag: string) => {
     setFlags(prev => 
@@ -636,6 +895,70 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                   Test Pattern
                 </Button>
               </Tooltip>
+
+              <EnhancedTooltip
+                title={isPremiumUser ? "Advanced Analytics" : "Advanced Analytics (Premium)"}
+                description={isPremiumUser 
+                  ? "Detailed match statistics, performance metrics, and optimization insights"
+                  : "Comprehensive analytics and performance insights - Premium feature"
+                }
+                shortcut={isPremiumUser ? "Click to analyze" : undefined}
+                showPremiumBadge={!isPremiumUser}
+                examples={[
+                  'Match coverage and density analysis',
+                  'Performance throughput metrics',
+                  'Capture group statistics'
+                ]}
+                tips={[
+                  'Run pattern test first to generate data',
+                  'Get optimization suggestions',
+                  'Export analytics as JSON'
+                ]}
+              >
+                <Button
+                  onClick={openAdvancedAnalytics}
+                  disabled={isProcessing || matches.length === 0}
+                  size="sm"
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  <BarChart3 className="w-4 h-4" />
+                  Analytics
+                </Button>
+              </EnhancedTooltip>
+
+              <EnhancedTooltip
+                title={isPremiumUser ? "Regex Visualizer" : "Regex Visualizer (Premium)"}
+                description={isPremiumUser 
+                  ? "Interactive flow diagram showing your regex pattern structure"
+                  : "Visual regex diagrams and flow charts - Premium feature"
+                }
+                shortcut={isPremiumUser ? "Click to visualize" : undefined}
+                showPremiumBadge={!isPremiumUser}
+                examples={[
+                  'Interactive node-based diagram',
+                  'Color-coded pattern components',
+                  'Export as SVG for documentation'
+                ]}
+                tips={[
+                  'Click nodes for detailed descriptions',
+                  'Zoom and pan for complex patterns',
+                  'Great for learning regex structure'
+                ]}
+              >
+                <Button
+                  onClick={openRegexVisualizer}
+                  disabled={isProcessing || !pattern}
+                  size="sm"
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  <Workflow className="w-4 h-4" />
+                  Visualize
+                </Button>
+              </EnhancedTooltip>
               
               <EnhancedTooltip
                 title={isPremiumUser ? (liveTesting ? "Disable live testing" : "Enable live testing") : "Live Testing (Premium)"}
@@ -682,6 +1005,70 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                   Copy Matches
                 </Button>
               </Tooltip>
+
+              <EnhancedTooltip
+                title={isPremiumUser ? "Explain Pattern" : "Pattern Explanation (Premium)"}
+                description={isPremiumUser 
+                  ? "Get a detailed breakdown of your regex pattern"
+                  : "Detailed pattern analysis and explanation - Premium feature"
+                }
+                shortcut={isPremiumUser ? "Click to analyze" : undefined}
+                showPremiumBadge={!isPremiumUser}
+                examples={[
+                  'Component-by-component breakdown',
+                  'Complexity analysis',
+                  'Performance warnings and suggestions'
+                ]}
+                tips={[
+                  'Helps understand complex patterns',
+                  'Identifies potential issues',
+                  'Educational explanations for learning'
+                ]}
+              >
+                <Button
+                  onClick={explainPattern}
+                  disabled={isProcessing || !pattern}
+                  size="sm"
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  <Brain className="w-4 h-4" />
+                  Explain
+                </Button>
+              </EnhancedTooltip>
+
+              <EnhancedTooltip
+                title={isPremiumUser ? (showReplaceMode ? "Hide Replace" : "Show Replace") : "Replace Mode (Premium)"}
+                description={isPremiumUser 
+                  ? (showReplaceMode ? "Hide replace functionality" : "Enable find and replace with capture group support")
+                  : "Advanced replace functionality with capture groups - Premium feature"
+                }
+                shortcut={isPremiumUser ? "Click to toggle" : undefined}
+                showPremiumBadge={!isPremiumUser}
+                examples={[
+                  'Use $1, $2 for capture group references',
+                  'Replace first match or all matches',
+                  'Live preview of replacement results'
+                ]}
+                tips={[
+                  'Capture groups with () in pattern',
+                  'Reference groups with $1, $2, etc.',
+                  'Named groups with $<name> syntax'
+                ]}
+              >
+                <Button
+                  onClick={toggleReplaceMode}
+                  disabled={isProcessing}
+                  size="sm"
+                  variant={showReplaceMode && isPremiumUser ? "default" : "outline"}
+                  className="flex items-center gap-2"
+                >
+                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  <Replace className="w-4 h-4" />
+                  Replace
+                </Button>
+              </EnhancedTooltip>
             </div>
 
             {/* Divider */}
@@ -701,6 +1088,70 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                   Load Sample
                 </Button>
               </Tooltip>
+
+              <EnhancedTooltip
+                title={isPremiumUser ? "Pattern Library" : "Pattern Library (Premium)"}
+                description={isPremiumUser 
+                  ? "Browse 100+ curated regex patterns organized by category"
+                  : "Access comprehensive pattern library - Premium feature"
+                }
+                shortcut={isPremiumUser ? "Click to browse" : undefined}
+                showPremiumBadge={!isPremiumUser}
+                examples={[
+                  '100+ validated patterns',
+                  'Organized by category and difficulty',
+                  'Email, phone, URL, date patterns and more'
+                ]}
+                tips={[
+                  'Search patterns by name or use case',
+                  'Copy patterns or load directly',
+                  'Includes examples and explanations'
+                ]}
+              >
+                <Button
+                  onClick={openPatternLibrary}
+                  disabled={isProcessing}
+                  size="sm"
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  <BookOpen className="w-4 h-4" />
+                  Library
+                </Button>
+              </EnhancedTooltip>
+
+              <EnhancedTooltip
+                title={isPremiumUser ? "Bulk Testing" : "Bulk Testing (Premium)"}
+                description={isPremiumUser 
+                  ? "Test your pattern against multiple text inputs with file upload support"
+                  : "Advanced bulk testing with file uploads - Premium feature"
+                }
+                shortcut={isPremiumUser ? "Click to open" : undefined}
+                showPremiumBadge={!isPremiumUser}
+                examples={[
+                  'Upload multiple text files',
+                  'Batch process with progress tracking',
+                  'Export results as CSV'
+                ]}
+                tips={[
+                  'Test log files, datasets, or documents',
+                  'Get comprehensive match statistics',
+                  'Perfect for data validation tasks'
+                ]}
+              >
+                <Button
+                  onClick={openBulkTesting}
+                  disabled={isProcessing}
+                  size="sm"
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  <Upload className="w-4 h-4" />
+                  Bulk Test
+                </Button>
+              </EnhancedTooltip>
               
               <Tooltip content="Clear all content from pattern and test text">
                 <Button
@@ -853,6 +1304,84 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
               <span>Line {cursorPosition.line}, Column {cursorPosition.column}</span>
             </div>
           </div>
+
+          {/* Replace Mode */}
+          {showReplaceMode && isPremiumUser && (
+            <div className="border-t pt-4">
+              <div className="space-y-4">
+                {/* Replace Input */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Replace With</label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={replaceText}
+                      onChange={(e) => setReplaceText(e.target.value)}
+                      placeholder="Replacement text (use $1, $2 for capture groups)"
+                      className="font-mono flex-1"
+                    />
+                    <Button
+                      onClick={() => performReplace(false)}
+                      disabled={isProcessing || !pattern || !testText}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Replace First
+                    </Button>
+                    <Button
+                      onClick={() => performReplace(true)}
+                      disabled={isProcessing || !pattern || !testText}
+                      size="sm"
+                      variant="default"
+                    >
+                      Replace All
+                    </Button>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Use $1, $2 for capture groups • $& for entire match • $` and $' for before/after
+                  </div>
+                </div>
+
+                {/* Replace Results */}
+                {replaceResults !== null && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-sm font-medium">Replacement Results</label>
+                      <Button
+                        onClick={copyReplaceResults}
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 px-2"
+                      >
+                        <Copy className="h-3 w-3 mr-1" />
+                        Copy
+                      </Button>
+                    </div>
+                    <div className="border rounded-lg overflow-hidden">
+                      <div className="bg-green-50 dark:bg-green-950/20 p-3 border-b">
+                        <div className="text-xs text-green-600 dark:text-green-400 mb-1 font-medium">
+                          After Replacement:
+                        </div>
+                        <div className="font-mono text-sm whitespace-pre-wrap break-all">
+                          {replaceResults}
+                        </div>
+                      </div>
+                      <div className="bg-red-50 dark:bg-red-950/20 p-3">
+                        <div className="text-xs text-red-600 dark:text-red-400 mb-1 font-medium">
+                          Original Text:
+                        </div>
+                        <div className="font-mono text-sm whitespace-pre-wrap break-all opacity-75">
+                          {testText}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-2">
+                      Character count: {replaceResults.length} (was {testText.length})
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -945,6 +1474,53 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
         </Card>
       )}
 
+      {/* Pattern Explanation */}
+      {showExplanation && patternAnalysis && (
+        <PatternExplanation
+          analysis={patternAnalysis}
+          pattern={pattern}
+          onClose={() => setShowExplanation(false)}
+        />
+      )}
+
+      {/* Pattern Library */}
+      <PatternLibrary
+        isOpen={showPatternLibrary}
+        onClose={() => setShowPatternLibrary(false)}
+        isPremiumUser={isPremiumUser}
+        onLoadPattern={loadPatternFromLibrary}
+      />
+
+      {/* Bulk Testing */}
+      <BulkTesting
+        isOpen={showBulkTesting}
+        onClose={() => setShowBulkTesting(false)}
+        isPremiumUser={isPremiumUser}
+        pattern={pattern}
+        language={language}
+        flags={flags}
+      />
+
+      {/* Advanced Analytics */}
+      <AdvancedAnalytics
+        isOpen={showAdvancedAnalytics}
+        onClose={() => setShowAdvancedAnalytics(false)}
+        matches={matches}
+        pattern={pattern}
+        testText={testText}
+        executionTime={executionTime || 0}
+        language={getRegexEngine(language).getLanguageName()}
+        flags={flags}
+      />
+
+      {/* Regex Visualizer */}
+      <RegexVisualizer
+        isOpen={showRegexVisualizer}
+        onClose={() => setShowRegexVisualizer(false)}
+        pattern={pattern}
+        isPremiumUser={isPremiumUser}
+      />
+
       {/* Premium Features Panel */}
       {!isPremiumUser && (
         <Card className="border-primary/20 bg-primary/5">
@@ -981,15 +1557,33 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                 </p>
               </div>
               <div className="space-y-2">
-                <h4 className="font-medium">Pattern Library & Saved Patterns</h4>
+                <h4 className="font-medium">Comprehensive Pattern Library</h4>
                 <p className="text-sm text-muted-foreground">
-                  Access 100+ common patterns and save your own
+                  Browse 100+ curated patterns organized by category with examples
                 </p>
               </div>
               <div className="space-y-2">
-                <h4 className="font-medium">Advanced Testing Features</h4>
+                <h4 className="font-medium">Advanced Replace Functionality</h4>
                 <p className="text-sm text-muted-foreground">
-                  Replace functionality, bulk testing, and performance analytics
+                  Find and replace with capture group references and live preview
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-medium">Bulk Testing & File Processing</h4>
+                <p className="text-sm text-muted-foreground">
+                  Test patterns against multiple files with batch processing and CSV export
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-medium">Advanced Analytics & Insights</h4>
+                <p className="text-sm text-muted-foreground">
+                  Deep performance analysis, optimization suggestions, and match statistics
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-medium">Interactive Regex Visualization</h4>
+                <p className="text-sm text-muted-foreground">
+                  Visual flow diagrams with interactive nodes and SVG export functionality
                 </p>
               </div>
             </div>
