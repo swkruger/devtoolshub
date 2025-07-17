@@ -5,8 +5,9 @@ import NewUserNotification from '@/components/emails/new-user-notification'
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null
 
-// Email configuration - Use Resend's testing domain for development
-const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev'
+// Email configuration - Use the correct domain
+const FROM_EMAIL = process.env.FROM_EMAIL || 'contactme@devtoolskithub.com'
+const ADMIN_EMAIL = 'contactme@devtoolskithub.com'
 
 // Helper function to check if email service is available
 const isEmailServiceAvailable = (): boolean => {
@@ -30,13 +31,10 @@ export const sendNewUserNotification = async (userData: UserData): Promise<{ suc
       return { success: false, error: 'Email service not configured' }
     }
 
-    // For testing, send to the user's own email instead of devtoolshub8@gmail.com
-    const adminEmail = process.env.NODE_ENV === 'development' ? userData.email : 'devtoolshub8@gmail.com'
-
-    // Send notification to admin (or user's email in development)
+    // Send notification to admin using verified domain
     const { data, error } = await resend!.emails.send({
       from: FROM_EMAIL,
-      to: [adminEmail],
+      to: [ADMIN_EMAIL],
       subject: '🎉 New User Signup - DevToolsHub',
       react: NewUserNotification({ userData }),
     })
@@ -92,8 +90,8 @@ export const sendTestEmail = async (testUserEmail?: string): Promise<{ success: 
       return { success: false, error: 'Email service not configured' }
     }
 
-    // Use provided email or default to a safe testing email
-    const toEmail = testUserEmail || 'kruger.sw@gmail.com'
+    // Use provided email or default to admin email
+    const toEmail = testUserEmail || ADMIN_EMAIL
 
     const { data, error } = await resend!.emails.send({
       from: FROM_EMAIL,
@@ -110,7 +108,7 @@ export const sendTestEmail = async (testUserEmail?: string): Promise<{ success: 
             <li>Environment: ${process.env.NODE_ENV || 'development'}</li>
             <li>Timestamp: ${new Date().toISOString()}</li>
           </ul>
-          <p>If you're seeing this email, your Resend integration is working correctly! 🎉</p>
+          <p>If you&apos;re seeing this email, your Resend integration is working correctly! 🎉</p>
           <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e7eb;">
           <p style="font-size: 12px; color: #6b7280;">
             This email was sent from DevToolsHub for testing purposes.

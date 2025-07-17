@@ -1,275 +1,459 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { authServer } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { getAllTools, getCategoryDisplayName } from "@/lib/tools"
-import { Mail, Github, Star, Zap, Shield, Code2 } from "lucide-react"
+import Link from 'next/link'
+import { authServer } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
 export default async function HomePage() {
-  // Check if user is authenticated and redirect to dashboard
+  // Check if user is already authenticated
   const user = await authServer.getUser()
-  
   if (user) {
     redirect('/dashboard')
   }
 
-  const tools = getAllTools()
-  const featuredTools = tools.slice(0, 6) // Show first 6 tools
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* Development Notice Banner */}
-      <div className="bg-blue-50 dark:bg-blue-950/50 border-b border-blue-200 dark:border-blue-800">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" aria-hidden="true"></div>
-              <span className="font-medium text-blue-700 dark:text-blue-300">
-                🚧 DevToolsHub is in active development
-              </span>
-            </div>
-            <span className="hidden sm:inline text-blue-600 dark:text-blue-400" aria-hidden="true">•</span>
-            <div className="flex items-center gap-1">
-              <Mail className="w-3 h-3 text-blue-600 dark:text-blue-400" aria-hidden="true" />
-              <span className="text-blue-600 dark:text-blue-400">
-                Send feedback to{" "}
-                <a 
-                  href="mailto:devtoolshub8@gmail.com" 
-                  className="font-medium underline hover:no-underline focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-sm"
-                  aria-label="Send feedback email to DevToolsHub team"
-                >
-                  devtoolshub8@gmail.com
-                </a>
-              </span>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Development Banner */}
+      <div className="bg-blue-600 text-white py-3 px-4 text-center">
+        <p className="text-sm font-medium">
+          🚧 DevToolsHub is currently in development. 
+          Contact us at{' '}
+          <a 
+            href="mailto:contactme@devtoolskithub.com" 
+            className="underline hover:text-blue-200 transition-colors"
+          >
+            contactme@devtoolskithub.com
+          </a>
+          {' '}for feedback and support.
+        </p>
       </div>
 
-      {/* Navigation Header */}
-      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <span className="text-2xl" role="img" aria-label="Tools">🔧</span>
-            <span className="font-bold text-xl">DevToolsHub</span>
-          </div>
-          <nav className="flex items-center gap-3" role="navigation" aria-label="Main navigation">
-            <Button variant="ghost" size="sm" asChild>
-              <a 
-                href="https://github.com/devtoolshub" 
-                target="_blank" 
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">D</span>
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900">DevToolsHub</h1>
+            </div>
+            <nav className="flex items-center space-x-6">
+              <Link 
+                href="https://github.com/yourusername/devtools-hub" 
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+                target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Visit DevToolsHub on GitHub (opens in new tab)"
               >
-                <Github className="w-4 h-4 mr-2" aria-hidden="true" />
                 GitHub
-              </a>
-            </Button>
-            <Button asChild>
-              <Link href="/sign-in">Sign In</Link>
-            </Button>
-          </nav>
+              </Link>
+              <Link 
+                href="/sign-in" 
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Get Started
+              </Link>
+            </nav>
+          </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-16">
-        {/* Hero Section */}
-        <section className="text-center mb-16" aria-labelledby="hero-title">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Badge variant="secondary" className="text-xs font-medium">
-              <Star className="w-3 h-3 mr-1" aria-hidden="true" />
-              Beta Release
-            </Badge>
-          </div>
-          <h1 id="hero-title" className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            DevToolsHub
+      {/* Hero Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+            Essential Developer Tools
+            <span className="block text-blue-600">All in One Place</span>
           </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Your all-in-one developer toolkit. Format JSON, test regex patterns, decode JWTs, and much more—all in one powerful platform.
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            Streamline your development workflow with our comprehensive suite of essential tools. 
+            From JSON formatting to regex testing, we&apos;ve got everything you need to code faster and better.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="gap-2" asChild>
-              <Link href="/sign-in">
-                <Zap className="w-4 h-4" aria-hidden="true" />
-                Get Started Free
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" className="gap-2" asChild>
-              <Link href="/dashboard">
-                <Code2 className="w-4 h-4" aria-hidden="true" />
-                Explore Tools
-              </Link>
-            </Button>
+            <Link 
+              href="/sign-in" 
+              className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              Start Building Now
+            </Link>
+            <Link 
+              href="#tools" 
+              className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:border-gray-400 transition-colors"
+            >
+              Explore Tools
+            </Link>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Key Features */}
-        <section className="mb-16" aria-labelledby="features-title">
-          <h2 id="features-title" className="sr-only">Key Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            <Card className="relative overflow-hidden">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center" aria-hidden="true">
-                    <Code2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <CardTitle>Essential Dev Tools</CardTitle>
-                </div>
-                <CardDescription>
-                  JSON formatter, regex tester, JWT decoder, UUID generator, and more. All the tools you need for daily development work.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="relative overflow-hidden">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/20 flex items-center justify-center" aria-hidden="true">
-                    <Zap className="w-5 h-5 text-green-600 dark:text-green-400" />
-                  </div>
-                  <CardTitle>Lightning Fast</CardTitle>
-                </div>
-                <CardDescription>
-                  Built with Next.js 14 and modern web technologies for instant responses and smooth user experience.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="relative overflow-hidden">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center" aria-hidden="true">
-                    <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <CardTitle>Secure & Private</CardTitle>
-                </div>
-                <CardDescription>
-                  Your data is processed securely. Premium features include advanced functionality and team collaboration.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-        </section>
-
-        {/* Featured Tools */}
-        <section className="mb-16" aria-labelledby="tools-title">
-          <div className="text-center mb-8">
-            <h2 id="tools-title" className="text-2xl sm:text-3xl font-bold mb-2">Available Tools</h2>
-            <p className="text-muted-foreground">
-              Powerful utilities to streamline your development workflow
+      {/* Tools Showcase */}
+      <section id="tools" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Professional Developer Tools
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Everything you need for modern web development, API testing, and data manipulation.
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list" aria-label="Available developer tools">
-            {featuredTools.map((tool) => (
-              <Card key={tool.id} className="group hover:shadow-lg transition-shadow" role="listitem">
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <div 
-                      className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xl" 
-                      aria-hidden="true"
-                    >
-                      {tool.emoji}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <CardTitle className="text-lg truncate">{tool.name}</CardTitle>
-                        <Badge variant="outline" className="text-xs shrink-0">
-                          {getCategoryDisplayName(tool.category)}
-                        </Badge>
-                      </div>
-                      <CardDescription className="text-sm">
-                        {tool.shortDescription}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {/* Free Features */}
-                    <div>
-                      <p className="text-sm font-medium text-green-700 dark:text-green-400 mb-1">
-                        ✓ Free Features:
-                      </p>
-                      <ul className="text-xs text-muted-foreground space-y-1" role="list">
-                        {tool.features.free.slice(0, 2).map((feature, idx) => (
-                          <li key={idx} role="listitem">• {feature}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    {/* Premium Features Preview */}
-                    {tool.features.premium && tool.features.premium.length > 0 && (
-                      <div>
-                        <p className="text-sm font-medium text-blue-700 dark:text-blue-400 mb-1">
-                          ⭐ Premium Features:
-                        </p>
-                        <ul className="text-xs text-muted-foreground space-y-1" role="list">
-                          {tool.features.premium.slice(0, 2).map((feature, idx) => (
-                            <li key={idx} role="listitem">• {feature}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    
-                    <Button 
-                      className="w-full group-hover:bg-primary/90 transition-colors" 
-                      size="sm"
-                      asChild
-                    >
-                      <Link href="/sign-in" aria-label={`Try ${tool.name} tool`}>
-                        Try {tool.name}
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          <div className="text-center mt-8">
-            <Button variant="outline" asChild>
-              <Link href="/dashboard" aria-label={`View all ${tools.length} available tools`}>
-                View All {tools.length} Tools
-              </Link>
-            </Button>
-          </div>
-        </section>
 
-        {/* CTA Section */}
-        <section className="text-center" aria-labelledby="cta-title">
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle id="cta-title" className="text-xl sm:text-2xl">Ready to streamline your workflow?</CardTitle>
-              <CardDescription className="text-base">
-                Join thousands of developers using DevToolsHub to boost their productivity
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button size="lg" asChild>
-                  <Link href="/sign-in">
-                    Get Started Free
-                  </Link>
-                </Button>
-                <Button variant="outline" size="lg" asChild>
-                  <a 
-                    href="mailto:devtoolshub8@gmail.com"
-                    aria-label="Contact DevToolsHub team via email"
-                  >
-                    Contact Us
-                  </a>
-                </Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* JSON Formatter */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                  <span className="text-blue-600 text-xl">📄</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">JSON Formatter</h3>
+                  <p className="text-sm text-gray-500">Free</p>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground mt-4">
-                Free forever • No credit card required • Premium features available
+              <p className="text-gray-600 mb-4">
+                Format, validate, and beautify JSON data with syntax highlighting and error detection.
               </p>
-            </CardContent>
-          </Card>
-        </section>
-      </main>
+              <div className="space-y-2 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Syntax highlighting
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Error validation
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Tree view
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Minify/Beautify
+                </div>
+              </div>
+            </div>
+
+            {/* Regex Tester */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                  <span className="text-green-600 text-xl">🔍</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Regex Tester</h3>
+                  <p className="text-sm text-gray-500">Free</p>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-4">
+                Test and debug regular expressions with real-time matching and detailed explanations.
+              </p>
+              <div className="space-y-2 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Real-time testing
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Pattern explanation
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Multiple engines
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Visual regex builder
+                </div>
+              </div>
+            </div>
+
+            {/* JWT Decoder */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                  <span className="text-purple-600 text-xl">🔐</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">JWT Decoder</h3>
+                  <p className="text-sm text-gray-500">Free</p>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-4">
+                Decode and inspect JWT tokens with detailed header and payload analysis.
+              </p>
+              <div className="space-y-2 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Token validation
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Header inspection
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Payload analysis
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Signature verification
+                </div>
+              </div>
+            </div>
+
+            {/* Base64 Encoder/Decoder */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                  <span className="text-orange-600 text-xl">🔢</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Base64 Tools</h3>
+                  <p className="text-sm text-gray-500">Free</p>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-4">
+                Encode and decode Base64 strings with support for various character encodings.
+              </p>
+              <div className="space-y-2 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Encode/Decode
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  File support
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  URL safe mode
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Multiple encodings
+                </div>
+              </div>
+            </div>
+
+            {/* Image Compressor */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mr-4">
+                  <span className="text-pink-600 text-xl">🖼️</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Image Compressor</h3>
+                  <p className="text-sm text-gray-500">Free</p>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-4">
+                Compress images while maintaining quality for faster web performance.
+              </p>
+              <div className="space-y-2 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Multiple formats
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Quality control
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Batch processing
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Size optimization
+                </div>
+              </div>
+            </div>
+
+            {/* UUID Generator */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                  <span className="text-indigo-600 text-xl">🆔</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">UUID Generator</h3>
+                  <p className="text-sm text-gray-500">Free</p>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-4">
+                Generate UUIDs in various formats with customization options.
+              </p>
+              <div className="space-y-2 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Multiple versions
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Custom formats
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Bulk generation
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Copy to clipboard
+                </div>
+              </div>
+            </div>
+
+            {/* Timestamp Converter */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                  <span className="text-yellow-600 text-xl">⏰</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Timestamp Converter</h3>
+                  <p className="text-sm text-gray-500">Free</p>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-4">
+                Convert between timestamps, dates, and various time formats.
+              </p>
+              <div className="space-y-2 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Unix timestamps
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  ISO 8601 format
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Multiple timezones
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Relative time
+                </div>
+              </div>
+            </div>
+
+            {/* Markdown Previewer */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mr-4">
+                  <span className="text-teal-600 text-xl">📝</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Markdown Previewer</h3>
+                  <p className="text-sm text-gray-500">Free</p>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-4">
+                Write and preview Markdown with real-time rendering and syntax highlighting.
+              </p>
+              <div className="space-y-2 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Live preview
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Syntax highlighting
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Export options
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Custom themes
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-white mb-6">
+            Ready to Supercharge Your Development?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8">
+            Join thousands of developers who trust DevToolsHub for their daily development needs.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/sign-in" 
+              className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors"
+            >
+              Get Started Free
+            </Link>
+            <Link 
+              href="mailto:contactme@devtoolskithub.com" 
+              className="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
+            >
+              Contact Us
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">D</span>
+                </div>
+                <span className="text-xl font-bold">DevToolsHub</span>
+              </div>
+              <p className="text-gray-400">
+                Essential developer tools for modern web development.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Tools</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href="/tools/json-formatter" className="hover:text-white transition-colors">JSON Formatter</Link></li>
+                <li><Link href="/tools/regex-tester" className="hover:text-white transition-colors">Regex Tester</Link></li>
+                <li><Link href="/tools/jwt-decoder" className="hover:text-white transition-colors">JWT Decoder</Link></li>
+                <li><Link href="/tools/base64" className="hover:text-white transition-colors">Base64 Tools</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Resources</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link href="https://github.com/yourusername/devtools-hub" className="hover:text-white transition-colors">GitHub</Link></li>
+                <li><Link href="/docs" className="hover:text-white transition-colors">Documentation</Link></li>
+                <li><Link href="/api" className="hover:text-white transition-colors">API Reference</Link></li>
+                <li><Link href="/changelog" className="hover:text-white transition-colors">Changelog</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Contact</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <a href="mailto:contactme@devtoolskithub.com" className="hover:text-white transition-colors">
+                    contactme@devtoolskithub.com
+                  </a>
+                </li>
+                <li><Link href="/support" className="hover:text-white transition-colors">Support</Link></li>
+                <li><Link href="/feedback" className="hover:text-white transition-colors">Feedback</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 DevToolsHub. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 } 
