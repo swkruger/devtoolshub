@@ -507,3 +507,73 @@ Goal: Smooth, beautiful app experience with saved state, user preferences, and h
 
 ---
 
+## 🆕 JWT Decoder/Encoder Implementation Tasks (2024-12-29)
+
+**Goal**: Build the best JWT Decoder/Encoder tool available online, with world-class decoding, encoding, signature verification, bulk operations, and premium developer features.
+
+### 📋 Core Infrastructure Tasks
+✅ **Task 1**: Set up JWT Decoder/Encoder tool config and directory structure
+- Add tool config to lib/tools.ts
+- Create app/tools/jwt-decoder/ with required structure (components, hooks, lib, page.tsx, tool.config.ts)
+
+✅ **Task 2**: Implement page.tsx with compact header, tool icon, and description
+- Use consistent layout with JSON Formatter/Regex Tester
+- Add tool description and feature overview section
+
+### 🆓 Free Features Implementation
+✅ **Task 3**: JWT input/editor with syntax highlighting and validation
+- Paste JWT, real-time validation, error messages
+- Highlight malformed tokens, show helpful tips
+- Keyboard shortcuts for core actions
+
+✅ **Task 4**: Decoded header, payload, and signature display
+- Pretty-print and syntax highlight all sections
+- Show algorithm, type, and claims in readable format
+- Copy decoded payload to clipboard
+- Show token expiration/issued-at in human-readable format
+
+✅ **Task 5**: Actions: load sample JWT, clear/reset editor, help panel
+- Provide sample JWTs (valid, expired, malformed)
+- Add clear/reset with confirmation
+- Help panel with examples, shortcuts, tips, accessibility
+
+### 💎 Premium Features Implementation
+✅ **Task 6**: Signature verification UI and backend logic
+- Paste public key/secret, select algorithm (HS256, RS256, ES256, etc.)
+- Verify signature and show result (valid/invalid)
+- Visual warning for expired/soon-to-expire tokens
+
+✅ **Task 7**: JWT creation/encoding form
+- Build JWT from header/payload, sign with key
+- Choose algorithm, show signed JWT output
+- Copy/download encoded JWT
+
+✅ **Task 8**: Bulk decode/upload/download
+- Paste/upload multiple JWTs, decode all at once
+- Export decoded results as CSV/JSON
+- File validation (size/type)
+
+✅ **Task 9**: Token Inspector with claim explanations
+- Highlight and explain each claim (tooltips, docs)
+- Show standard and custom claims with descriptions
+
+✅ **Task 10**: Save/manage JWTs to user profile (Supabase)
+- Save tokens/snippets, retrieve/load, categorize
+- (Optional) Share JWT snippets
+
+### 🎨 UI/UX Enhancement Tasks
+✅ **Task 11**: Premium feature gating, crown icon, tooltips, upgrade prompts
+- Disabled premium buttons for free users with crown icon
+- Tooltips and upgrade prompts for premium features
+- Smooth transitions for feature availability
+
+✅ **Task 12**: Accessibility and keyboard shortcuts
+- ARIA labels, keyboard navigation, screen reader support
+- Implement all required keyboard shortcuts (core, premium, utility)
+
+### 🧪 Testing and Documentation Tasks
+✅ **Task 13**: Unit tests and documentation
+- Add unit tests for all features
+- Update README and help panel documentation
+- Test responsive design, accessibility, and premium/free feature access control
+

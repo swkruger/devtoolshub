@@ -7,7 +7,7 @@ import {
   Code,
   Clock,
   Shuffle,
-  type LucideIcon
+  type LucideIcon,
 } from "lucide-react"
 
 export interface ToolConfig {
@@ -17,7 +17,7 @@ export interface ToolConfig {
   icon: LucideIcon
   emoji: string
   isPremium: boolean
-  category: 'text' | 'crypto' | 'image' | 'utility' | 'web'
+  category: 'text' | 'crypto' | 'image' | 'utility' | 'web' | 'security' // Added 'security' category
   tags: string[]
   path: string
   shortDescription: string
@@ -62,18 +62,37 @@ export const toolsConfig: Record<string, ToolConfig> = {
   },
   'jwt-decoder': {
     id: 'jwt-decoder',
-    name: 'JWT Decoder',
-    description: 'Decode and verify JSON Web Tokens with signature validation',
-    shortDescription: 'Decode and verify JSON Web Tokens',
-    icon: Shield,
+    name: 'JWT Decoder/Encoder',
+    description: 'Decode, encode, and verify JWTs with advanced features.',
+    shortDescription: 'JWT decode, encode, verify',
+    icon: Shield, // Use Shield icon as JwtIcon does not exist
     emoji: '🔐',
-    isPremium: false,
-    category: 'crypto',
-    tags: ['jwt', 'token', 'decode', 'verify'],
+    isPremium: false, // Tool is accessible to all users
+    category: 'security',
+    tags: ['jwt', 'token', 'security', 'auth'],
     path: '/tools/jwt-decoder',
     features: {
-      free: ['Decode JWT payload', 'View headers & claims', 'Basic validation'],
-      premium: ['Verify signatures', 'Custom key management', 'Advanced token validation', 'Token generation']
+      free: [
+        'Decode JWT header, payload, signature',
+        'Syntax highlighting and validation',
+        'Copy decoded payload',
+        'Show algorithm/type/claims',
+        'Token expiry/issued-at display',
+        'Load sample JWT',
+        'Clear/reset editor',
+        'Help panel with examples, shortcuts, tips, accessibility'
+      ],
+      premium: [
+        'Signature verification (HS256, RS256, ES256, etc.)',
+        'JWT creation/encoding',
+        'Bulk decode/upload/download',
+        'Token Inspector with claim explanations',
+        'Save/manage JWTs (Supabase)',
+        'File upload/download',
+        'Advanced algorithms',
+        'Premium keyboard shortcuts',
+        'Expiry alerts'
+      ]
     }
   },
   'image-compressor': {
@@ -189,7 +208,7 @@ export const searchTools = (query: string): ToolConfig[] => {
 }
 
 export const getCategories = (): ToolConfig['category'][] => {
-  return ['text', 'crypto', 'image', 'utility', 'web']
+  return ['text', 'crypto', 'image', 'utility', 'web', 'security'] // Added 'security' category
 }
 
 export const getCategoryDisplayName = (category: ToolConfig['category']): string => {
@@ -198,7 +217,8 @@ export const getCategoryDisplayName = (category: ToolConfig['category']): string
     crypto: 'Cryptography',
     image: 'Image Processing',
     utility: 'Utilities',
-    web: 'Web Development'
+    web: 'Web Development',
+    security: 'Security' // Added 'Security' category
   }
   return names[category]
 } 

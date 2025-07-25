@@ -118,13 +118,46 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 ### 🛠 Tool System
 **Modular Architecture**: Each tool is a pluggable Next.js route with its own UI and logic.
 
+#### 🔐 JWT Decoder/Encoder Tool
+The JWT Decoder/Encoder is a comprehensive tool for working with JSON Web Tokens:
+
+**Free Features:**
+- Decode JWT header, payload, and signature
+- Syntax highlighting and validation
+- Copy decoded payload to clipboard
+- Show algorithm, type, and claims
+- Token expiry and issued-at display
+- Load sample JWT for testing
+- Clear/reset editor functionality
+- Comprehensive help panel with examples
+
+**Premium Features:**
+- Signature verification (HS256, RS256, ES256, etc.)
+- JWT creation and encoding
+- Bulk decode/upload/download operations
+- Token Inspector with detailed claim explanations
+- Save and manage JWTs in user profile
+- File upload/download functionality
+- Advanced algorithms support
+- Premium keyboard shortcuts
+- Expiry alerts and notifications
+
+**Key Features:**
+- **Real-time decoding**: Instant JWT parsing and validation
+- **Comprehensive error handling**: Clear error messages for malformed tokens
+- **Accessibility**: Full keyboard navigation and screen reader support
+- **Premium gating**: Visual indicators for premium features with upgrade prompts
+- **Database integration**: Secure JWT snippet storage with Supabase
+- **File operations**: Upload JWT files and download decoded results
+- **Help system**: Built-in documentation with examples and shortcuts
+
 #### Current Tools:
 
 | Tool | Status | Description |
 |------|---------|-------------|
 | 📄 JSON Formatter | Free | Format, validate & beautify JSON |
 | 🔍 Regex Tester | Free | Test regex patterns with live matching |
-| 🔐 JWT Decoder | Premium | Decode & verify JSON Web Tokens |
+| 🔐 JWT Decoder/Encoder | Free | Decode, encode & verify JSON Web Tokens |
 | 📸 Image Compressor | Premium | Compress & optimize images |
 | 🧬 UUID Generator | Free | Generate unique identifiers |
 | 🧪 XPath Tester | Premium | Test XPath & CSS selectors |
@@ -168,6 +201,8 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
   }
 }
 ```
+
+**Example**: See the JWT Decoder/Encoder tool configuration in `lib/tools.ts` for a complete implementation with premium feature gating.
 
 2. **Create Tool Directory**:
 
