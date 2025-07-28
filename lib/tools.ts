@@ -98,17 +98,40 @@ export const toolsConfig: Record<string, ToolConfig> = {
   'image-compressor': {
     id: 'image-compressor',
     name: 'Image Compressor',
-    description: 'Compress and optimize images with format conversion',
+    description: 'Compress and optimize images with advanced algorithms and format conversion. The best image compression tool for developers.',
     shortDescription: 'Compress and optimize images',
     icon: Image,
     emoji: '📸',
     isPremium: false,
     category: 'image',
-    tags: ['image', 'compress', 'optimize', 'convert'],
+    tags: ['image', 'compress', 'optimize', 'convert', 'webp', 'avif', 'jpeg', 'png'],
     path: '/tools/image-compressor',
     features: {
-      free: ['Basic image compression', 'Single file upload', 'JPEG/PNG support'],
-      premium: ['Advanced compression algorithms', 'Batch processing', 'All format conversion', 'Quality control settings']
+      free: [
+        'Single image upload with drag & drop',
+        'Basic compression with quality control',
+        'JPEG and PNG support',
+        'Before/after comparison',
+        'Download compressed image',
+        'File size reduction display',
+        'Image metadata display',
+        'Help panel with examples and shortcuts'
+      ],
+      premium: [
+        'Batch processing (multiple images)',
+        'Advanced format conversion (WebP, AVIF)',
+        'Advanced compression algorithms',
+        'Resize options (width/height/percentage)',
+        'Metadata stripping options',
+        'Progressive JPEG support',
+        'Lossless compression options',
+        'Bulk download (ZIP) functionality',
+        'Quality presets and custom settings',
+        'Real-time compression preview',
+        'Compression statistics and analytics',
+        'Premium keyboard shortcuts',
+        'Save compression history (optional)'
+      ]
     }
   },
   'uuid-generator': {
