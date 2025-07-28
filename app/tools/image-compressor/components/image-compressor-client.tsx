@@ -77,6 +77,8 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   const [settingsName, setSettingsName] = useState('');
   const [isDefaultSetting, setIsDefaultSetting] = useState(false);
   const [savedSettings, setSavedSettings] = useState<any[]>([]);
+  const [compressionHistory, setCompressionHistory] = useState<any[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [compressionSettings, setCompressionSettings] = useState<CompressionSettings>({
     quality: 80,
     format: 'jpeg',
@@ -279,6 +281,8 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
               }
             : img
         ));
+        
+        await saveCompressionHistory(image, size, compressionRatio);
       } catch (error) {
         setImages(prev => prev.map(img => 
           img.id === image.id 
@@ -428,6 +432,8 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
             }
           : img
       ));
+      
+      await saveCompressionHistory(image, size, compressionRatio);
     } catch (error) {
       setImages(prev => prev.map(img => 
         img.id === image.id 
@@ -638,7 +644,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
     }
   };
 
-  const handleSaveHistory = () => {
+  const handleSaveHistory = async () => {
     if (!isPremiumUser) {
       // Show upgrade prompt
       toast({
@@ -648,7 +654,42 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       });
       return;
     }
-    setIsHistoryOpen(true);
+    
+    setIsLoadingHistory(true);
+    try {
+      const historyResponse = await imageCompressionDB.getHistory();
+      if (historyResponse.error) {
+        throw new Error(historyResponse.error);
+      }
+      setCompressionHistory(historyResponse.data);
+      setIsHistoryOpen(true);
+    } catch (error) {
+      console.error('Error loading compression history:', error);
+      toast({
+        type: 'error',
+        title: 'Error Loading History',
+        description: 'Failed to load compression history. Please try again.'
+      });
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  const saveCompressionHistory = async (image: ImageFile, compressedSize: number, compressionRatio: number) => {
+    if (!isPremiumUser) return;
+    
+    try {
+      await imageCompressionDB.saveHistory({
+        original_filename: image.file.name,
+        original_size: image.originalSize,
+        compressed_size: compressedSize,
+        compression_ratio: compressionRatio,
+        settings: compressionSettings
+      });
+    } catch (error) {
+      console.error('Error saving compression history:', error);
+      // Don't show error toast for history saving as it's not critical
+    }
   };
 
   const handleHelp = () => {
@@ -1784,20 +1825,136 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       {/* History Modal */}
       {isHistoryOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-              Compression History
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Your saved compression settings will appear here.
-            </p>
-            <Button
-              className="mt-6 w-full"
-              onClick={() => setIsHistoryOpen(false)}
-              aria-label="Close history"
-            >
-              Close History
-            </Button>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                Compression History
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsHistoryOpen(false)}
+                aria-label="Close history"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            
+            {isLoadingHistory ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                <span>Loading history...</span>
+              </div>
+            ) : compressionHistory.length === 0 ? (
+              <div className="text-center py-8">
+                <FileImage className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-400 mb-2">
+                  No compression history found
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-500">
+                  Your compression activities will appear here once you start compressing images.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  Showing {compressionHistory.length} recent compression activities
+                </div>
+                
+                {compressionHistory.map((entry) => (
+                  <Card key={entry.id} className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <FileImage className="w-4 h-4 text-blue-500" />
+                          <span className="font-medium text-gray-900 dark:text-gray-100">
+                            {entry.original_filename}
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <span className="text-gray-500 dark:text-gray-400">Original:</span>
+                            <span className="ml-1 font-medium">{formatFileSize(entry.original_size)}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 dark:text-gray-400">Compressed:</span>
+                            <span className="ml-1 font-medium">{formatFileSize(entry.compressed_size)}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 dark:text-gray-400">Ratio:</span>
+                            <span className="ml-1 font-medium">{entry.compression_ratio.toFixed(1)}%</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 dark:text-gray-400">Format:</span>
+                            <span className="ml-1 font-medium">{entry.settings.format.toUpperCase()}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                          {new Date(entry.created_at).toLocaleDateString()} at {new Date(entry.created_at).toLocaleTimeString()}
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2 ml-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setCompressionSettings(entry.settings);
+                            setIsHistoryOpen(false);
+                            toast({
+                              type: 'success',
+                              title: 'Settings Applied',
+                              description: `Applied settings from ${entry.original_filename}`
+                            });
+                          }}
+                          aria-label="Apply settings from this entry"
+                        >
+                          <RefreshCw className="w-3 h-3 mr-1" />
+                          Apply
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={async () => {
+                            try {
+                              await imageCompressionDB.deleteHistory(entry.id);
+                              setCompressionHistory(compressionHistory.filter(h => h.id !== entry.id));
+                              toast({
+                                type: 'success',
+                                title: 'Entry Deleted',
+                                description: 'History entry removed successfully'
+                              });
+                            } catch (error) {
+                              toast({
+                                type: 'error',
+                                title: 'Error',
+                                description: 'Failed to delete history entry'
+                              });
+                            }
+                          }}
+                          aria-label="Delete this history entry"
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+            
+            <div className="flex justify-end mt-6">
+              <Button
+                variant="outline"
+                onClick={() => setIsHistoryOpen(false)}
+                aria-label="Close history"
+              >
+                Close
+              </Button>
+            </div>
           </div>
         </div>
       )}
