@@ -240,7 +240,7 @@ export function SignatureVerification({ jwt, isOpen, onClose }: SignatureVerific
                   <li>• Make sure the algorithm matches the one used to sign the JWT</li>
                   <li>• For symmetric algorithms (HS*), use the same secret key used for signing</li>
                   <li>• For asymmetric algorithms (RS*, ES*), use the public key corresponding to the private key used for signing</li>
-                  <li>• Check that the JWT hasn't expired before verification</li>
+                  <li>• Check that the JWT hasn&apos;t expired before verification</li>
                 </ul>
               </div>
             </div>

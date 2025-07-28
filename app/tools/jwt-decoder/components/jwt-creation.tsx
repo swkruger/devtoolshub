@@ -307,7 +307,7 @@ export function JwtCreation({ isOpen, onClose }: JwtCreationProps) {
                   <div className="text-sm text-blue-800 dark:text-blue-200">
                     <div className="font-medium mb-1">JWT Creation Tips:</div>
                     <ul className="space-y-1 text-xs">
-                      <li>• The 'alg' field in the header will be automatically set to your selected algorithm</li>
+                      <li>• The &apos;alg&apos; field in the header will be automatically set to your selected algorithm</li>
                       <li>• Common payload fields: sub (subject), iat (issued at), exp (expiration)</li>
                       <li>• Use iat: Math.floor(Date.now() / 1000) for current timestamp</li>
                       <li>• Set exp to iat + seconds for expiration time</li>
