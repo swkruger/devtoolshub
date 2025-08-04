@@ -3,10 +3,16 @@ import { authServer } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 
 export default async function HomePage() {
-  // Check if user is already authenticated
-  const user = await authServer.getUser()
-  if (user) {
-    redirect('/dashboard')
+  // Check if user is already authenticated (only during request time, not build time)
+  try {
+    const user = await authServer.getUser()
+    if (user) {
+      redirect('/dashboard')
+    }
+  } catch (error) {
+    // During build time, authServer.getUser() will fail because there's no request context
+    // This is expected and we can safely ignore it for the landing page
+    console.log('No request context available (likely during build time)')
   }
 
   return (
@@ -65,7 +71,7 @@ export default async function HomePage() {
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Streamline your development workflow with our comprehensive suite of essential tools. 
-            From JSON formatting to regex testing, we&apos;ve got everything you need to code faster and better.
+            6 powerful tools available now, with more coming soon. Everything you need to code faster and better.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
@@ -97,274 +103,302 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* JSON Formatter */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-blue-600 text-xl">📄</span>
+            {/* JSON Formatter - AVAILABLE */}
+            <Link href="/tools/json-formatter" className="group">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-blue-300">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                    <span className="text-blue-600 text-xl">📄</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">JSON Formatter</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-green-600 font-medium">✅ Available</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">JSON Formatter</h3>
-                  <p className="text-sm text-gray-500">Free</p>
+                <p className="text-gray-600 mb-4">
+                  Format, validate, and beautify JSON data with syntax highlighting, tree view, and advanced features.
+                </p>
+                <div className="space-y-2 text-sm text-gray-500">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Real-time syntax highlighting
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Error validation & repair
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Interactive tree view
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Format conversion (XML, CSV, YAML)
+                  </div>
                 </div>
               </div>
-              <p className="text-gray-600 mb-4">
-                Format, validate, and beautify JSON data with syntax highlighting and error detection.
-              </p>
-              <div className="space-y-2 text-sm text-gray-500">
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Syntax highlighting
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Error validation
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Tree view
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Minify/Beautify
-                </div>
-              </div>
-            </div>
+            </Link>
 
-            {/* Regex Tester */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-green-600 text-xl">🔍</span>
+            {/* Regex Tester - AVAILABLE */}
+            <Link href="/tools/regex-tester" className="group">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-green-300">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                    <span className="text-green-600 text-xl">🔍</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">Regex Tester</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-green-600 font-medium">✅ Available</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">Regex Tester</h3>
-                  <p className="text-sm text-gray-500">Free</p>
+                <p className="text-gray-600 mb-4">
+                  Test regular expressions with real-time matching, multi-language support, and pattern visualization.
+                </p>
+                <div className="space-y-2 text-sm text-gray-500">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Live pattern matching & highlighting
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Multi-language engines (JS, Python, Java, Go)
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Pattern explanation & visualization
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    100+ pattern library
+                  </div>
                 </div>
               </div>
-              <p className="text-gray-600 mb-4">
-                Test and debug regular expressions with real-time matching and detailed explanations.
-              </p>
-              <div className="space-y-2 text-sm text-gray-500">
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Real-time testing
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Pattern explanation
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Multiple engines
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Visual regex builder
-                </div>
-              </div>
-            </div>
+            </Link>
 
-            {/* JWT Decoder */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-purple-600 text-xl">🔐</span>
+            {/* JWT Decoder - AVAILABLE */}
+            <Link href="/tools/jwt-decoder" className="group">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-purple-300">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                    <span className="text-purple-600 text-xl">🔐</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">JWT Decoder/Encoder</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-green-600 font-medium">✅ Available</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">JWT Decoder</h3>
-                  <p className="text-sm text-gray-500">Free</p>
+                <p className="text-gray-600 mb-4">
+                  Decode, encode, and verify JWT tokens with comprehensive header and payload analysis.
+                </p>
+                <div className="space-y-2 text-sm text-gray-500">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Token decode/encode with validation
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Signature verification & creation
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Claims inspection & explanation
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Bulk processing & management
+                  </div>
                 </div>
               </div>
-              <p className="text-gray-600 mb-4">
-                Decode and inspect JWT tokens with detailed header and payload analysis.
-              </p>
-              <div className="space-y-2 text-sm text-gray-500">
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Token validation
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Header inspection
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Payload analysis
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Signature verification
-                </div>
-              </div>
-            </div>
+            </Link>
 
-            {/* Base64 Encoder/Decoder */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-orange-600 text-xl">🔢</span>
+            {/* Image Compressor - AVAILABLE */}
+            <Link href="/tools/image-compressor" className="group">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-pink-300">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mr-4">
+                    <span className="text-pink-600 text-xl">📸</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">Image Compressor</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-green-600 font-medium">✅ Available</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">Base64 Tools</h3>
-                  <p className="text-sm text-gray-500">Free</p>
+                <p className="text-gray-600 mb-4">
+                  Compress and optimize images with advanced algorithms, format conversion, and batch processing.
+                </p>
+                <div className="space-y-2 text-sm text-gray-500">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Advanced compression algorithms
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Format conversion (WebP, AVIF, JPEG, PNG)
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Batch processing & bulk download
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Real-time preview & statistics
+                  </div>
                 </div>
               </div>
-              <p className="text-gray-600 mb-4">
-                Encode and decode Base64 strings with support for various character encodings.
-              </p>
-              <div className="space-y-2 text-sm text-gray-500">
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Encode/Decode
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  File support
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  URL safe mode
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Multiple encodings
-                </div>
-              </div>
-            </div>
+            </Link>
 
-            {/* Image Compressor */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-pink-600 text-xl">🖼️</span>
+            {/* UUID Generator - AVAILABLE */}
+            <Link href="/tools/uuid-generator" className="group">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-indigo-300">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                    <span className="text-indigo-600 text-xl">🧬</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">UUID Generator</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-green-600 font-medium">✅ Available</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">Image Compressor</h3>
-                  <p className="text-sm text-gray-500">Free</p>
+                <p className="text-gray-600 mb-4">
+                  Generate unique identifiers in multiple versions and formats with advanced customization options.
+                </p>
+                <div className="space-y-2 text-sm text-gray-500">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    UUID v1, v3, v4, v5 generation
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Multiple formats (standard, compact, base64)
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Bulk generation & export
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Namespace management & history
+                  </div>
                 </div>
               </div>
-              <p className="text-gray-600 mb-4">
-                Compress images while maintaining quality for faster web performance.
-              </p>
-              <div className="space-y-2 text-sm text-gray-500">
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Multiple formats
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Quality control
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Batch processing
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Size optimization
-                </div>
-              </div>
-            </div>
+            </Link>
 
-            {/* UUID Generator */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-indigo-600 text-xl">🆔</span>
+            {/* XPath/CSS Selector Tester - AVAILABLE */}
+            <Link href="/tools/xpath-tester" className="group">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-teal-300">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mr-4">
+                    <span className="text-teal-600 text-xl">🧪</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">XPath/CSS Selector Tester</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-green-600 font-medium">✅ Available</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">UUID Generator</h3>
-                  <p className="text-sm text-gray-500">Free</p>
+                <p className="text-gray-600 mb-4">
+                  Test XPath and CSS selectors against HTML with real-time highlighting and comprehensive features.
+                </p>
+                <div className="space-y-2 text-sm text-gray-500">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Real-time selector testing & highlighting
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Complete element highlighting
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    File upload & URL testing
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Export results & selector management
+                  </div>
                 </div>
               </div>
-              <p className="text-gray-600 mb-4">
-                Generate UUIDs in various formats with customization options.
-              </p>
-              <div className="space-y-2 text-sm text-gray-500">
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Multiple versions
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Custom formats
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Bulk generation
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Copy to clipboard
-                </div>
-              </div>
-            </div>
+            </Link>
 
-            {/* Timestamp Converter */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+            {/* Timestamp Converter - COMING SOON */}
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 opacity-75">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
                   <span className="text-yellow-600 text-xl">⏰</span>
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900">Timestamp Converter</h3>
-                  <p className="text-sm text-gray-500">Free</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-orange-600 font-medium">🚧 Coming Soon</span>
+                  </div>
                 </div>
               </div>
               <p className="text-gray-600 mb-4">
-                Convert between timestamps, dates, and various time formats.
+                Convert between timestamps, dates, and various time formats with timezone support.
               </p>
               <div className="space-y-2 text-sm text-gray-500">
                 <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Unix timestamps
+                  <span className="text-gray-400 mr-2">○</span>
+                  Unix timestamp conversion
                 </div>
                 <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  ISO 8601 format
+                  <span className="text-gray-400 mr-2">○</span>
+                  ISO 8601 & custom formats
                 </div>
                 <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Multiple timezones
+                  <span className="text-gray-400 mr-2">○</span>
+                  Multiple timezone support
                 </div>
                 <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Relative time
+                  <span className="text-gray-400 mr-2">○</span>
+                  Relative time calculations
                 </div>
               </div>
             </div>
 
-            {/* Markdown Previewer */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+            {/* Base64 Encoder/Decoder - COMING SOON */}
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 opacity-75">
               <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-teal-600 text-xl">📝</span>
+                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                  <span className="text-orange-600 text-xl">🔄</span>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900">Markdown Previewer</h3>
-                  <p className="text-sm text-gray-500">Free</p>
+                  <h3 className="text-xl font-semibold text-gray-900">Base64 Encoder/Decoder</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-orange-600 font-medium">🚧 Coming Soon</span>
+                  </div>
                 </div>
               </div>
               <p className="text-gray-600 mb-4">
-                Write and preview Markdown with real-time rendering and syntax highlighting.
+                Encode and decode Base64 strings and files with support for various character encodings.
               </p>
               <div className="space-y-2 text-sm text-gray-500">
                 <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Live preview
+                  <span className="text-gray-400 mr-2">○</span>
+                  Text & file encoding/decoding
                 </div>
                 <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Syntax highlighting
+                  <span className="text-gray-400 mr-2">○</span>
+                  URL-safe Base64 encoding
                 </div>
                 <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Export options
+                  <span className="text-gray-400 mr-2">○</span>
+                  Batch processing support
                 </div>
                 <div className="flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  Custom themes
+                  <span className="text-gray-400 mr-2">○</span>
+                  Multiple encoding formats
                 </div>
               </div>
             </div>
@@ -415,12 +449,14 @@ export default async function HomePage() {
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-4">Tools</h3>
+              <h3 className="text-lg font-semibold mb-4">Available Tools</h3>
               <ul className="space-y-2 text-gray-400">
                 <li><Link href="/tools/json-formatter" className="hover:text-white transition-colors">JSON Formatter</Link></li>
                 <li><Link href="/tools/regex-tester" className="hover:text-white transition-colors">Regex Tester</Link></li>
                 <li><Link href="/tools/jwt-decoder" className="hover:text-white transition-colors">JWT Decoder</Link></li>
-                <li><Link href="/tools/base64" className="hover:text-white transition-colors">Base64 Tools</Link></li>
+                <li><Link href="/tools/image-compressor" className="hover:text-white transition-colors">Image Compressor</Link></li>
+                <li><Link href="/tools/uuid-generator" className="hover:text-white transition-colors">UUID Generator</Link></li>
+                <li><Link href="/tools/xpath-tester" className="hover:text-white transition-colors">XPath/CSS Tester</Link></li>
               </ul>
             </div>
             

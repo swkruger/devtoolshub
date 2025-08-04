@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { JwtSnippetsService } from '@/lib/services/jwt-snippets';
 import { authServer } from '@/lib/auth';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 const service = new JwtSnippetsService();
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {

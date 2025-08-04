@@ -137,33 +137,85 @@ export const toolsConfig: Record<string, ToolConfig> = {
   'uuid-generator': {
     id: 'uuid-generator',
     name: 'UUID Generator',
-    description: 'Generate unique identifiers in various formats',
+    description: 'Generate unique identifiers in various formats with advanced customization. The best UUID generator tool for developers.',
     shortDescription: 'Generate unique identifiers',
     icon: Hash,
     emoji: '🧬',
     isPremium: false,
     category: 'utility',
-    tags: ['uuid', 'unique', 'identifier', 'generate'],
+    tags: ['uuid', 'unique', 'identifier', 'generate', 'guid', 'random'],
     path: '/tools/uuid-generator',
     features: {
-      free: ['Generate UUID v4', 'Copy to clipboard', 'Multiple formats'],
-      premium: ['Bulk generation', 'Export to file', 'Custom formats']
+      free: [
+        'Generate UUID v4 (random)',
+        'Generate UUID v1 (timestamp-based)',
+        'Generate UUID v3/v5 (namespace-based)',
+        'Multiple output formats (standard, compact, base64)',
+        'Copy to clipboard functionality',
+        'Real-time generation',
+        'Format validation',
+        'Help panel with examples and shortcuts',
+        'Basic customization options',
+        'Single UUID generation'
+      ],
+      premium: [
+        'Bulk UUID generation (1-1000)',
+        'Custom UUID formats and patterns',
+        'Namespace management (save/load custom namespaces)',
+        'Advanced validation and verification',
+        'Export to multiple formats (JSON, CSV, TXT)',
+        'UUID collision detection',
+        'Performance metrics and statistics',
+        'Custom seed generation',
+        'UUID history and favorites',
+        'Batch processing with progress tracking',
+        'Advanced formatting options',
+        'UUID parsing and validation',
+        'Premium keyboard shortcuts',
+        'Database integration for saved UUIDs'
+      ]
     }
   },
   'xpath-tester': {
     id: 'xpath-tester',
-    name: 'XPath Tester',
-    description: 'Test XPath and CSS selectors against HTML/XML documents',
-    shortDescription: 'Test XPath and CSS selectors',
+    name: 'XPath/CSS Selector Tester',
+    description: 'Test XPath and CSS selectors against HTML with real-time highlighting, file upload, and advanced features. The best selector testing tool for developers.',
+    shortDescription: 'Test XPath and CSS selectors against HTML',
     icon: Code,
     emoji: '🧪',
     isPremium: false,
     category: 'web',
-    tags: ['xpath', 'css', 'selector', 'html', 'xml'],
+    tags: ['xpath', 'css', 'selector', 'html', 'xml', 'web-scraping', 'dom'],
     path: '/tools/xpath-tester',
     features: {
-      free: ['Basic XPath testing', 'CSS selector testing', 'Sample HTML input'],
-      premium: ['Upload HTML files', 'URL fetching & parsing', 'Advanced XPath functions', 'Result export']
+      free: [
+        'XPath selector testing with real-time validation',
+        'CSS selector testing with comprehensive browser support',
+        'HTML input area with syntax highlighting',
+        'Real-time match highlighting and result display',
+        'Copy matches to clipboard functionality',
+        'Sample HTML and selector examples',
+        'Match count and details display',
+        'Element hierarchy and attributes display',
+        'Help panel with examples, shortcuts, tips',
+        'Basic selector validation'
+      ],
+      premium: [
+        'Upload HTML files with drag & drop support',
+        'Test selectors against live URLs',
+        'XPath 2.0/3.0 advanced functions',
+        'CSS pseudo-selectors and combinators',
+        'Selector validation and optimization',
+        'Performance metrics and timing',
+        'Bulk testing multiple selectors',
+        'Export results as CSV/JSON',
+        'Save and manage custom selectors',
+        'Categorized selector examples',
+        'Import/export selector collections',
+        'Advanced match analytics',
+        'Premium keyboard shortcuts',
+        'File validation and error handling'
+      ]
     }
   },
   'timestamp-converter': {
