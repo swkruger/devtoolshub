@@ -71,7 +71,7 @@ export default async function HomePage() {
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Streamline your development workflow with our comprehensive suite of essential tools. 
-            6 powerful tools available now, with more coming soon. Everything you need to code faster and better.
+            7 powerful tools available now, with more coming soon. Everything you need to code faster and better.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
@@ -331,41 +331,43 @@ export default async function HomePage() {
               </div>
             </Link>
 
-            {/* Timestamp Converter - COMING SOON */}
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 opacity-75">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-yellow-600 text-xl">⏰</span>
+            {/* Timestamp Converter - AVAILABLE */}
+            <Link href="/tools/timestamp-converter" className="group">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-yellow-300">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                    <span className="text-yellow-600 text-xl">⏰</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">Timestamp Converter</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-green-600 font-medium">✅ Available</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">Timestamp Converter</h3>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-orange-600 font-medium">🚧 Coming Soon</span>
+                <p className="text-gray-600 mb-4">
+                  Convert between timestamps, dates, and various time formats with timezone support and database-backed preferences.
+                </p>
+                <div className="space-y-2 text-sm text-gray-500">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Unix ↔ date bidirectional conversion
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Multiple timezones with DST support
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Batch processing & timezone comparison
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Saved timezone preferences (Premium)
                   </div>
                 </div>
               </div>
-              <p className="text-gray-600 mb-4">
-                Convert between timestamps, dates, and various time formats with timezone support.
-              </p>
-              <div className="space-y-2 text-sm text-gray-500">
-                <div className="flex items-center">
-                  <span className="text-gray-400 mr-2">○</span>
-                  Unix timestamp conversion
-                </div>
-                <div className="flex items-center">
-                  <span className="text-gray-400 mr-2">○</span>
-                  ISO 8601 & custom formats
-                </div>
-                <div className="flex items-center">
-                  <span className="text-gray-400 mr-2">○</span>
-                  Multiple timezone support
-                </div>
-                <div className="flex items-center">
-                  <span className="text-gray-400 mr-2">○</span>
-                  Relative time calculations
-                </div>
-              </div>
-            </div>
+            </Link>
 
             {/* Base64 Encoder/Decoder - COMING SOON */}
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 opacity-75">

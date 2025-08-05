@@ -221,17 +221,41 @@ export const toolsConfig: Record<string, ToolConfig> = {
   'timestamp-converter': {
     id: 'timestamp-converter',
     name: 'Timestamp Converter',
-    description: 'Convert between different timestamp formats and timezones',
-    shortDescription: 'Convert timestamp formats',
+    description: 'Convert between Unix timestamps and human-readable dates with timezone support. The best timestamp conversion tool for developers.',
+    shortDescription: 'Convert timestamps and dates with timezone support',
     icon: Clock,
     emoji: '⏰',
     isPremium: false,
     category: 'utility',
-    tags: ['timestamp', 'epoch', 'convert', 'timezone'],
+    tags: ['timestamp', 'unix', 'date', 'time', 'timezone', 'epoch', 'conversion'],
     path: '/tools/timestamp-converter',
     features: {
-      free: ['Unix timestamp conversion', 'Human readable dates', 'Timezone conversion'],
-      premium: ['Batch conversion', 'Multiple formats', 'Date calculations']
+      free: [
+        'Unix timestamp to date conversion',
+        'Date to Unix timestamp conversion',
+        'Current timestamp display with auto-update',
+        'Basic timezone support (UTC, Local, common zones)',
+        'ISO 8601 format support',
+        'Millisecond precision handling',
+        'Copy results to clipboard',
+        'Input validation and error handling',
+        'Live bidirectional conversion',
+        'Help panel with examples and shortcuts'
+      ],
+      premium: [
+        'Batch timestamp conversion from CSV/text',
+        'Custom date format patterns (strftime, moment.js)',
+        'Timezone comparison view (multiple zones)',
+        'Historical timezone data with DST handling',
+        'CSV/JSON import and export',
+        'Timestamp arithmetic (add/subtract intervals)',
+        'Relative time calculations ("2 hours ago")',
+        'Multiple timestamp formats support',
+        'Advanced validation and edge case handling',
+        'Premium keyboard shortcuts',
+        'File upload for batch processing',
+        'Performance metrics and timing'
+      ]
     }
   },
   'base64-encoder': {

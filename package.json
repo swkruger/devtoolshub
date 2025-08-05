@@ -42,6 +42,8 @@
     "ace-builds": "^1.43.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "js-yaml": "^4.1.0",
     "json2csv": "^6.0.0-alpha.2",
     "jszip": "^3.10.1",

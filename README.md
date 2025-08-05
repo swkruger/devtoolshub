@@ -25,7 +25,7 @@ It simplifies workflows by combining popular developer web tools into one extend
 
 ## 🚀 **DevToolsHub: Production-Ready Developer Tools Platform**
 
-**6 Fully-Featured Tools Available Now** • **Real-time Processing** • **Premium Features** • **Mobile-First Design**
+**7 Production-Ready Tools Available Now** • **Real-time Processing** • **Premium Features** • **Mobile-First Design**
 
 ### ✨ What Makes DevToolsHub Special
 
@@ -216,6 +216,43 @@ The Image Compressor is a comprehensive tool for optimizing images with advanced
 - **File Validation**: Comprehensive file type and size validation
 - **Error Handling**: Graceful error recovery with user-friendly messages
 
+#### ⏰ Timestamp Converter Tool
+
+The Timestamp Converter is a comprehensive tool for working with timestamps and dates with database-backed timezone preferences:
+
+**Free Features:**
+- Unix timestamp to human-readable date conversion
+- Date to Unix timestamp conversion
+- Real-time bidirectional conversion with active field tracking
+- Current timestamp display with auto-update
+- Basic timezone support (UTC, Local, common zones)
+- Multiple output formats (ISO 8601, locale, custom patterns)
+- Millisecond precision handling
+- Individual copy buttons for all formats
+- Input validation and error handling
+- Help panel with examples and shortcuts
+
+**Premium Features:**
+- **Database-backed timezone preferences**: Save and sync timezone configurations across devices
+- **Enhanced timezone comparison**: Unix and ISO format display with separate copy buttons
+- **Batch timestamp conversion**: Process up to 1000 timestamps from CSV/text
+- **Persistent timezone settings**: Automatically load saved timezone preferences
+- **Custom date format patterns**: strftime and moment.js style patterns
+- **Advanced timezone features**: Default timezone protection, display order management
+- **CSV/JSON export**: Export conversion results and timezone comparisons
+- **File upload support**: Batch processing from uploaded files
+- **Premium keyboard shortcuts**: Advanced hotkeys for power users
+
+**Key Features:**
+- **Enhanced UI**: Streamlined 3-tab interface (Single, Batch, Current & Compare)
+- **Database integration**: Supabase-backed timezone preference storage for premium users
+- **Real-time conversion**: Instant bidirectional timestamp parsing with format change detection
+- **Multiple copy options**: Individual copy buttons for Unix timestamps, ISO format, and formatted time
+- **Timezone awareness**: Support for major world timezones with DST handling and database persistence
+- **Combined functionality**: Current timestamp and timezone comparison in unified interface
+- **Premium gating**: Visual indicators for premium features with upgrade prompts
+- **Accessibility**: Full keyboard navigation and screen reader support
+
 #### Current Tools:
 
 | Tool | Status | Description |
@@ -226,16 +263,19 @@ The Image Compressor is a comprehensive tool for optimizing images with advanced
 | 📸 Image Compressor | ✅ Complete | Compress & optimize images with batch processing & format conversion |
 | 🧬 UUID Generator | ✅ Complete | Generate unique identifiers in various formats with namespace management |
 | 🧪 XPath/CSS Selector Tester | ✅ Complete | Test XPath & CSS selectors with real-time element highlighting |
-| ⏰ Timestamp Converter | 🚧 Coming Soon | Convert timestamp formats with timezone support |
+| ⏰ Timestamp Converter | ✅ Complete | Convert timestamps & dates with timezone support & batch processing |
 | 🔄 Base64 Encoder | 🚧 Coming Soon | Encode/decode Base64 data with file support |
 
 ### 🏆 Recent Achievements (December 2024)
-- ✅ **6 Complete Tools**: All core developer tools fully implemented and tested
+- ✅ **7 Complete Tools**: All core developer tools fully implemented and tested
+- ✅ **Enhanced Timestamp Converter**: Database-backed timezone preferences, combined Current & Compare tabs, Unix/ISO copy buttons
+- ✅ **Streamlined UI**: 3-tab interface (Single, Batch, Current & Compare) for better user experience  
+- ✅ **Premium Database Integration**: User timezone preferences stored in Supabase with full CRUD operations
 - ✅ **Real-time Highlighting**: Advanced element highlighting in XPath/CSS Selector Tester
 - ✅ **Multi-language Regex**: Support for JavaScript, Python, Java, Go regex engines
 - ✅ **Advanced Image Processing**: WebP/AVIF conversion with batch processing
 - ✅ **Production Ready**: Successful build pipeline with zero blocking errors
-- ✅ **Professional Landing Page**: Updated showcase with proper tool status indicators
+- ✅ **Updated Landing Page**: Accurate tool status and enhanced descriptions
 
 ### 🎨 UI/UX Features
 - **Responsive Design**: Mobile-first with collapsible sidebar
