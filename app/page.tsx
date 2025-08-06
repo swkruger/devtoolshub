@@ -71,7 +71,7 @@ export default async function HomePage() {
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Streamline your development workflow with our comprehensive suite of essential tools. 
-            7 powerful tools available now, with more coming soon. Everything you need to code faster and better.
+            8 powerful tools available now, with more coming soon. Everything you need to code faster and better.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
@@ -369,41 +369,43 @@ export default async function HomePage() {
               </div>
             </Link>
 
-            {/* Base64 Encoder/Decoder - COMING SOON */}
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 opacity-75">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-orange-600 text-xl">🔄</span>
+            {/* Base64 Encoder/Decoder - AVAILABLE */}
+            <Link href="/tools/base64-encoder" className="group">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-orange-300">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                    <span className="text-orange-600 text-xl">🔄</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">Base64 Encoder/Decoder</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-green-600 font-medium">✅ Available</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">Base64 Encoder/Decoder</h3>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-orange-600 font-medium">🚧 Coming Soon</span>
+                <p className="text-gray-600 mb-4">
+                  Encode and decode Base64 strings and files with advanced options, file support, and premium features.
+                </p>
+                <div className="space-y-2 text-sm text-gray-500">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Text & file encoding/decoding
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    URL-safe Base64 & custom options
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Drag & drop file upload
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">✓</span>
+                    Download results & batch processing
                   </div>
                 </div>
               </div>
-              <p className="text-gray-600 mb-4">
-                Encode and decode Base64 strings and files with support for various character encodings.
-              </p>
-              <div className="space-y-2 text-sm text-gray-500">
-                <div className="flex items-center">
-                  <span className="text-gray-400 mr-2">○</span>
-                  Text & file encoding/decoding
-                </div>
-                <div className="flex items-center">
-                  <span className="text-gray-400 mr-2">○</span>
-                  URL-safe Base64 encoding
-                </div>
-                <div className="flex items-center">
-                  <span className="text-gray-400 mr-2">○</span>
-                  Batch processing support
-                </div>
-                <div className="flex items-center">
-                  <span className="text-gray-400 mr-2">○</span>
-                  Multiple encoding formats
-                </div>
-              </div>
-            </div>
+            </Link>
           </div>
         </div>
       </section>

@@ -261,17 +261,37 @@ export const toolsConfig: Record<string, ToolConfig> = {
   'base64-encoder': {
     id: 'base64-encoder',
     name: 'Base64 Encoder/Decoder',
-    description: 'Encode and decode Base64 strings and files',
-    shortDescription: 'Encode/decode Base64 data',
+    description: 'Encode and decode Base64 strings and files with advanced character encoding, batch processing, and conversion history',
+    shortDescription: 'Base64 encoding/decoding with file support & premium features',
     icon: Shuffle,
     emoji: '🔄',
     isPremium: false,
     category: 'text',
-    tags: ['base64', 'encode', 'decode', 'convert'],
+    tags: ['base64', 'encode', 'decode', 'convert', 'files', 'images', 'batch', 'history', 'charset', 'unicode', 'ascii'],
     path: '/tools/base64-encoder',
     features: {
-      free: ['Text encoding/decoding', 'Copy to clipboard', 'URL safe encoding'],
-      premium: ['File encoding', 'Batch processing', 'Multiple encoding formats']
+      free: [
+        'Text encoding and decoding',
+        'File upload with drag & drop',
+        'Image preview and data URL generation', 
+        'Multiple output formats (Base64, Data URL)',
+        'Copy and download results',
+        'Real-time conversion with debouncing',
+        'Input validation and error handling',
+        'Keyboard shortcuts and accessibility'
+      ],
+      premium: [
+        'Batch processing up to 100 items',
+        'Character set support (UTF-8, ASCII, ISO-8859, Windows-1252, CP encodings)',
+        'Newline separator handling (LF, CRLF, CR)',
+        'Conversion history with search & filter',
+        'Advanced encoding options (character sets, newline separators, URL-safe, padding, line length)',
+        'Progress tracking for batch operations',
+        'CSV/JSON export of batch results',
+        'History management and reuse',
+        'Enhanced file format support',
+        'Premium keyboard shortcuts'
+      ]
     }
   }
 }
