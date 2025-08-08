@@ -5,15 +5,10 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { getAllTools } from "@/lib/tools"
 import { 
   Home, 
   Wrench, 
-  FileJson, 
-  Search, 
-  Shield, 
-  Image, 
-  Hash, 
-  Code,
   Crown,
   Settings
 } from "lucide-react"
@@ -31,44 +26,13 @@ const navigation = [
   },
 ]
 
-const tools = [
-  {
-    name: "JSON Formatter",
-    href: "/tools/json-formatter",
-    icon: FileJson,
-    isPremium: false,
-  },
-  {
-    name: "Regex Tester",
-    href: "/tools/regex-tester",
-    icon: Search,
-    isPremium: false,
-  },
-  {
-    name: "JWT Decoder",
-    href: "/tools/jwt-decoder",
-    icon: Shield,
-    isPremium: false,
-  },
-  {
-    name: "Image Compressor",
-    href: "/tools/image-compressor",
-    icon: Image,
-    isPremium: false,
-  },
-  {
-    name: "UUID Generator",
-    href: "/tools/uuid-generator",
-    icon: Hash,
-    isPremium: false,
-  },
-  {
-    name: "XPath Tester",
-    href: "/tools/xpath-tester",
-    icon: Code,
-    isPremium: false,
-  },
-]
+// Get all tools dynamically from toolsConfig
+const tools = getAllTools().map(tool => ({
+  name: tool.name,
+  href: tool.path,
+  icon: tool.icon,
+  isPremium: tool.isPremium,
+}))
 
 interface SidebarProps {
   className?: string

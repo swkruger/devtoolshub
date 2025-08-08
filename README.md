@@ -25,7 +25,7 @@ It simplifies workflows by combining popular developer web tools into one extend
 
 ## 🚀 **DevToolsHub: Production-Ready Developer Tools Platform**
 
-**7 Production-Ready Tools Available Now** • **Real-time Processing** • **Premium Features** • **Mobile-First Design**
+**9 Production-Ready Tools Available Now** • **Real-time Processing** • **Premium Features** • **Mobile-First Design**
 
 ### ✨ What Makes DevToolsHub Special
 
@@ -64,6 +64,13 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 # App Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# OpenWeatherMap API (for World Clock weather features)
+# Get your free API key at: https://openweathermap.org/api
+OPENWEATHER_API_KEY=your_openweathermap_api_key
+
+# Email Configuration
+RESEND_API_KEY=your_resend_api_key
 ```
 
 ### 3. Database Setup
@@ -257,6 +264,7 @@ The Timestamp Converter is a comprehensive tool for working with timestamps and 
 
 | Tool | Status | Description |
 |------|---------|-------------|
+| 🌍 World Clock & Time Zones | ✅ Complete | Compare timezones with meeting planner, weather data & date picker |
 | 📄 JSON Formatter | ✅ Complete | Format, validate & beautify JSON with advanced features |
 | 🔍 Regex Tester | ✅ Complete | Test regex patterns with multi-language support & visualization |
 | 🔐 JWT Decoder/Encoder | ✅ Complete | Decode, encode & verify JSON Web Tokens with bulk processing |
@@ -266,9 +274,10 @@ The Timestamp Converter is a comprehensive tool for working with timestamps and 
 | ⏰ Timestamp Converter | ✅ Complete | Convert timestamps & dates with timezone support & batch processing |
 | 🔄 Base64 Encoder | ✅ Complete | Encode/decode Base64 data with file support & premium features |
 
-### 🏆 Recent Achievements (December 2024)
-- ✅ **8 Complete Tools**: All core developer tools fully implemented and tested
-- ✅ **New Base64 Encoder/Decoder**: Text & file encoding with URL-safe options, drag & drop, premium features
+### 🏆 Recent Achievements (January 2025)
+- ✅ **9 Complete Tools**: All core developer tools fully implemented and tested
+- ✅ **NEW World Clock & Time Zone Converter**: Compare timezones with meeting planner, live weather data, date picker for any past/future dates, city persistence, business hours visualization, and advanced timezone navigation
+- ✅ **Enhanced Base64 Encoder/Decoder**: Text & file encoding with URL-safe options, drag & drop, premium features
 - ✅ **Enhanced Timestamp Converter**: Database-backed timezone preferences, combined Current & Compare tabs, Unix/ISO copy buttons
 - ✅ **Streamlined UI**: 3-tab interface (Single, Batch, Current & Compare) for better user experience  
 - ✅ **Premium Database Integration**: User timezone preferences stored in Supabase with full CRUD operations
@@ -836,6 +845,7 @@ npm run db:generate  # Generate TypeScript types from Supabase
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key | ✅ |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key | ✅ |
 | `NEXT_PUBLIC_APP_URL` | Application base URL | ✅ |
+| `OPENWEATHER_API_KEY` | OpenWeatherMap API key for weather data | ⚠️ |
 | `RESEND_API_KEY` | Resend email service API key | ✅ |
 | `FROM_EMAIL` | Verified sender email address | ⚠️ |
 | `GOOGLE_SITE_VERIFICATION` | Google Search Console verification | ❌ |
