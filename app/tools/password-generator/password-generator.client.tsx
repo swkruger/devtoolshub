@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Copy, Crown, Eye, EyeOff, RotateCcw } from 'lucide-react'
@@ -120,6 +121,7 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
 
   // Key-like state
   const [keyType, setKeyType] = useState<KeyLikeType>('hex')
+  const [pemText, setPemText] = useState<string>('')
 
   // Persist settings
   useEffect(() => { localStorage.setItem('pg_length', String(length)) }, [length])
@@ -148,6 +150,7 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
       } else if (mode === 'keylike') {
         const val = generateKeyLike(keyType)
         setOutput(val)
+        if (keyType === 'pem') setPemText(val)
       }
       setTimeout(() => outputRef.current?.focus(), 0)
     } catch (e: any) {
@@ -290,14 +293,29 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
 
             <Disclaimer />
 
-            <OutputSection
-              masked={masked}
-              setMasked={setMasked}
-              value={output}
-              onCopy={copy}
-              onRegenerate={generate}
-              disabled={premiumDisabled}
-            />
+            {keyType === 'pem' ? (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">PEM-like block</label>
+                <Textarea
+                  aria-label="PEM-like block"
+                  value={pemText}
+                  onChange={(e) => setPemText(e.target.value)}
+                  className="font-mono min-h-[180px]"
+                  disabled={premiumDisabled}
+                />
+              </div>
+            ) : null}
+
+            {keyType !== 'pem' && (
+              <OutputSection
+                masked={masked}
+                setMasked={setMasked}
+                value={output}
+                onCopy={copy}
+                onRegenerate={generate}
+                disabled={premiumDisabled}
+              />
+            )}
           </CardContent>
         </Card>
       </TabsContent>
