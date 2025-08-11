@@ -84,6 +84,9 @@ function useDebounce(value: any, delay: number) {
 
 export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
   const { toast } = useToast()
+  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
+  const showError = (title: string, description?: string) => toast({ type: 'error', title, description })
+  const showWarning = (title: string, description?: string) => toast({ type: 'warning', title, description })
   const [pattern, setPattern] = useState('')
   const [testText, setTestText] = useState('')
   const [matches, setMatches] = useState<RegexMatch[]>([])
@@ -374,11 +377,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
   const testRegex = useCallback((isLive = false) => {
     if (!pattern) {
       if (!isLive) {
-        toast({
-          type: 'warning',
-          title: 'No pattern',
-          description: 'Please enter a regex pattern to test'
-        })
+        showWarning('No pattern', 'Please enter a regex pattern to test')
       }
       setMatches([])
       setError(null)
@@ -405,11 +404,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
         highlightMatches(result.matches)
         
         if (!isLive) {
-          toast({
-            type: 'success',
-            title: 'Pattern tested',
-            description: `Found ${result.matches.length} matches in ${result.executionTime?.toFixed(2)}ms`
-          })
+          showSuccess('Pattern tested', `Found ${result.matches.length} matches in ${result.executionTime?.toFixed(2)}ms`)
         }
       } else {
         setMatches([])
@@ -1199,7 +1194,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
         <CardContent className="space-y-4">
           {/* Pattern Input with Language Selector */}
           <div>
-            <label className="text-sm font-medium mb-2 block">Regular Expression Pattern</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Regular Expression Pattern</label>
             <div className="flex gap-3">
               <div className="flex-1">
                 <Input
@@ -1210,7 +1205,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                 />
               </div>
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-sm text-muted-foreground whitespace-nowrap">Language:</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Language:</span>
                 <div className="relative min-w-0">
                   <select
                     value={language}
@@ -1230,7 +1225,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
           {/* Flags */}
           <div>
-            <label className="text-sm font-medium mb-2 block">Flags:</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Flags:</label>
             <div className="flex flex-wrap gap-3">
               {availableFlags.map(({ flag, description }) => (
                 <label key={flag} className="flex items-center gap-2 cursor-pointer">
@@ -1250,7 +1245,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
           {/* Test Text Editor */}
           <div>
-            <label className="text-sm font-medium mb-2 block">Test Text</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Test Text</label>
             <div className="border rounded-lg overflow-hidden">
               <AceEditor
                 mode="text"

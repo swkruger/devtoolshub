@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { format, fromUnixTime, getUnixTime, parseISO, isValid } from "date-fns"
 import { formatInTimeZone } from "date-fns-tz"
-import { Clock, Copy, RotateCcw, Play, Pause, HelpCircle } from "lucide-react"
+import { Clock, Copy, RotateCcw, Play, Pause, HelpCircle, Crown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -55,6 +55,8 @@ const DATE_FORMATS = [
 
 export function TimestampConverterClient({ isPremiumUser, userId }: TimestampConverterClientProps) {
   const { toast } = useToast()
+  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
+  const showError = (title: string, description?: string) => toast({ type: 'error', title, description })
   const [unixInput, setUnixInput] = useState("")
   const [dateInput, setDateInput] = useState("")
   const [selectedTimezone, setSelectedTimezone] = useState("UTC")
@@ -315,17 +317,9 @@ export function TimestampConverterClient({ isPremiumUser, userId }: TimestampCon
   const copyToClipboard = async (text: string, description: string) => {
     try {
       await navigator.clipboard.writeText(text)
-      toast({
-        type: "success",
-        title: "Copied!",
-        description: `${description} copied to clipboard`,
-      })
+      showSuccess('Copied!', `${description} copied to clipboard`)
     } catch (error) {
-      toast({
-        type: "error",
-        title: "Copy failed",
-        description: "Unable to copy to clipboard"
-      })
+      showError('Copy failed', 'Unable to copy to clipboard')
     }
   }
 
@@ -403,10 +397,10 @@ export function TimestampConverterClient({ isPremiumUser, userId }: TimestampCon
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="single">Single</TabsTrigger>
           <TabsTrigger value="batch" disabled={!isPremiumUser}>
-            Batch {!isPremiumUser && "👑"}
+            Batch {!isPremiumUser && <Crown className="w-3 h-3 ml-1" />}
           </TabsTrigger>
           <TabsTrigger value="compare" disabled={!isPremiumUser}>
-            Current & Compare {!isPremiumUser && "👑"}
+            Current & Compare {!isPremiumUser && <Crown className="w-3 h-3 ml-1" />}
           </TabsTrigger>
         </TabsList>
 
@@ -419,7 +413,7 @@ export function TimestampConverterClient({ isPremiumUser, userId }: TimestampCon
               {/* Input Section */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="unix-input">Unix Timestamp</Label>
+                  <Label htmlFor="unix-input" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Unix Timestamp</Label>
                   <Input
                     id="unix-input"
                     placeholder="1704110400 or 1704110400000"
@@ -431,7 +425,7 @@ export function TimestampConverterClient({ isPremiumUser, userId }: TimestampCon
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="date-input">Human-Readable Date</Label>
+                  <Label htmlFor="date-input" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Human-Readable Date</Label>
                   <Input
                     id="date-input"
                     placeholder="2024-01-01T12:00:00Z or January 1, 2024"
@@ -447,7 +441,7 @@ export function TimestampConverterClient({ isPremiumUser, userId }: TimestampCon
               {/* Configuration Section */}
               <div className="flex gap-4">
                 <div className="flex-1">
-                  <Label htmlFor="timezone">Timezone</Label>
+                  <Label htmlFor="timezone" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Timezone</Label>
                   <Select value={selectedTimezone} onValueChange={setSelectedTimezone}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select timezone" />
@@ -462,7 +456,7 @@ export function TimestampConverterClient({ isPremiumUser, userId }: TimestampCon
                   </Select>
                 </div>
                 <div className="flex-1">
-                  <Label htmlFor="format">Output Format</Label>
+                  <Label htmlFor="format" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Output Format</Label>
                   <Select value={selectedFormat} onValueChange={setSelectedFormat}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select format" />

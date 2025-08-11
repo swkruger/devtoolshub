@@ -118,7 +118,7 @@ export default function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-blue-500" />
+            <HelpCircle className="w-4 h-4 text-blue-500" />
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
               UUID Generator Help
             </h2>
@@ -182,7 +182,7 @@ export default function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
             {EXAMPLES.map((example, index) => (
               <Card key={index} className="p-4">
                 <div className="flex items-start gap-3">
-                  <Hash className="w-5 h-5 text-blue-500 mt-1" />
+                  <Hash className="w-4 h-4 text-blue-500 mt-1" />
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
                       {example.title}

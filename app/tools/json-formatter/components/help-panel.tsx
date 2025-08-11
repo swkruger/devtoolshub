@@ -127,7 +127,7 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
 
   const tips = [
     {
-      icon: <Lightbulb className="w-5 h-5 text-yellow-500" />,
+      icon: <Lightbulb className="w-4 h-4 text-yellow-500" />,
       title: 'Validation Tips',
       items: [
         'Use double quotes for strings, not single quotes',
@@ -137,7 +137,7 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
       ]
     },
     {
-      icon: <Wrench className="w-5 h-5 text-blue-500" />,
+      icon: <Wrench className="w-4 h-4 text-blue-500" />,
       title: 'Repair Function',
       items: [
         'Automatically fixes trailing commas',
@@ -147,7 +147,7 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
       ]
     },
     {
-      icon: <Code className="w-5 h-5 text-green-500" />,
+      icon: <Code className="w-4 h-4 text-green-500" />,
       title: 'Performance Tips',
       items: [
         'Large files (50KB+) may be slower to validate',
@@ -157,7 +157,7 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
       ]
     },
     {
-      icon: <Crown className="w-5 h-5 text-amber-500" />,
+      icon: <Crown className="w-4 h-4 text-amber-500" />,
       title: 'Premium Features',
       items: [
         'Upload and download JSON files',
@@ -202,7 +202,7 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-blue-600" />
+              <HelpCircle className="w-4 h-4 text-blue-600" />
               <CardTitle>JSON Formatter Help</CardTitle>
             </div>
             <Button 

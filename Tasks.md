@@ -27,6 +27,63 @@ Full implementation with date picker for any past/future dates, live weather dat
 
 ---
 
+## 🎨 UI Consistency Standardization Plan (2025-08-08)
+
+Goal: Apply the standards in `UI_CONSISTENCY_REVIEW_PROMPT.md` across all 9 tools without changing functionality. Use compact headers, consistent cards/grids, standardized buttons, tabs, help panels, accessibility, and premium gating with crown indicator for free users [[memory:2772980]].
+
+### 📦 Phase 1: Foundation (High Priority)
+- [ ] Update shared `components/ui/` where needed to ensure consistent button sizes/variants, icon sizes, card paddings (no behavior change)
+- [x] Create a reusable `ToolPageHeader` component (icon, title, description) to use in every `page.tsx`
+- [x] Create a small `PremiumOverview` card component shown only to free users
+- [x] Verify premium gating wrapper uses the standardized disabled-with-crown pattern [[memory:2772980]]
+- [x] Standardize toast API usage and types across tools
+
+### 🎛 Phase 2: Layout (Medium Priority)
+- [x] Ensure all tool pages use `container mx-auto px-4 py-4 max-w-7xl`
+- [x] Normalize control panels to `Card > CardContent` with grid `grid grid-cols-1 md:grid-cols-2 gap-4`
+- [x] Standardize button toolbars to `flex flex-wrap gap-2` with consistent sizing
+- [x] Enforce icon sizing `w-3 h-3` or `w-4 h-4` consistently
+- [x] Standardize tab structure (max 3-4 tabs) and premium crowns on premium tabs
+
+### 📚 Phase 3: Documentation & Help (Medium Priority)
+- [x] Ensure each tool has a 4-tab Help Panel: Getting Started, Features, Shortcuts, Accessibility
+- [x] Align keyboard shortcuts categories and display across tools
+- [x] Verify accessibility notes and examples align with standards
+
+### ✨ Phase 4: Polish (Low Priority)
+- [x] Unify loading states (spinner + message) and disabled states
+- [x] Align error/validation styles and placement
+- [x] Audit color usage and typography scale for consistency
+- [x] Align tooltip implementation and content style
+
+### 🔍 Per-Tool Audit & Edits (Apply standards; preserve behavior)
+- [x] World Clock (`/tools/world-clock`): Header, buttons, tabs, help panel, premium crowns
+- [x] JSON Formatter (`/tools/json-formatter`): Header, control card/grid, toolbar, tabs, help panel
+- [x] Regex Tester (`/tools/regex-tester`): Header, toolbar placement, language selector alignment, tabs, help panel
+- [x] JWT Decoder/Encoder (`/tools/jwt-decoder`): Header, action groups, premium gating for signature verify/create/bulk
+- [x] Image Compressor (`/tools/image-compressor`): Header, control cards, batch/premium controls gating
+- [x] UUID Generator (`/tools/uuid-generator`): Header, toolbar, tabs (Single/Batch/History), help panel
+- [x] XPath/CSS Selector (`/tools/xpath-tester`): Header, control layout, tabs, help panel consistency
+- [x] Timestamp Converter (`/tools/timestamp-converter`): Header, controls, 3-tab structure, premium crowns
+- [x] Base64 Encoder/Decoder (`/tools/base64-encoder`): Header, tabs, history/batch gating, help panel
+
+### 🧪 Testing & Validation
+- [x] Build check: `npm run build` clean (no TS errors)
+- [ ] Cross-tool visual QA: mobile/tablet/desktop + dark mode
+- [ ] Verify keyboard shortcuts and copy-to-clipboard behaviors
+- [ ] Confirm premium gating visuals work correctly for free vs premium [[memory:2772980]]
+
+### 🧾 Documentation
+- [x] Add brief “UI Consistency Standards” section to `README.md` referencing `UI_CONSISTENCY_REVIEW_PROMPT.md`
+- [x] Note any shared component additions/changes and usage guidelines
+
+### Discovered During Work
+- [ ] Add any inconsistencies or follow-ups found during audits
+
+—
+
+Please review and confirm this plan; once approved, I will proceed tool-by-tool, starting with standardizing headers and premium gating, then control layouts and tabs, followed by help panels and polish. I will mark each task here upon completion.
+
 🧱 **Phase 1: Project Template & Core Architecture** ✅ **COMPLETE**
 Goal: Build the foundational framework, UI system, auth, layout, routing, and Supabase integration.
 

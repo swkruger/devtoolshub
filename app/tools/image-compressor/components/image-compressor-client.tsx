@@ -967,7 +967,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
         <CardContent className="space-y-4" aria-labelledby="compression-settings-title">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="quality" id="quality-label">Quality: {compressionSettings.quality}%</Label>
+              <Label htmlFor="quality" id="quality-label" className="text-sm font-medium text-gray-700 dark:text-gray-300">Quality: {compressionSettings.quality}%</Label>
               <Slider
                 id="quality"
                 value={[compressionSettings.quality]}
@@ -993,7 +993,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="format" id="format-label">Output Format</Label>
+              <Label htmlFor="format" id="format-label" className="text-sm font-medium text-gray-700 dark:text-gray-300">Output Format</Label>
               <Select
                 value={compressionSettings.format}
                 onValueChange={(value: 'jpeg' | 'png' | 'webp' | 'avif') => 
@@ -1019,7 +1019,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="strip-metadata">Strip Metadata</Label>
+              <Label htmlFor="strip-metadata" className="text-sm font-medium text-gray-700 dark:text-gray-300">Strip Metadata</Label>
               <Button
                 variant={compressionSettings.stripMetadata ? "default" : "outline"}
                 size="sm"
@@ -1036,7 +1036,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
             <div className="pt-4 border-t">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="max-width">Max Width (px)</Label>
+                  <Label htmlFor="max-width" className="text-sm font-medium text-gray-700 dark:text-gray-300">Max Width (px)</Label>
                   <input
                     id="max-width"
                     type="number"
@@ -1051,7 +1051,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="max-height">Max Height (px)</Label>
+                  <Label htmlFor="max-height" className="text-sm font-medium text-gray-700 dark:text-gray-300">Max Height (px)</Label>
                   <input
                     id="max-height"
                     type="number"
@@ -1066,7 +1066,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="resize-percentage">Resize Percentage</Label>
+                  <Label htmlFor="resize-percentage" className="text-sm font-medium text-gray-700 dark:text-gray-300">Resize Percentage</Label>
                   <input
                     id="resize-percentage"
                     type="number"
@@ -1094,7 +1094,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                   }))}
                   className="w-4 h-4"
                 />
-                <Label htmlFor="maintain-aspect-ratio">Maintain aspect ratio</Label>
+                   <Label htmlFor="maintain-aspect-ratio" className="text-sm font-medium text-gray-700 dark:text-gray-300">Maintain aspect ratio</Label>
               </div>
             </div>
           )}
@@ -1555,7 +1555,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="advanced-quality">Quality: {compressionSettings.quality}%</Label>
+                   <Label htmlFor="advanced-quality" className="text-sm font-medium text-gray-700 dark:text-gray-300">Quality: {compressionSettings.quality}%</Label>
                 <Slider
                   id="advanced-quality"
                   value={[compressionSettings.quality]}
@@ -1575,7 +1575,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="advanced-format">Format</Label>
+                 <Label htmlFor="advanced-format" className="text-sm font-medium text-gray-700 dark:text-gray-300">Format</Label>
                 <Select
                   value={compressionSettings.format}
                   onValueChange={(value: 'jpeg' | 'png' | 'webp' | 'avif') => 
@@ -1595,7 +1595,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="advanced-strip-metadata">Strip Metadata</Label>
+                 <Label htmlFor="advanced-strip-metadata" className="text-sm font-medium text-gray-700 dark:text-gray-300">Strip Metadata</Label>
                 <Button
                   variant={compressionSettings.stripMetadata ? "default" : "outline"}
                   size="sm"
@@ -1611,7 +1611,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                 <div className="pt-4 border-t">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="advanced-max-width">Max Width (px)</Label>
+                       <Label htmlFor="advanced-max-width" className="text-sm font-medium text-gray-700 dark:text-gray-300">Max Width (px)</Label>
                       <input
                         id="advanced-max-width"
                         type="number"
@@ -1626,7 +1626,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="advanced-max-height">Max Height (px)</Label>
+                       <Label htmlFor="advanced-max-height" className="text-sm font-medium text-gray-700 dark:text-gray-300">Max Height (px)</Label>
                       <input
                         id="advanced-max-height"
                         type="number"
@@ -1641,7 +1641,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="advanced-resize-percentage">Resize Percentage</Label>
+                       <Label htmlFor="advanced-resize-percentage" className="text-sm font-medium text-gray-700 dark:text-gray-300">Resize Percentage</Label>
                       <input
                         id="advanced-resize-percentage"
                         type="number"
@@ -1669,7 +1669,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                       }))}
                       className="w-4 h-4"
                     />
-                    <Label htmlFor="advanced-maintain-aspect-ratio">Maintain aspect ratio</Label>
+                    <Label htmlFor="advanced-maintain-aspect-ratio" className="text-sm font-medium text-gray-700 dark:text-gray-300">Maintain aspect ratio</Label>
                   </div>
                 </div>
               )}

@@ -295,6 +295,14 @@ The Timestamp Converter is a comprehensive tool for working with timestamps and 
 - **Real-time Feedback**: Live testing with debounced inputs and visual highlighting
 - **Consistent UX**: Unified design patterns across all tools
 
+### 📐 UI Consistency Standards
+- Use compact headers via `ToolPageHeader` with 16px icons.
+- Show premium info via `PremiumOverview` for free users; follow the crown pattern for disabled premium actions (free users see disabled + crown; premium users see enabled without crown).
+- Icon sizing: w-3/h-3 or w-4/h-4 across headers, buttons, and help panels.
+- Tabs: max 3-4 primary tabs; place crown on premium tabs or items.
+- Help Panels: 4 tabs (Examples, Shortcuts, Tips, Accessibility) with consistent structure and icon sizes.
+- Loading: use the shared `Spinner` for async states; pair with brief status text when appropriate.
+
 ### 📧 Email System
 - **Resend Integration**: Modern email API for reliable delivery
 - **New User Notifications**: Automatic admin notifications for signups

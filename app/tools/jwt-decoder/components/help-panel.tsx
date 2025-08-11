@@ -91,7 +91,7 @@ const HelpPanel: React.FC<HelpPanelProps> = ({ isOpen, onClose }) => {
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-blue-600" />
+              <HelpCircle className="w-4 h-4 text-blue-600" />
               <CardTitle>JWT Decoder/Encoder Help</CardTitle>
             </div>
             <Button

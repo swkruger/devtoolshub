@@ -30,6 +30,8 @@ export function DatePicker({
   const [inputValue, setInputValue] = useState("")
   const [isEditing, setIsEditing] = useState(false)
   const { toast } = useToast()
+  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
+  const showWarning = (title: string, description?: string) => toast({ type: 'warning', title, description })
 
   // Update input value when selectedDate changes
   useEffect(() => {
@@ -54,48 +56,28 @@ export function DatePicker({
       const parsedDate = parseISO(inputValue + 'T12:00:00') // Set to noon to avoid timezone issues
       
       if (!isValid(parsedDate)) {
-        toast({ 
-          type: 'error', 
-          title: 'Invalid Date', 
-          description: 'Please enter a valid date in YYYY-MM-DD format' 
-        })
+        showWarning('Invalid Date', 'Please enter a valid date in YYYY-MM-DD format')
         setInputValue(format(selectedDate, 'yyyy-MM-dd'))
         return
       }
 
       // Check date bounds
       if (minDate && parsedDate < startOfDay(minDate)) {
-        toast({ 
-          type: 'warning', 
-          title: 'Date Too Early', 
-          description: `Date cannot be earlier than ${format(minDate, 'MMM d, yyyy')}` 
-        })
+        showWarning('Date Too Early', `Date cannot be earlier than ${format(minDate, 'MMM d, yyyy')}`)
         setInputValue(format(selectedDate, 'yyyy-MM-dd'))
         return
       }
 
       if (maxDate && parsedDate > endOfDay(maxDate)) {
-        toast({ 
-          type: 'warning', 
-          title: 'Date Too Late', 
-          description: `Date cannot be later than ${format(maxDate, 'MMM d, yyyy')}` 
-        })
+        showWarning('Date Too Late', `Date cannot be later than ${format(maxDate, 'MMM d, yyyy')}`)
         setInputValue(format(selectedDate, 'yyyy-MM-dd'))
         return
       }
 
       onDateChange(parsedDate)
-      toast({ 
-        type: 'success', 
-        title: 'Date Updated', 
-        description: `Changed to ${format(parsedDate, 'EEEE, MMMM d, yyyy')}` 
-      })
+      showSuccess('Date Updated', `Changed to ${format(parsedDate, 'EEEE, MMMM d, yyyy')}`)
     } catch (error) {
-      toast({ 
-        type: 'error', 
-        title: 'Invalid Date', 
-        description: 'Please enter a valid date in YYYY-MM-DD format' 
-      })
+      showWarning('Invalid Date', 'Please enter a valid date in YYYY-MM-DD format')
       setInputValue(format(selectedDate, 'yyyy-MM-dd'))
     }
   }
@@ -118,11 +100,7 @@ export function DatePicker({
     previousDay.setDate(previousDay.getDate() - 1)
     
     if (minDate && previousDay < startOfDay(minDate)) {
-      toast({ 
-        type: 'warning', 
-        title: 'Cannot Go Earlier', 
-        description: `Minimum date is ${format(minDate, 'MMM d, yyyy')}` 
-      })
+      showWarning('Cannot Go Earlier', `Minimum date is ${format(minDate, 'MMM d, yyyy')}`)
       return
     }
     
@@ -134,11 +112,7 @@ export function DatePicker({
     nextDay.setDate(nextDay.getDate() + 1)
     
     if (maxDate && nextDay > endOfDay(maxDate)) {
-      toast({ 
-        type: 'warning', 
-        title: 'Cannot Go Later', 
-        description: `Maximum date is ${format(maxDate, 'MMM d, yyyy')}` 
-      })
+      showWarning('Cannot Go Later', `Maximum date is ${format(maxDate, 'MMM d, yyyy')}`)
       return
     }
     
@@ -148,11 +122,7 @@ export function DatePicker({
   const goToToday = () => {
     const today = new Date()
     onDateChange(today)
-    toast({ 
-      type: 'success', 
-      title: 'Returned to Today', 
-      description: format(today, 'EEEE, MMMM d, yyyy') 
-    })
+    showSuccess('Returned to Today', format(today, 'EEEE, MMMM d, yyyy'))
   }
 
   const isToday = format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')

@@ -28,7 +28,7 @@ import {
 import { useToast } from '@/components/ui/toast'
 import HtmlEditor from './html-editor'
 import SelectorEditor from './selector-editor'
-// import HelpPanel from './help-panel'
+import HelpPanel from './help-panel'
 
 interface MatchResult {
   element: string
@@ -1107,7 +1107,7 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
       />
 
       {/* Help Panel */}
-      {/* {showHelp && <HelpPanel onClose={() => setShowHelp(false)} />} */}
+      {showHelp && <HelpPanel onClose={() => setShowHelp(false)} />}
     </div>
   )
 } 

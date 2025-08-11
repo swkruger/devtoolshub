@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { HelpCircle, X, Keyboard, Clock, Calendar, Globe } from "lucide-react"
+import { HelpCircle, X, Keyboard, Clock, Calendar, Globe, Crown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -164,9 +164,9 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
                         <div className="flex items-center gap-3">
                           <Badge 
                             variant={shortcut.premium ? "default" : "secondary"}
-                            className="font-mono text-xs min-w-[100px] justify-center"
+                            className="font-mono text-xs min-w-[100px] justify-center flex items-center gap-1"
                           >
-                            {shortcut.premium && "👑 "}{shortcut.key}
+                            {shortcut.premium && <Crown className="w-3 h-3" />} {shortcut.key}
                           </Badge>
                           <span className="text-sm">{shortcut.description}</span>
                         </div>

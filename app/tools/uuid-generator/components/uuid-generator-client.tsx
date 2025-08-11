@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/components/ui/toast';
 import HelpPanel from './help-panel';
+import { Spinner } from '@/components/ui/spinner';
 import BulkGenerator from './bulk-generator';
 import NamespaceManager from './namespace-manager';
 import UuidHistory from './uuid-history';
@@ -53,6 +54,8 @@ type UuidFormat = 'standard' | 'compact' | 'base64' | 'binary';
 
 export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGeneratorClientProps) {
   const { toast } = useToast();
+  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
+  const showError = (title: string, description?: string) => toast({ type: 'error', title, description })
   const [currentUuid, setCurrentUuid] = useState<string>('');
   const [uuidVersion, setUuidVersion] = useState<UuidVersion>('v4');
   const [uuidFormat, setUuidFormat] = useState<UuidFormat>('standard');
@@ -107,20 +110,12 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
       setCurrentUuid(formattedUuid);
       setGeneratedUuids(prev => [entry, ...prev.slice(0, 9)]); // Keep last 10
 
-      toast({
-        type: 'success',
-        title: 'UUID Generated',
-        description: `${version.toUpperCase()} UUID generated successfully`
-      });
+      showSuccess('UUID Generated', `${version.toUpperCase()} UUID generated successfully`);
 
     } catch (error) {
       console.error('Error generating UUID:', error);
       setValidationErrors(['Failed to generate UUID. Please try again.']);
-      toast({
-        type: 'error',
-        title: 'Generation Failed',
-        description: 'Failed to generate UUID. Please try again.'
-      });
+      showError('Generation Failed', 'Failed to generate UUID. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -193,17 +188,9 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
   const copyToClipboard = async (uuid: string) => {
     try {
       await navigator.clipboard.writeText(uuid);
-      toast({
-        type: 'success',
-        title: 'Copied to Clipboard',
-        description: 'UUID copied successfully'
-      });
+      showSuccess('Copied!', 'UUID copied successfully');
     } catch (error) {
-      toast({
-        type: 'error',
-        title: 'Copy Failed',
-        description: 'Failed to copy UUID to clipboard'
-      });
+      showError('Copy failed', 'Failed to copy UUID to clipboard');
     }
   };
 
@@ -260,11 +247,7 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    toast({
-      type: 'success',
-      title: 'Download Complete',
-      description: `UUIDs downloaded as ${filename}`
-    });
+    showSuccess('Download Complete', `UUIDs downloaded as ${filename}`);
   };
 
   // Event handlers
@@ -392,7 +375,7 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
           {/* Generation Options */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="uuid-version">UUID Version</Label>
+              <Label htmlFor="uuid-version" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">UUID Version</Label>
               <Select value={uuidVersion} onValueChange={(value: UuidVersion) => setUuidVersion(value)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -407,7 +390,7 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
             </div>
             
             <div>
-              <Label htmlFor="uuid-format">Output Format</Label>
+              <Label htmlFor="uuid-format" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Output Format</Label>
               <Select value={uuidFormat} onValueChange={(value: UuidFormat) => setUuidFormat(value)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -426,7 +409,7 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
           {(uuidVersion === 'v3' || uuidVersion === 'v5') && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="namespace">Namespace UUID</Label>
+                <Label htmlFor="namespace" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Namespace UUID</Label>
                 <Input
                   id="namespace"
                   value={namespace}
@@ -435,7 +418,7 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
                 />
               </div>
               <div>
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Name</Label>
                 <Input
                   id="name"
                   value={name}
@@ -448,7 +431,7 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
 
           {/* Generated UUID Display */}
           <div className="space-y-2">
-            <Label>Generated UUID</Label>
+            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Generated UUID</Label>
             <div className="flex items-center gap-2">
               <div className="flex-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-md border font-mono text-sm break-all">
                 {currentUuid || 'Click Generate to create a UUID'}
@@ -472,9 +455,9 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
               disabled={isGenerating}
               className="flex items-center gap-2"
             >
-              {isGenerating ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
+            {isGenerating ? (
+              <Spinner />
+            ) : (
                 <RefreshCw className="w-4 h-4" />
               )}
               Generate UUID

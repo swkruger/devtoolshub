@@ -112,7 +112,7 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Search className="w-5 h-5 text-blue-600" />
+              <Search className="w-4 h-4 text-blue-600" />
               <CardTitle>Regex Tester Help</CardTitle>
             </div>
             <Button 

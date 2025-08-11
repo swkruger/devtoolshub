@@ -99,13 +99,13 @@ function ToastItem({ toast, onDismiss }: { toast: Toast, onDismiss: (id: string)
   const getIcon = () => {
     switch (toast.type) {
       case 'success':
-        return <CheckCircle className="w-5 h-5 text-green-500" />
+        return <CheckCircle className="w-4 h-4 text-green-500" />
       case 'error':
-        return <AlertCircle className="w-5 h-5 text-red-500" />
+        return <AlertCircle className="w-4 h-4 text-red-500" />
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-yellow-500" />
+        return <AlertTriangle className="w-4 h-4 text-yellow-500" />
       case 'info':
-        return <AlertCircle className="w-5 h-5 text-blue-500" />
+        return <AlertCircle className="w-4 h-4 text-blue-500" />
     }
   }
 

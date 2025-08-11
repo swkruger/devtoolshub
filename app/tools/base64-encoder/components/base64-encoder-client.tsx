@@ -41,6 +41,8 @@ type InputType = 'text' | 'file'
 
 export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClientProps) {
   const { toast } = useToast()
+  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
+  const showError = (title: string, description?: string) => toast({ type: 'error', title, description })
   
   // Core state
   const [activeTab, setActiveTab] = useState("single")
@@ -249,11 +251,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
         // Add to history
         addToHistory(displayOutput, result.dataUrl)
         
-        toast({
-          type: "success",
-          title: "File Encoded",
-          description: `${file.name} encoded successfully`
-        })
+        showSuccess('File Encoded', `${file.name} encoded successfully`)
       } else {
         setErrors([result.error || 'File encoding failed'])
       }
@@ -290,17 +288,9 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
   const copyToClipboard = async (text: string, description: string) => {
     try {
       await navigator.clipboard.writeText(text)
-      toast({
-        type: "success",
-        title: "Copied!",
-        description: `${description} copied to clipboard`
-      })
+      showSuccess('Copied!', `${description} copied to clipboard`)
     } catch (error) {
-      toast({
-        type: "error",
-        title: "Copy Failed",
-        description: "Unable to copy to clipboard"
-      })
+      showError('Copy failed', 'Unable to copy to clipboard')
     }
   }
 
@@ -319,17 +309,9 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
 
-      toast({
-        type: "success",
-        title: "Downloaded!",
-        description: "Result downloaded successfully"
-      })
+      showSuccess('Downloaded!', 'Result downloaded successfully')
     } catch (error) {
-      toast({
-        type: "error",
-        title: "Download Failed",
-        description: "Unable to download result"
-      })
+      showError('Download failed', 'Unable to download result')
     }
   }, [outputText, mode, toast])
 
@@ -440,11 +422,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
     // Switch to Single tab
     setActiveTab('single')
     
-    toast({
-      type: "success",
-      title: "Conversion Restored",
-      description: "Previous conversion has been loaded"
-    })
+      showSuccess('Conversion Restored', 'Previous conversion has been loaded')
   }, [toast])
 
   // Keyboard shortcuts
@@ -557,10 +535,10 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="single">Single</TabsTrigger>
           <TabsTrigger value="batch" disabled={!isPremiumUser}>
-            Batch {!isPremiumUser && "👑"}
+            Batch {!isPremiumUser && <Crown className="w-3 h-3 ml-1" />}
           </TabsTrigger>
           <TabsTrigger value="history" disabled={!isPremiumUser}>
-            History {!isPremiumUser && "👑"}
+            History {!isPremiumUser && <Crown className="w-3 h-3 ml-1" />}
           </TabsTrigger>
         </TabsList>
 
@@ -588,8 +566,8 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
             <CardContent className="space-y-4">
               {/* Input Section */}
               <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <Label className="text-sm font-medium">Input Type:</Label>
+                 <div className="flex items-center gap-4">
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Input Type:</Label>
                   <div className="flex gap-2">
                     <Button
                       variant={inputType === 'text' ? 'default' : 'outline'}
@@ -611,7 +589,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
 
                 {inputType === 'text' ? (
                   <div className="space-y-2">
-                    <Label htmlFor="input-text">
+                    <Label htmlFor="input-text" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
                       {mode === 'encode' ? 'Text to Encode' : 'Base64 to Decode'}
                     </Label>
                     <Textarea
@@ -628,7 +606,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <Label>File Upload</Label>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">File Upload</Label>
                     <div
                       className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                         dragOver 
@@ -670,7 +648,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
                           {/* Output Format Toggle for Files */}
                           {(fileDataUrl || uploadedFile) && (
                             <div className="flex items-center justify-center gap-2">
-                              <Label className="text-sm">Output Format:</Label>
+                              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Output Format:</Label>
                               <div className="flex gap-1">
                                 <Button
                                   variant={showDataUrl ? 'default' : 'outline'}
@@ -747,13 +725,13 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
               {/* Encoding Options (Premium) */}
               {isPremiumUser && (
                 <Card className="p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Label className="font-medium">Encoding Options</Label>
+                   <div className="flex items-center gap-2 mb-3">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Encoding Options</Label>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {/* Character Set */}
                     <div className="space-y-2">
-                      <Label className="text-sm">Character Set</Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Character Set</Label>
                       <Select
                         value={encodingOptions.characterSet || 'utf-8'}
                         onValueChange={(value) => 
@@ -790,7 +768,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
 
                     {/* Newline Separator */}
                     <div className="space-y-2">
-                      <Label className="text-sm">Newline Separator</Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Newline Separator</Label>
                       <Select
                         value={encodingOptions.newlineSeparator || 'lf'}
                         onValueChange={(value) => 
@@ -812,7 +790,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
 
                     {/* URL Safe */}
                     <div className="space-y-2">
-                      <Label className="text-sm">URL Safe</Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">URL Safe</Label>
                       <Select
                         value={encodingOptions.urlSafe ? 'true' : 'false'}
                         onValueChange={(value) => 
@@ -831,7 +809,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
 
                     {/* Padding */}
                     <div className="space-y-2">
-                      <Label className="text-sm">Padding</Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Padding</Label>
                       <Select
                         value={encodingOptions.noPadding ? 'false' : 'true'}
                         onValueChange={(value) => 
@@ -850,7 +828,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
 
                     {/* Line Length */}
                     <div className="space-y-2">
-                      <Label className="text-sm">Line Length</Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Line Length</Label>
                       <Select
                         value={encodingOptions.lineLength?.toString() || '0'}
                         onValueChange={(value) => 
@@ -886,7 +864,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
               {outputText && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="output-text">
+                    <Label htmlFor="output-text" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {mode === 'encode' 
                         ? (showDataUrl && fileDataUrl ? 'Data URL (Ready for Image Components)' : 'Base64 Result')
                         : 'Decoded Text'

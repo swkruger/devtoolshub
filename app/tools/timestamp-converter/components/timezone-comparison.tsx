@@ -370,7 +370,9 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
       <Card>
         <CardContent className="pt-6">
           <div className="text-center py-8">
-            <div className="text-6xl mb-4">👑</div>
+            <div className="flex items-center justify-center mb-4">
+              <Crown className="w-10 h-10 text-amber-500" />
+            </div>
             <h3 className="text-lg font-semibold mb-2">Premium Feature</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Timezone comparison is available with a premium plan

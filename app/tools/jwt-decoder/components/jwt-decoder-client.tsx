@@ -437,7 +437,8 @@ export default function JwtDecoderClient({ isPremiumUser, userId }: JwtDecoderCl
         </Button>
       </div>
 
-      <div role="region" aria-label="JWT input editor">
+      <div role="region" aria-label="JWT input editor" className="space-y-2">
+        <div className="text-sm font-medium text-gray-700 dark:text-gray-300">JWT</div>
         <JwtEditor
           value={jwt}
           onChange={(val) => { setJwt(val); setTouched(true); }}
@@ -458,14 +459,14 @@ export default function JwtDecoderClient({ isPremiumUser, userId }: JwtDecoderCl
       {header && payload && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4" role="region" aria-label="Decoded JWT sections">
           <div role="region" aria-label="JWT header">
-            <div className="font-semibold mb-1">Header</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Header</div>
             <pre className="bg-muted rounded p-2 text-xs overflow-x-auto" tabIndex={0}>
               {JSON.stringify(header, null, 2)}
             </pre>
           </div>
           <div role="region" aria-label="JWT payload">
             <div className="flex items-center mb-1">
-              <span className="font-semibold">Payload</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Payload</span>
               <Button 
                 size="sm" 
                 variant="ghost" 
@@ -483,7 +484,7 @@ export default function JwtDecoderClient({ isPremiumUser, userId }: JwtDecoderCl
             </pre>
           </div>
           <div role="region" aria-label="JWT signature">
-            <div className="font-semibold mb-1">Signature</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Signature</div>
             <pre className="bg-muted rounded p-2 text-xs overflow-x-auto break-all" tabIndex={0}>
               {signature}
             </pre>

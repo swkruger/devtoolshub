@@ -33,7 +33,7 @@ export default function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelP
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <HelpCircle className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             World Clock Help
           </div>
           <button

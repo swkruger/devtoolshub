@@ -42,6 +42,9 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
   const [showHelp, setShowHelp] = useState(false)
   const [activeTab, setActiveTab] = useState('clock')
   const { toast } = useToast()
+  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
+  const showError = (title: string, description?: string) => toast({ type: 'error', title, description })
+  const showWarning = (title: string, description?: string) => toast({ type: 'warning', title, description })
 
   // Initialize with popular cities for demo (only if no saved cities after hook has loaded)
   useEffect(() => {
