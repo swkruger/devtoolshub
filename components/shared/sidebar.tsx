@@ -12,6 +12,7 @@ import {
   Crown,
   Settings
 } from "lucide-react"
+import * as React from 'react'
 
 const navigation = [
   {
@@ -26,13 +27,7 @@ const navigation = [
   },
 ]
 
-// Get all tools dynamically from toolsConfig
-const tools = getAllTools().map(tool => ({
-  name: tool.name,
-  href: tool.path,
-  icon: tool.icon,
-  isPremium: tool.isPremium,
-}))
+// Tools will be derived dynamically inside the component so the menu reflects any config changes
 
 interface SidebarProps {
   className?: string
@@ -41,6 +36,12 @@ interface SidebarProps {
 
 export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
   const pathname = usePathname()
+  const tools = React.useMemo(() => getAllTools().map(tool => ({
+    name: tool.name,
+    href: tool.path,
+    icon: tool.icon,
+    isPremium: tool.isPremium,
+  })), [])
 
   return (
     <div className={cn("pb-12", className)}>

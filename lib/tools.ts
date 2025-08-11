@@ -331,6 +331,31 @@ export const toolsConfig: Record<string, ToolConfig> = {
       ]
     }
   }
+  ,
+  'password-generator': {
+    id: 'password-generator',
+    name: 'Password & Key-like Generator',
+    description: 'Generate strong passwords, passphrases, and private-key-like strings. Includes entropy/strength indicators and copy utilities.',
+    shortDescription: 'Generate passwords, passphrases, and key-like strings',
+    icon: Shield,
+    emoji: '🔑',
+    isPremium: false,
+    category: 'security',
+    tags: ['security', 'passwords', 'crypto-like', 'utilities'],
+    path: '/tools/password-generator',
+    features: {
+      free: [
+        'Password mode with length and charset toggles',
+        'Pronounceable option',
+        'Passphrase mode with separators and suffix options',
+        'Entropy display and copy actions'
+      ],
+      premium: [
+        'Key-like mode: Hex, Base58, Base64, UUID v4, Bech32-like, PEM-like',
+        'Disclaimer and premium-gated controls'
+      ]
+    }
+  }
 }
 
 // Helper functions
