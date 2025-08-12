@@ -3,6 +3,17 @@
     {
       "source": "/(.*)",
       "headers": [
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    }
+  ]
+}
+
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
         {
           "key": "X-Frame-Options",
           "value": "DENY"

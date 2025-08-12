@@ -97,25 +97,26 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'DevToolsHub',
-    description: 'Your all-in-one developer toolkit. Format JSON, test regex patterns, decode JWTs, compress images, and more. Free developer tools with premium features.',
-    url: process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app',
+    description:
+      'DevToolsHub is a professional suite of web developer tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 utilities, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password/key generator, and PWA asset generator.',
+    url: siteUrl,
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Web Browser',
     offers: {
       '@type': 'Offer',
       price: '0',
       priceCurrency: 'USD',
-      priceValidUntil: '2025-12-31',
       availability: 'https://schema.org/InStock',
     },
     author: {
       '@type': 'Organization',
-      name: 'DevToolsHub Team',
-      email: 'devtoolshub8@gmail.com',
+      name: 'DevToolsHub',
+      email: 'contactme@devtoolskithub.com',
     },
     datePublished: '2024-01-01',
     dateModified: new Date().toISOString(),
@@ -124,14 +125,17 @@ export default function RootLayout({
     featureList: [
       'JSON Formatter & Validator',
       'Regex Pattern Tester',
-      'JWT Token Decoder',
-      'Base64 Encoder/Decoder',
-      'UUID Generator',
-      'Timestamp Converter',
+      'JWT Decoder/Encoder & Signature Verification',
+      'Base64 Encoder/Decoder (text & files)',
+      'UUID Generator (v1/v3/v4/v5)',
+      'Timestamp Converter with timezones',
       'XPath & CSS Selector Tester',
-      'Image Compressor',
+      'Image Compressor & format conversion',
+      'World Clock & Time Zones',
+      'Password & Key‑like Generator',
+      'PWA Assets & Manifest Generator',
     ],
-    screenshot: '/screenshot.png',
+    screenshot: `${siteUrl}/screenshot.png`,
     softwareVersion: '1.0.0',
     permissions: 'No special permissions required',
   }
@@ -148,11 +152,11 @@ export default function RootLayout({
         <meta name="msapplication-tap-highlight" content="no" />
         
         {/* Favicons */}
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000" />
         
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

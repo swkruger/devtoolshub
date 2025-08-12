@@ -1,8 +1,8 @@
 # 🛠 Next Tool Development Prompt
 
-## 🎯 Goal: Implement Timestamp Converter Tool
+## 🎯 Goal: Implement PWA Assets & Manifest Generator
 
-Continue building the best developer tools platform by implementing the **Timestamp Converter** tool, following the exact same approach as our previous 6 successful tools.
+Build a professional tool that generates all required PWA images and filenames according to current platform specs, plus a ready-to-use `manifest.json` and `<link>` tags. Follow the same architecture, premium gating, and UI conventions as existing tools.
 
 ---
 
@@ -16,9 +16,9 @@ Continue building the best developer tools platform by implementing the **Timest
 - **UUID Generator** ✅ Complete - Multi-version UUID generation with namespace management
 - **XPath/CSS Selector Tester** ✅ Complete - Real-time element highlighting and testing
 
-### 🎯 Next Tool: **⏰ Timestamp Converter**
-**Path**: `/tools/timestamp-converter`
-**Purpose**: Convert between Unix timestamps, human-readable dates, and various time formats with timezone support
+### 🎯 Next Tool: **PWA Assets & Manifest Generator**
+**Path**: `/tools/pwa-assets`
+**Purpose**: Generate PWA icons, favicons, maskable icons, iOS/Android assets, and output a correct manifest.json + HTML tags
 
 ---
 
@@ -26,15 +26,19 @@ Continue building the best developer tools platform by implementing the **Timest
 
 ### 📁 Required Structure:
 ```
-app/tools/timestamp-converter/
-├── page.tsx                    # Main page component
-├── tool.config.ts             # Tool configuration
+app/tools/pwa-assets/
+├── page.tsx                        # Server page (auth + header + premium overview)
+├── tool.config.ts                 # Tool config mirrors lib/tools.ts
 └── components/
-    ├── timestamp-converter-client.tsx  # Main client component
-    ├── help-panel.tsx                 # Documentation and examples
-    ├── timezone-selector.tsx          # Timezone selection component
-    ├── format-selector.tsx            # Date format selection
-    └── batch-converter.tsx            # Premium bulk conversion
+    ├── pwa-assets-client.tsx      # Main client UI
+    ├── preview-grid.tsx           # Thumbnails of generated assets
+    ├── export-panel.tsx           # Manifest/tags preview + ZIP
+    └── help-panel.tsx             # Docs/spec tables/tips
+└── lib/
+    ├── presets.ts                 # Size matrices and filenames
+    ├── pipeline.ts                # Canvas rasterization helpers
+    ├── naming.ts                  # Filename builders
+    └── zip.ts                     # ZIP assembly (JSZip)
 ```
 
 ### 🔄 Implementation Steps:
@@ -42,32 +46,30 @@ app/tools/timestamp-converter/
 #### 1. **Update Configuration** (lib/tools.ts)
 ```typescript
 {
-  id: 'timestamp-converter',
-  name: 'Timestamp Converter',
-  description: 'Convert between Unix timestamps and human-readable dates with timezone support',
-  icon: '⏰',
-  path: '/tools/timestamp-converter',
-  category: 'conversion',
-  tags: ['timestamp', 'unix', 'date', 'time', 'timezone', 'epoch', 'conversion'],
-  free: [
-    'Unix timestamp to date conversion',
-    'Date to Unix timestamp conversion', 
-    'Current timestamp display',
-    'Basic timezone support',
-    'ISO 8601 format support',
-    'Millisecond precision',
-    'Copy results to clipboard'
-  ],
-  premium: [
-    'Batch timestamp conversion',
-    'Custom date format patterns',
-    'Timezone comparison view',
-    'Historical timezone data',
-    'CSV import/export',
-    'Timestamp arithmetic',
-    'Relative time calculations',
-    'Multiple timestamp formats'
-  ]
+  id: 'pwa-assets',
+  name: 'PWA Assets & Manifest Generator',
+  description: 'Generate PWA icons, favicons, maskable icons, iOS/Android assets, manifest.json, and HTML tags',
+  icon: Globe, // or appropriate icon
+  path: '/tools/pwa-assets',
+  category: 'web',
+  tags: ['pwa','icons','manifest','favicon','maskable','ios','android'],
+  features: {
+    free: [
+      'Standard manifest icons (48..512)',
+      'Favicons (16/32/48)',
+      'Apple touch 180x180',
+      'Optional maskable 192/512',
+      'Manifest.json + basic link tags',
+      'ZIP export'
+    ],
+    premium: [
+      'Full iOS/Android matrices',
+      'Splash screens (light/dark)',
+      'Windows tiles & Safari pinned tab',
+      'Light/Dark variants with themed manifest',
+      'Batch brand mode'
+    ]
+  }
 }
 ```
 
@@ -85,41 +87,35 @@ app/tools/timestamp-converter/
 - Proper metadata for SEO
 ```
 
-#### 4. **Core Client Component** (timestamp-converter-client.tsx)
+#### 4. **Core Client Component** (pwa-assets-client.tsx)
 ```typescript
 // Key Features & State Management:
-interface TimestampConverterState {
-  // Input/Output
-  unixTimestamp: string;
-  humanDate: string;
-  selectedTimezone: string;
-  selectedFormat: string;
-  
-  // Display
-  currentTimestamp: number;
-  conversionResults: ConversionResult[];
-  isAutoUpdate: boolean;
-  
-  // Premium features
-  batchMode: boolean;
-  batchInput: string;
-  customFormat: string;
-  timezoneComparison: string[];
-  
-  // UI states
-  activeTab: 'single' | 'batch' | 'current';
-  isLoading: boolean;
-  copyStatus: string;
+interface PwaAssetState {
+  sourceFile?: File;
+  backgroundColor: string; // HEX
+  paddingPercent: number; // 0-30
+  cornerRadiusPercent: number; // 0-50
+  maskable: boolean;
+  quality: number; // 0.6..1
+  themeColor: string;
+  manifestBackground: string;
+  preset: 'minimal' | 'recommended' | 'full';
+  // Output
+  files: Array<{ path: string; blob: Blob; width: number; height: number }>;
+  manifest: string; // JSON string
+  headSnippet: string; // HTML tags
+  // UI
+  activeTab: 'configure' | 'preview' | 'export' | 'help';
+  isProcessing: boolean;
 }
 
 // Core Functions:
-- convertUnixToDate(timestamp: number, timezone: string, format: string)
-- convertDateToUnix(dateString: string, timezone: string)
-- getCurrentTimestamp()
-- updateCurrentTime() // Auto-updating current time
-- handleBatchConversion() // Premium
-- calculateTimeDifference() // Premium
-- exportResults() // Premium
+- rasterizeAll()
+- buildManifest()
+- buildHeadSnippet()
+- makeZip()
+- switchPreset()
+- (premium) generateSplashScreens()
 ```
 
 #### 5. **Premium Features Implementation**
@@ -156,7 +152,7 @@ interface TimestampConverterState {
 ├─────────────────────────────────────────┤
 │ Action Toolbar: [Convert] [Clear] [?]   │
 ├─────────────────────────────────────────┤
-│ Tabs: [Single] [Batch] [Current Time]   │
+│ Tabs: [Configure] [Preview] [Export] [Help] │
 ├─────────────────────────────────────────┤
 │ Input Section:                          │
 │ ┌─────────────────┬─────────────────┐   │
@@ -165,7 +161,7 @@ interface TimestampConverterState {
 │ └─────────────────┴─────────────────┘   │
 ├─────────────────────────────────────────┤
 │ Configuration:                          │
-│ [Timezone Selector] [Format Selector]   │
+│ [Upload] [Padding/Radius/Maskable] [Theme/Background] │
 ├─────────────────────────────────────────┤
 │ Results Section:                        │
 │ [Conversion Results with Copy buttons]  │
@@ -192,32 +188,27 @@ interface TimestampConverterState {
 
 ## 🧠 Core Functionality Specifications
 
-### 📅 Timestamp Formats to Support:
-```typescript
-// Input/Output Formats:
-- Unix timestamp (seconds since epoch)
-- Unix timestamp with milliseconds
-- ISO 8601 format (2024-12-29T15:30:00Z)
-- RFC 2822 format
-- Local date string
-- Custom format patterns (premium)
+### 📐 Sizes & Filenames
+Free:
+- Manifest icons: 48, 72, 96, 144, 192, 256, 384, 512 → `icon-<WxH>.png`
+- Favicons: 16, 32, 48 → `favicon-<WxH>.png` (+ optional `.ico`)
+- Apple touch: 180 → `apple-touch-icon-180x180.png`
+- Maskable (optional): 192/512 → `maskable_icon-<WxH>.png` with `purpose: "maskable"`
 
-// Timezone Support:
-- UTC (default)
-- Local browser timezone
-- Major world timezones (America/New_York, Europe/London, etc.)
-- Timezone abbreviations (EST, PST, GMT, etc.)
-- Custom timezone offset (+05:30, -08:00)
-```
+Premium:
+- iOS icons: 120, 152, 167, 180
+- Android maskable set: 192, 256, 384, 512
+- Windows tiles: 150, 310x150, 310
+- Safari pinned tab: monochrome SVG
+- Splash screens (portrait/landscape common sizes) with background color
 
 ### 🔧 Validation & Error Handling:
 ```typescript
 // Input Validation:
-- Validate Unix timestamp range (reasonable dates)
-- Check date string format compatibility
-- Verify timezone validity
-- Handle daylight saving time transitions
-- Prevent future timestamp overflow
+- Validate image type (PNG/SVG) and file size limits
+- Guard against massive dimensions; cap output to 1024/2048 px
+- Ensure exact output WxH per preset
+- Validate HEX colors and quality ranges
 
 // Error Messages:
 - "Invalid timestamp format"
@@ -229,10 +220,10 @@ interface TimestampConverterState {
 
 ### ⚡ Performance Considerations:
 - **Debounced Input**: 300ms delay for auto-conversion
-- **Timezone Caching**: Cache timezone data for performance
-- **Format Caching**: Cache compiled format patterns
-- **Memory Management**: Clean up intervals for current time
-- **Batch Processing**: Handle large datasets efficiently (premium)
+- **OffscreenCanvas/createImageBitmap** where supported
+- **Web Worker** for splash/batch (premium)
+- **Memory Management**: dispose ImageBitmaps, reuse canvases
+- **ZIP streaming** if needed
 
 ---
 
@@ -269,12 +260,11 @@ interface TimestampConverterState {
 
 ### ✅ Core Test Cases:
 ```typescript
-// Basic Conversion Tests:
-✓ Convert valid Unix timestamp to date
-✓ Convert valid date string to Unix timestamp
-✓ Handle timestamp with milliseconds
-✓ Convert between different timezones
-✓ Validate current timestamp display
+// Basic Asset Tests:
+✓ Every generated image has exact WxH and PNG format
+✓ Manifest icons array contains all free sizes with correct filenames
+✓ Maskable icons include purpose: 'maskable'
+✓ Head snippet contains correct link/meta tags
 
 // Edge Cases:
 ✓ Handle epoch timestamp (0)
@@ -284,11 +274,10 @@ interface TimestampConverterState {
 ✓ Handle invalid input gracefully
 
 // Premium Features:
-✓ Batch conversion with mixed formats
-✓ Custom format pattern validation
-✓ Timezone comparison accuracy
-✓ Export functionality
-✓ Timestamp arithmetic operations
+✓ iOS/Android matrices created with exact sizes
+✓ Splash screens generated with correct canvas size and bg color
+✓ Windows tiles and pinned tab assets
+✓ ZIP contains all premium assets and manifest variants
 ```
 
 ### 🐛 Error Scenarios:
