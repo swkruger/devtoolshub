@@ -77,6 +77,15 @@ export async function middleware(request: NextRequest) {
 
   // If user is not authenticated and trying to access protected route
   if (!user && isProtectedRoute) {
+    // If accessing a tool, route to public docs instead of sign-in
+    if (pathname.startsWith('/tools/')) {
+      const parts = pathname.split('/')
+      const slug = parts[2]
+      if (slug) {
+        return NextResponse.redirect(new URL(`/docs/${slug}`, request.url))
+      }
+      return NextResponse.redirect(new URL('/docs', request.url))
+    }
     const redirectUrl = new URL('/sign-in', request.url)
     redirectUrl.searchParams.set('redirectTo', pathname)
     return NextResponse.redirect(redirectUrl)

@@ -1,6 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getAllTools } from "@/lib/tools"
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Dashboard – DevToolsHub',
+  description: 'Browse and launch DevToolsHub tools from your dashboard. JSON, RegEx, JWT, Base64, UUID, timestamps, XPath/CSS, images, and more.',
+  robots: { index: true, follow: true },
+  alternates: { canonical: '/dashboard' },
+}
 import Link from "next/link"
 
 const tools = getAllTools()

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://base64-encoder.devtoolshub.dev/sitemap.xml

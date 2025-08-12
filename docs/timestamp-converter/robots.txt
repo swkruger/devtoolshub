@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://timestamp-converter.devtoolshub.dev/sitemap.xml

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://xpath-tester.devtoolshub.dev/sitemap.xml

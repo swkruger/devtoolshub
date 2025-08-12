@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DevToolsHub Documentation</title>
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://devtoolshub.dev/" />
+    <style>
+    :root { --bg:#f8fafc; --fg:#0f172a; --muted:#475569; --border:#e5e7eb; --link:#2563eb; --link-hover:#1d4ed8; --card:#ffffff; }
+    @media (prefers-color-scheme: dark){ :root { --bg:#0b0b0b; --fg:#eaeaea; --muted:#a3a3a3; --border:#222; --link:#8ab4ff; --link-hover:#a7c1ff; --card:#0f172a; } }
+    html { color-scheme: light dark; }
+    body { background: var(--bg); color: var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    header { background: var(--card); border-bottom: 1px solid var(--border); display:flex; align-items:center; gap:12px; padding:12px 16px; }
+    header nav a { color: var(--link); text-decoration: none; margin-left: 16px; }
+    header nav a:hover { color: var(--link-hover); text-decoration: underline; }
+    .container { max-width: 1100px; margin: 32px auto; padding: 0 16px; }
+    h1 { font-size: 2rem; font-weight: 800; margin: 0 0 8px; }
+    .muted { color: var(--muted); margin-bottom: 24px; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
+    .card { display:flex; gap:12px; background: var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; text-decoration:none; color: inherit; }
+    .card:hover { border-color: var(--link); }
+    .card-icon { font-size: 20px; }
+    .card-title { font-weight: 700; margin-bottom: 4px; }
+    .card-desc { color: var(--muted); font-size: 0.95rem; }
+  </style>
+  </head>
+  <body>
+    <header>
+      <img src="http://localhost:3000/icons/icon-48x48.png" width="24" height="24" alt="DevToolsHub icon" />
+      <div style="font-weight:700;">DevToolsHub Docs</div>
+      <nav style="margin-left:auto;">
+        <a href="http://localhost:3000">Main App</a>
+        <a href="http://localhost:3000/#tools">All Tools</a>
+        <a href="http://localhost:3000/sign-in">Sign in</a>
+      </nav>
+    </header>
+    <main class="container">
+      <h1>Documentation</h1>
+      <p class="muted">Standalone, SEO‑optimized documentation pages for every DevToolsHub tool.</p>
+      <div class="grid">
+        
+      <a class="card" href="./world-clock/">
+        <div class="card-icon">🌍</div>
+        <div class="card-body">
+          <div class="card-title">World Clock &amp; Time Zones</div>
+          <div class="card-desc">World clock with meeting planner &amp; weather integration</div>
+        </div>
+      </a>
+
+      <a class="card" href="./json-formatter/">
+        <div class="card-icon">📄</div>
+        <div class="card-body">
+          <div class="card-title">JSON Formatter</div>
+          <div class="card-desc">Format and validate JSON data</div>
+        </div>
+      </a>
+
+      <a class="card" href="./regex-tester/">
+        <div class="card-icon">🔍</div>
+        <div class="card-body">
+          <div class="card-title">Regex Tester</div>
+          <div class="card-desc">Test regex patterns with live matching</div>
+        </div>
+      </a>
+
+      <a class="card" href="./jwt-decoder/">
+        <div class="card-icon">🔐</div>
+        <div class="card-body">
+          <div class="card-title">JWT Decoder/Encoder</div>
+          <div class="card-desc">JWT decode, encode, verify</div>
+        </div>
+      </a>
+
+      <a class="card" href="./image-compressor/">
+        <div class="card-icon">📸</div>
+        <div class="card-body">
+          <div class="card-title">Image Compressor</div>
+          <div class="card-desc">Compress and optimize images</div>
+        </div>
+      </a>
+
+      <a class="card" href="./uuid-generator/">
+        <div class="card-icon">🧬</div>
+        <div class="card-body">
+          <div class="card-title">UUID Generator</div>
+          <div class="card-desc">Generate unique identifiers</div>
+        </div>
+      </a>
+
+      <a class="card" href="./xpath-tester/">
+        <div class="card-icon">🧪</div>
+        <div class="card-body">
+          <div class="card-title">XPath/CSS Selector Tester</div>
+          <div class="card-desc">Test XPath and CSS selectors against HTML</div>
+        </div>
+      </a>
+
+      <a class="card" href="./timestamp-converter/">
+        <div class="card-icon">⏰</div>
+        <div class="card-body">
+          <div class="card-title">Timestamp Converter</div>
+          <div class="card-desc">Convert timestamps and dates with timezone support</div>
+        </div>
+      </a>
+
+      <a class="card" href="./base64-encoder/">
+        <div class="card-icon">🔄</div>
+        <div class="card-body">
+          <div class="card-title">Base64 Encoder/Decoder</div>
+          <div class="card-desc">Base64 encoding/decoding with file support &amp; premium features</div>
+        </div>
+      </a>
+
+      <a class="card" href="./password-generator/">
+        <div class="card-icon">🔑</div>
+        <div class="card-body">
+          <div class="card-title">Password &amp; Key-like Generator</div>
+          <div class="card-desc">Generate passwords, passphrases, and key-like strings</div>
+        </div>
+      </a>
+
+      <a class="card" href="./pwa-assets/">
+        <div class="card-icon">📱</div>
+        <div class="card-body">
+          <div class="card-title">PWA Assets &amp; Manifest Generator</div>
+          <div class="card-desc">Generate PWA icons and manifest.json</div>
+        </div>
+      </a>
+      </div>
+    </main>
+  </body>
+</html>

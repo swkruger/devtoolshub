@@ -835,6 +835,7 @@ npm run build        # Build for production
 npm run start        # Start production server  
 npm run lint         # Run ESLint
 npm run db:generate  # Generate TypeScript types from Supabase
+npm run docs:gen     # Generate static docs into /docs
 ```
 
 ## 🔒 Security
@@ -865,6 +866,11 @@ npm run db:generate  # Generate TypeScript types from Supabase
 1. Connect your GitHub repository to Vercel
 2. Add environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
+
+### Documentation (Static)
+
+- Generate static docs with `npm run docs:gen` (writes to `docs/`)
+- Configure hosting for `docs/` (any static host). See `docs/README.md` for mapping to per-tool subdomains and sitemaps/feed
 
 ### Other Platforms
 

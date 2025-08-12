@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://pwa-assets.devtoolshub.dev/sitemap.xml

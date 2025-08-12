@@ -1469,3 +1469,35 @@ Goal: Smooth, beautiful app experience with saved state, user preferences, and h
 
 ---
 
+## 📚 Documentation Work
+
+- [x] Create documentation generator prompt (`DOCS_PROMPT.md`) with requirements for standalone SEO-optimized static pages per tool. (2025-08-12)
+- [ ] Generate static documentation pages (1000–1400 words) for each tool under `docs/<tool-slug>/index.html`, including JSON-LD, OG/Twitter meta, and backlinks to all other tools.
+- [ ] Create `docs/index.html` listing all tool docs with links.
+- [ ] Add `docs/README.md` with hosting instructions and per-domain guidance.
+- [ ] Validate one page through W3C HTML validator and fix issues; then apply fixes across all pages.
+
+## 🧭 SEO & Discoverability Tasks (2025-08-12)
+
+- [x] Robots discoverability: Landing and Dashboard
+  - [x] Confirm robots.txt allows `/` and `/dashboard` (current `app/robots.ts` allows `/`; disallows `/auth`, `/api`, `/_next`, `/private`).
+  - [x] Confirm per-page robots meta `index, follow` for `/` and `/dashboard` (globally set in `app/layout.tsx`; added explicit page-level metadata for redundancy).
+  - [x] Confirm canonical URLs and OG/Twitter meta present (global in `app/layout.tsx`).
+  - [x] Keep auth callbacks noindex and disallowed in robots.txt (already disallowed via `/auth/`).
+
+- [ ] App sitemap.xml
+  - [x] Review `app/sitemap.ts` and ensure `/` and `/dashboard` are included (currently included).
+  - [x] Verify only public, non-user-specific routes are listed; avoid leaking personalized paths.
+  - [x] Add any additional static marketing pages to the sitemap when created (added `/dashboard/overview`).
+
+- [ ] Docs generator (per `DOCS_PROMPT.md`)
+  - [x] Implement Node+TypeScript generator reading `lib/tools.ts` to emit `docs/<slug>/index.html` with shared template helpers. (scripts/docs-generator.ts + CJS bootstrap)
+  - [x] Build `docs/index.html` linking to every tool doc.
+  - [x] Include per-page JSON-LD, OG/Twitter meta, internal backlinks to all other tools, and a related tools grid.
+  - [x] Generate aggregate `docs/sitemap.xml`.
+  - [x] Generate Atom `docs/feed.xml` of documentation updates.
+  - [x] Add `docs/README.md` with hosting/mapping instructions.
+
+### Discovered During Work
+- [ ] Consider whether `/dashboard` (auth-gated) should remain in sitemap. If kept for discoverability, add a public, crawlable dashboard overview page that explains features without requiring login.
+

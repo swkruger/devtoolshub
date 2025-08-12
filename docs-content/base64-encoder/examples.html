@@ -1,0 +1,8 @@
+<h3>Encode text</h3>
+<pre><code>btoa('hello world') → aGVsbG8gd29ybGQ=</code></pre>
+
+<h3>Decode text</h3>
+<pre><code>atob('aGVsbG8gd29ybGQ=') → hello world</code></pre>
+
+<h3>Make URL‑safe</h3>
+<pre><code>base64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')</code></pre>

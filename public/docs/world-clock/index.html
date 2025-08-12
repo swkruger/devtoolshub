@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>World Clock &amp; Time Zones – DevToolsHub</title>
+    <meta name="description" content="World clock with meeting planner &amp; weather integration" />
+    <link rel="canonical" href="https://world-clock.devtoolshub.dev/" />
+    <meta name="robots" content="index,follow" />
+    <meta name="keywords" content="time, timezone, clock, world, meeting, weather, cities" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DevToolsHub" />
+    <meta property="og:title" content="World Clock &amp; Time Zones – DevToolsHub" />
+    <meta property="og:description" content="World clock with meeting planner &amp; weather integration" />
+    <meta property="og:url" content="https://world-clock.devtoolshub.dev/" />
+    <meta property="og:image" content="http://localhost:3000/icons/icon-512x512.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="World Clock &amp; Time Zones – DevToolsHub" />
+    <meta name="twitter:description" content="World clock with meeting planner &amp; weather integration" />
+    <meta name="twitter:image" content="http://localhost:3000/icons/icon-512x512.png" />
+
+    <link rel="icon" href="http://localhost:3000/icons/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="http://localhost:3000/icons/icon-192x192.png" />
+  
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"World Clock & Time Zones","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Compare time zones across cities worldwide with meeting planner, weather data, and business hours visualization","url":"https://world-clock.devtoolshub.dev/","image":"http://localhost:3000/icons/icon-512x512.png","author":{"@type":"Organization","name":"DevToolsHub"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"keywords":["time","timezone","clock","world","meeting","weather","cities"],"dateModified":"2025-08-12T23:15:19.522Z"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is World Clock & Time Zones?","acceptedAnswer":{"@type":"Answer","text":"Compare time zones across cities worldwide with meeting planner, weather data, and business hours visualization"}},{"@type":"Question","name":"Is World Clock & Time Zones free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes, core features are free. Some advanced features are available with a premium plan in the DevToolsHub app."}},{"@type":"Question","name":"How do I open this tool in DevToolsHub?","acceptedAnswer":{"@type":"Answer","text":"Use the “Open this tool in DevToolsHub” button which links directly to the app interface."}}]}</script>
+    <style>
+    :root {
+      --bg: #f8fafc; --fg: #0f172a; --muted: #475569; --border: #e5e7eb;
+      --link: #2563eb; --link-hover: #1d4ed8; --card-bg: #ffffff; --code-bg: #f1f5f9;
+      --header-bg: #ffffff; --btn-bg: #2563eb; --btn-fg: #ffffff; --btn-hover: #1d4ed8;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0b0b; --fg: #eaeaea; --muted: #a3a3a3; --border: #222;
+        --link: #8ab4ff; --link-hover: #a7c1ff; --card-bg: #0f172a; --code-bg: #111827;
+        --header-bg: #0b0b0b; --btn-bg: #2563eb; --btn-fg: #ffffff; --btn-hover: #1d4ed8;
+      }
+    }
+    html { color-scheme: light dark; }
+    body { background: var(--bg); color: var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    header { background: var(--header-bg); border-bottom: 1px solid var(--border); }
+    header nav a { color: var(--link); text-decoration: none; }
+    header nav a:hover { color: var(--link-hover); text-decoration: underline; }
+    .container { max-width: 960px; margin: 32px auto; padding: 0 16px; line-height: 1.7; }
+    h1 { font-size: 2.25rem; font-weight: 800; margin: 0 0 12px; }
+    h2 { font-size: 1.25rem; font-weight: 700; margin: 28px 0 12px; }
+    h3 { font-size: 1rem; font-weight: 700; margin: 18px 0 8px; }
+    p { margin: 0 0 16px; }
+    .muted { color: var(--muted); }
+    ul { margin: 0 0 16px 1.25rem; padding: 0; }
+    ol { margin: 0 0 16px 1.25rem; padding: 0; }
+    li { margin: 6px 0; }
+    a { color: var(--link); }
+    a:hover { color: var(--link-hover); }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    pre { background: var(--code-bg); padding: 12px; border-radius: 8px; overflow: auto; border: 1px solid var(--border); }
+    .cta { display: inline-block; background: var(--btn-bg); color: var(--btn-fg); padding: 12px 16px; border-radius: 8px; text-decoration: none; }
+    .cta:hover { background: var(--btn-hover); }
+    footer { border-top: 1px solid var(--border); color: var(--muted); }
+  </style>
+  </head>
+  <body>
+    
+  <header style="display:flex;align-items:center;gap:12px;padding:12px 16px;">
+    <img src="http://localhost:3000/icons/icon-48x48.png" width="24" height="24" alt="DevToolsHub icon"/>
+    <nav style="margin-left:auto;display:flex;gap:16px;">
+      <a href="http://localhost:3000">Main App</a>
+      <a href="http://localhost:3000/#tools">All Tools</a>
+      <a href="http://localhost:3000/sign-in">Sign in</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>World Clock &amp; Time Zones</h1>
+    <p class="muted">Compare time zones across cities worldwide with meeting planner, weather data, and business hours visualization</p>
+    <p><strong>World Clock &amp; Time Zones</strong> is built for remote teams, SREs, and analysts who coordinate across continents. Compare cities side‑by‑side, scrub time forward or backward, and instantly see who is in business hours, evening, or off‑hours.</p>
+<p>Instead of a dense table, the tool uses clear, card‑based tiles so each city keeps its context (name, country, offset, and optional weather). Reorder cards, pin favorites, and preview how a proposed meeting time looks for everyone before you send a calendar invite.</p>
+<p>Premium users unlock unlimited cities, live weather, advanced date ranges (±30 days), and one‑click calendar export—perfect for recurring cross‑region coordination.</p>
+
+
+    <h2>Key features</h2>
+    <ul>
+      <li>Up to 5 city timezones</li>
+<li>Real-time clock display with seconds</li>
+<li>Time zone conversion and comparison</li>
+<li>Date/time scrubbing (±7 days)</li>
+<li>Basic meeting time finder</li>
+<li>Copy time/date to clipboard</li>
+<li>Export timezone list as JSON</li>
+<li>Business hours visualization</li>
+    </ul>
+
+    <h2>How it works</h2>
+    <p>The planner renders a synchronized timeline for all selected cities. A shared time scrubber moves every card in unison, accurately handling DST transitions and historical offsets. Business‑hour shading and weekend cues make it obvious when a slot is workable.</p>
+<p>The meeting finder scores candidate windows using overlap and local business‑hour heuristics. You can nudge the duration, adjust constraints, and copy or export the final slot in seconds. Weather overlays (premium) provide useful context for travel or outdoor events.</p>
+
+
+    <h2>Step-by-step usage</h2>
+    <ol>
+  <li>Add 2–5 cities you collaborate with most often.</li>
+  <li>Drag cards to match your mental ordering (e.g., east → west).</li>
+  <li>Scrub the timeline to preview tomorrow or next week.</li>
+  <li>Open the meeting planner and set the desired duration.</li>
+  <li>Pick a high‑score slot and copy or export it to your calendar.</li>
+  <li>(Optional, premium) Enable weather and extend the date range to ±30 days.</li>
+</ol>
+
+
+    <h2>Examples</h2>
+    <h3>Find overlapping business hours</h3>
+<p>Add <em>San Francisco</em>, <em>London</em>, and <em>Sydney</em>. Use the time scrubber around 16:00 London time to catch morning SF and late‑evening Sydney. Look for green (business‑hour) shading on at least two cards.</p>
+
+<h3>Plan a weekly stand‑up</h3>
+<p>Open the meeting planner, set duration to <strong>30 minutes</strong>, and restrict to local working hours. Pick a slot that scores well for your core team, then <strong>Copy</strong> or <strong>Export (premium)</strong> to your calendar.</p>
+
+<h3>Preview tomorrow’s hand‑off</h3>
+<p>Scrub to <strong>tomorrow 09:00</strong> in your team lead’s timezone. Confirm the receiving engineer in another city is still within business hours, then copy the localized time for your hand‑off note.</p>
+
+
+    <h2>Security & privacy</h2>
+    <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
+
+    <h2>Accessibility</h2>
+    <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
+
+    <h2>Limitations & disclaimers</h2>
+    <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+
+    <h2>Related tools</h2>
+    <p>Explore other DevToolsHub modules that complement World Clock &amp; Time Zones:</p>
+    <ul><li><a href="http://localhost:3000/tools/json-formatter" rel="nofollow">JSON Formatter</a> – Format and validate JSON data</li>
+<li><a href="http://localhost:3000/tools/regex-tester" rel="nofollow">Regex Tester</a> – Test regex patterns with live matching</li>
+<li><a href="http://localhost:3000/tools/jwt-decoder" rel="nofollow">JWT Decoder/Encoder</a> – JWT decode, encode, verify</li>
+<li><a href="http://localhost:3000/tools/image-compressor" rel="nofollow">Image Compressor</a> – Compress and optimize images</li>
+<li><a href="http://localhost:3000/tools/uuid-generator" rel="nofollow">UUID Generator</a> – Generate unique identifiers</li>
+<li><a href="http://localhost:3000/tools/xpath-tester" rel="nofollow">XPath/CSS Selector Tester</a> – Test XPath and CSS selectors against HTML</li>
+<li><a href="http://localhost:3000/tools/timestamp-converter" rel="nofollow">Timestamp Converter</a> – Convert timestamps and dates with timezone support</li>
+<li><a href="http://localhost:3000/tools/base64-encoder" rel="nofollow">Base64 Encoder/Decoder</a> – Base64 encoding/decoding with file support &amp; premium features</li>
+<li><a href="http://localhost:3000/tools/password-generator" rel="nofollow">Password &amp; Key-like Generator</a> – Generate passwords, passphrases, and key-like strings</li>
+<li><a href="http://localhost:3000/tools/pwa-assets" rel="nofollow">PWA Assets &amp; Manifest Generator</a> – Generate PWA icons and manifest.json</li></ul>
+
+    <h2>Resources & references</h2>
+    <ul>
+      <li><a href="https://developer.mozilla.org/">MDN Web Docs</a></li>
+<li><a href="https://whatwg.org/">WHATWG Standards</a></li>
+<li><a href="https://schema.org/SoftwareApplication">Schema.org: SoftwareApplication</a></li>
+<li><a href="https://www.w3.org/TR/WCAG21/">W3C WCAG 2.1</a></li>
+<li><a href="https://web.dev/learn/">web.dev: Best Practices</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/">RFC Editor</a></li>
+    </ul>
+
+    <p style="margin-top:24px;">
+      <a href="http://localhost:3000/tools/world-clock" class="cta">Open this tool in DevToolsHub</a>
+    </p>
+  </main>
+
+  <footer style="text-align:center;padding:16px;">
+    &copy; 2025 <a href="http://localhost:3000">DevToolsHub</a>
+  </footer>
+  
+  </body>
+</html>

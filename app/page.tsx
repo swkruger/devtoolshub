@@ -2,6 +2,16 @@ import Link from 'next/link'
 import { authServer } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { getAllTools } from '@/lib/tools'
+import { BookOpen } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'DevToolsHub – Essential Developer Tools',
+  description:
+    'All-in-one developer toolkit: JSON formatter, regex tester, JWT decoder/encoder, Base64 utilities, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, and more.',
+  robots: { index: true, follow: true },
+  alternates: { canonical: '/' },
+}
 
 export default async function HomePage() {
   // Check if user is already authenticated (only during request time, not build time)
@@ -102,7 +112,7 @@ export default async function HomePage() {
       <section id="tools" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 id="tools" className="text-4xl font-bold text-gray-900 mb-4">
               Professional Developer Tools
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -112,27 +122,37 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {tools.map(tool => (
-              <Link key={tool.id} href={tool.path} className="group">
-              <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-blue-300">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                      <tool.icon className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{tool.name}</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-green-600 font-medium">✅ Available</span>
+              <div key={tool.id} className="relative">
+                <Link href={tool.path} className="group block">
+                  <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-blue-300">
+                    <div className="flex items-center mb-4">
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                        <tool.icon className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-900">{tool.name}</h3>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-green-600 font-medium">✅ Available</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-gray-600 mb-4">{tool.shortDescription}</p>
+                    <div className="flex flex-wrap gap-2 text-xs text-gray-500">
+                      {tool.tags.slice(0,4).map(tag => (
+                        <span key={tag} className="px-2 py-1 rounded bg-gray-100">{tag}</span>
+                      ))}
                     </div>
                   </div>
-                </div>
-                  <p className="text-gray-600 mb-4">{tool.shortDescription}</p>
-                  <div className="flex flex-wrap gap-2 text-xs text-gray-500">
-                    {tool.tags.slice(0,4).map(tag => (
-                      <span key={tag} className="px-2 py-1 rounded bg-gray-100">{tag}</span>
-                    ))}
-                </div>
+                </Link>
+                <Link
+                  href={`/docs/${tool.id}`}
+                  aria-label={`Open ${tool.name} docs`}
+                  className="absolute top-3 right-3 text-gray-500 hover:text-blue-600 transition-colors"
+                  title="Open docs"
+                >
+                  <BookOpen className="w-5 h-5" />
+                </Link>
               </div>
-            </Link>
             ))}
           </div>
         </div>

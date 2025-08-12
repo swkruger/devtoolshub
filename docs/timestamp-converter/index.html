@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Timestamp Converter – DevToolsHub</title>
+    <meta name="description" content="Convert timestamps and dates with timezone support" />
+    <link rel="canonical" href="https://timestamp-converter.devtoolshub.dev/" />
+    <meta name="robots" content="index,follow" />
+    <meta name="keywords" content="timestamp, unix, date, time, timezone, epoch, conversion" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DevToolsHub" />
+    <meta property="og:title" content="Timestamp Converter – DevToolsHub" />
+    <meta property="og:description" content="Convert timestamps and dates with timezone support" />
+    <meta property="og:url" content="https://timestamp-converter.devtoolshub.dev/" />
+    <meta property="og:image" content="http://localhost:3000/icons/icon-512x512.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Timestamp Converter – DevToolsHub" />
+    <meta name="twitter:description" content="Convert timestamps and dates with timezone support" />
+    <meta name="twitter:image" content="http://localhost:3000/icons/icon-512x512.png" />
+
+    <link rel="icon" href="http://localhost:3000/icons/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="http://localhost:3000/icons/icon-192x192.png" />
+  
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Timestamp Converter","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Convert between Unix timestamps and human-readable dates with timezone support. The best timestamp conversion tool for developers.","url":"https://timestamp-converter.devtoolshub.dev/","image":"http://localhost:3000/icons/icon-512x512.png","author":{"@type":"Organization","name":"DevToolsHub"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"keywords":["timestamp","unix","date","time","timezone","epoch","conversion"],"dateModified":"2025-08-12T23:15:19.522Z"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Timestamp Converter?","acceptedAnswer":{"@type":"Answer","text":"Convert between Unix timestamps and human-readable dates with timezone support. The best timestamp conversion tool for developers."}},{"@type":"Question","name":"Is Timestamp Converter free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes, core features are free. Some advanced features are available with a premium plan in the DevToolsHub app."}},{"@type":"Question","name":"How do I open this tool in DevToolsHub?","acceptedAnswer":{"@type":"Answer","text":"Use the “Open this tool in DevToolsHub” button which links directly to the app interface."}}]}</script>
+    <style>
+    :root {
+      --bg: #f8fafc; --fg: #0f172a; --muted: #475569; --border: #e5e7eb;
+      --link: #2563eb; --link-hover: #1d4ed8; --card-bg: #ffffff; --code-bg: #f1f5f9;
+      --header-bg: #ffffff; --btn-bg: #2563eb; --btn-fg: #ffffff; --btn-hover: #1d4ed8;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0b0b; --fg: #eaeaea; --muted: #a3a3a3; --border: #222;
+        --link: #8ab4ff; --link-hover: #a7c1ff; --card-bg: #0f172a; --code-bg: #111827;
+        --header-bg: #0b0b0b; --btn-bg: #2563eb; --btn-fg: #ffffff; --btn-hover: #1d4ed8;
+      }
+    }
+    html { color-scheme: light dark; }
+    body { background: var(--bg); color: var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    header { background: var(--header-bg); border-bottom: 1px solid var(--border); }
+    header nav a { color: var(--link); text-decoration: none; }
+    header nav a:hover { color: var(--link-hover); text-decoration: underline; }
+    .container { max-width: 960px; margin: 32px auto; padding: 0 16px; line-height: 1.7; }
+    h1 { font-size: 2.25rem; font-weight: 800; margin: 0 0 12px; }
+    h2 { font-size: 1.25rem; font-weight: 700; margin: 28px 0 12px; }
+    h3 { font-size: 1rem; font-weight: 700; margin: 18px 0 8px; }
+    p { margin: 0 0 16px; }
+    .muted { color: var(--muted); }
+    ul { margin: 0 0 16px 1.25rem; padding: 0; }
+    ol { margin: 0 0 16px 1.25rem; padding: 0; }
+    li { margin: 6px 0; }
+    a { color: var(--link); }
+    a:hover { color: var(--link-hover); }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    pre { background: var(--code-bg); padding: 12px; border-radius: 8px; overflow: auto; border: 1px solid var(--border); }
+    .cta { display: inline-block; background: var(--btn-bg); color: var(--btn-fg); padding: 12px 16px; border-radius: 8px; text-decoration: none; }
+    .cta:hover { background: var(--btn-hover); }
+    footer { border-top: 1px solid var(--border); color: var(--muted); }
+  </style>
+  </head>
+  <body>
+    
+  <header style="display:flex;align-items:center;gap:12px;padding:12px 16px;">
+    <img src="http://localhost:3000/icons/icon-48x48.png" width="24" height="24" alt="DevToolsHub icon"/>
+    <nav style="margin-left:auto;display:flex;gap:16px;">
+      <a href="http://localhost:3000">Main App</a>
+      <a href="http://localhost:3000/#tools">All Tools</a>
+      <a href="http://localhost:3000/sign-in">Sign in</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Timestamp Converter</h1>
+    <p class="muted">Convert between Unix timestamps and human-readable dates with timezone support. The best timestamp conversion tool for developers.</p>
+    <p><strong>Timestamp Converter</strong> translates between Unix epochs and human‑readable dates with timezone awareness. It’s built for debugging logs, aligning ETL windows, and validating API payloads.</p>
+
+
+    <h2>Key features</h2>
+    <ul>
+      <li>Unix timestamp to date conversion</li>
+<li>Date to Unix timestamp conversion</li>
+<li>Current timestamp display with auto-update</li>
+<li>Basic timezone support (UTC, Local, common zones)</li>
+<li>ISO 8601 format support</li>
+<li>Millisecond precision handling</li>
+<li>Copy results to clipboard</li>
+<li>Input validation and error handling</li>
+    </ul>
+
+    <h2>How it works</h2>
+    <p>Bidirectional parsing updates both fields live, with precise control over seconds/milliseconds. Premium adds batch conversion, custom format patterns, and multi‑timezone comparison with DST handling.</p>
+
+
+    <h2>Step-by-step usage</h2>
+    <ol>
+  <li>Paste a Unix timestamp or date string.</li>
+  <li>Choose a timezone and review ISO/local outputs.</li>
+  <li>(Premium) Convert batches from text/CSV and export results.</li>
+</ol>
+
+
+    <h2>Examples</h2>
+    <h3>Epoch to ISO</h3>
+<pre><code>1734048000 → 2024-12-13T00:00:00.000Z</code></pre>
+
+<h3>ISO to epoch (seconds)</h3>
+<pre><code>2025-01-01T00:00:00Z → 1735689600</code></pre>
+
+<h3>(Premium) Batch convert</h3>
+<p>Paste a column of epochs, convert to local time, and export results as CSV.</p>
+
+
+    <h2>Security & privacy</h2>
+    <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
+
+    <h2>Accessibility</h2>
+    <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
+
+    <h2>Limitations & disclaimers</h2>
+    <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+
+    <h2>Related tools</h2>
+    <p>Explore other DevToolsHub modules that complement Timestamp Converter:</p>
+    <ul><li><a href="http://localhost:3000/tools/world-clock" rel="nofollow">World Clock &amp; Time Zones</a> – World clock with meeting planner &amp; weather integration</li>
+<li><a href="http://localhost:3000/tools/json-formatter" rel="nofollow">JSON Formatter</a> – Format and validate JSON data</li>
+<li><a href="http://localhost:3000/tools/regex-tester" rel="nofollow">Regex Tester</a> – Test regex patterns with live matching</li>
+<li><a href="http://localhost:3000/tools/jwt-decoder" rel="nofollow">JWT Decoder/Encoder</a> – JWT decode, encode, verify</li>
+<li><a href="http://localhost:3000/tools/image-compressor" rel="nofollow">Image Compressor</a> – Compress and optimize images</li>
+<li><a href="http://localhost:3000/tools/uuid-generator" rel="nofollow">UUID Generator</a> – Generate unique identifiers</li>
+<li><a href="http://localhost:3000/tools/xpath-tester" rel="nofollow">XPath/CSS Selector Tester</a> – Test XPath and CSS selectors against HTML</li>
+<li><a href="http://localhost:3000/tools/base64-encoder" rel="nofollow">Base64 Encoder/Decoder</a> – Base64 encoding/decoding with file support &amp; premium features</li>
+<li><a href="http://localhost:3000/tools/password-generator" rel="nofollow">Password &amp; Key-like Generator</a> – Generate passwords, passphrases, and key-like strings</li>
+<li><a href="http://localhost:3000/tools/pwa-assets" rel="nofollow">PWA Assets &amp; Manifest Generator</a> – Generate PWA icons and manifest.json</li></ul>
+
+    <h2>Resources & references</h2>
+    <ul>
+      <li><a href="https://developer.mozilla.org/">MDN Web Docs</a></li>
+<li><a href="https://whatwg.org/">WHATWG Standards</a></li>
+<li><a href="https://schema.org/SoftwareApplication">Schema.org: SoftwareApplication</a></li>
+<li><a href="https://www.w3.org/TR/WCAG21/">W3C WCAG 2.1</a></li>
+<li><a href="https://web.dev/learn/">web.dev: Best Practices</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/">RFC Editor</a></li>
+    </ul>
+
+    <p style="margin-top:24px;">
+      <a href="http://localhost:3000/tools/timestamp-converter" class="cta">Open this tool in DevToolsHub</a>
+    </p>
+  </main>
+
+  <footer style="text-align:center;padding:16px;">
+    &copy; 2025 <a href="http://localhost:3000">DevToolsHub</a>
+  </footer>
+  
+  </body>
+</html>
