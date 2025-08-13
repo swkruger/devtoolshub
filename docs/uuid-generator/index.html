@@ -25,7 +25,7 @@
     <link rel="icon" href="http://localhost:3000/icons/favicon-32x32.png" />
     <link rel="apple-touch-icon" href="http://localhost:3000/icons/icon-192x192.png" />
   
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"UUID Generator","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Generate unique identifiers in various formats with advanced customization. The best UUID generator tool for developers.","url":"https://uuid-generator.devtoolshub.dev/","image":"http://localhost:3000/icons/icon-512x512.png","author":{"@type":"Organization","name":"DevToolsHub"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"keywords":["uuid","unique","identifier","generate","guid","random"],"dateModified":"2025-08-12T23:15:19.522Z"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"UUID Generator","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Generate unique identifiers in various formats with advanced customization. The best UUID generator tool for developers.","url":"https://uuid-generator.devtoolshub.dev/","image":"http://localhost:3000/icons/icon-512x512.png","author":{"@type":"Organization","name":"DevToolsHub"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"keywords":["uuid","unique","identifier","generate","guid","random"],"dateModified":"2025-08-12T23:58:17.095Z"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is UUID Generator?","acceptedAnswer":{"@type":"Answer","text":"Generate unique identifiers in various formats with advanced customization. The best UUID generator tool for developers."}},{"@type":"Question","name":"Is UUID Generator free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes, core features are free. Some advanced features are available with a premium plan in the DevToolsHub app."}},{"@type":"Question","name":"How do I open this tool in DevToolsHub?","acceptedAnswer":{"@type":"Answer","text":"Use the “Open this tool in DevToolsHub” button which links directly to the app interface."}}]}</script>
     <style>
     :root {
@@ -51,6 +51,8 @@
     h3 { font-size: 1rem; font-weight: 700; margin: 18px 0 8px; }
     p { margin: 0 0 16px; }
     .muted { color: var(--muted); }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .stack { display: grid; gap: 16px; }
     ul { margin: 0 0 16px 1.25rem; padding: 0; }
     ol { margin: 0 0 16px 1.25rem; padding: 0; }
     li { margin: 6px 0; }
@@ -75,14 +77,18 @@
   </header>
 
   <main class="container">
-    <h1>UUID Generator</h1>
-    <p class="muted">Generate unique identifiers in various formats with advanced customization. The best UUID generator tool for developers.</p>
-    <p><strong>UUID Generator</strong> produces standards‑compliant identifiers for prototypes, migrations, and production systems. Generate v1/v3/v4/v5 with formats tailored to your storage or wire protocols.</p>
+    <div class="stack">
+      <section class="card">
+        <h1>UUID Generator</h1>
+        <p class="muted">Generate unique identifiers in various formats with advanced customization. The best UUID generator tool for developers.</p>
+        <p><strong>UUID Generator</strong> produces standards‑compliant identifiers for prototypes, migrations, and production systems. Generate v1/v3/v4/v5 with formats tailored to your storage or wire protocols.</p>
 
+      </section>
 
-    <h2>Key features</h2>
-    <ul>
-      <li>Generate UUID v4 (random)</li>
+      <section class="card">
+        <h2>Key features</h2>
+        <ul>
+          <li>Generate UUID v4 (random)</li>
 <li>Generate UUID v1 (timestamp-based)</li>
 <li>Generate UUID v3/v5 (namespace-based)</li>
 <li>Multiple output formats (standard, compact, base64)</li>
@@ -90,22 +96,28 @@
 <li>Real-time generation</li>
 <li>Format validation</li>
 <li>Help panel with examples and shortcuts</li>
-    </ul>
+        </ul>
+      </section>
 
-    <h2>How it works</h2>
-    <p>Values are created with cryptographically secure randomness (v4) or deterministic hashing (v3/v5) using well‑known namespaces. Premium adds bulk generation, history, and namespace management.</p>
+      <section class="card">
+        <h2>How it works</h2>
+        <p>Values are created with cryptographically secure randomness (v4) or deterministic hashing (v3/v5) using well‑known namespaces. Premium adds bulk generation, history, and namespace management.</p>
 
+      </section>
 
-    <h2>Step-by-step usage</h2>
-    <ol>
+      <section class="card">
+        <h2>Step-by-step usage</h2>
+        <ol>
   <li>Select version (v1/v3/v4/v5) and desired output format.</li>
   <li>Provide name and namespace for v3/v5 if applicable.</li>
   <li>Copy results or (premium) generate in bulk and export.</li>
 </ol>
 
+      </section>
 
-    <h2>Examples</h2>
-    <h3>Create a v4 ID for a new record</h3>
+      <section class="card">
+        <h2>Examples</h2>
+        <h3>Create a v4 ID for a new record</h3>
 <pre><code>crypto.randomUUID() // e.g. 3f3c0f35-...</code></pre>
 
 <h3>Deterministic IDs with v5</h3>
@@ -114,19 +126,27 @@
 <h3>(Premium) Generate 500 IDs</h3>
 <p>Bulk generate and export to CSV for a load test fixture.</p>
 
+      </section>
 
-    <h2>Security & privacy</h2>
-    <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
+      <section class="card">
+        <h2>Security & privacy</h2>
+        <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
+      </section>
 
-    <h2>Accessibility</h2>
-    <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
+      <section class="card">
+        <h2>Accessibility</h2>
+        <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
+      </section>
 
-    <h2>Limitations & disclaimers</h2>
-    <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+      <section class="card">
+        <h2>Limitations & disclaimers</h2>
+        <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+      </section>
 
-    <h2>Related tools</h2>
-    <p>Explore other DevToolsHub modules that complement UUID Generator:</p>
-    <ul><li><a href="http://localhost:3000/tools/world-clock" rel="nofollow">World Clock &amp; Time Zones</a> – World clock with meeting planner &amp; weather integration</li>
+      <section class="card">
+        <h2>Related tools</h2>
+        <p>Explore other DevToolsHub modules that complement UUID Generator:</p>
+        <ul><li><a href="http://localhost:3000/tools/world-clock" rel="nofollow">World Clock &amp; Time Zones</a> – World clock with meeting planner &amp; weather integration</li>
 <li><a href="http://localhost:3000/tools/json-formatter" rel="nofollow">JSON Formatter</a> – Format and validate JSON data</li>
 <li><a href="http://localhost:3000/tools/regex-tester" rel="nofollow">Regex Tester</a> – Test regex patterns with live matching</li>
 <li><a href="http://localhost:3000/tools/jwt-decoder" rel="nofollow">JWT Decoder/Encoder</a> – JWT decode, encode, verify</li>
@@ -136,20 +156,26 @@
 <li><a href="http://localhost:3000/tools/base64-encoder" rel="nofollow">Base64 Encoder/Decoder</a> – Base64 encoding/decoding with file support &amp; premium features</li>
 <li><a href="http://localhost:3000/tools/password-generator" rel="nofollow">Password &amp; Key-like Generator</a> – Generate passwords, passphrases, and key-like strings</li>
 <li><a href="http://localhost:3000/tools/pwa-assets" rel="nofollow">PWA Assets &amp; Manifest Generator</a> – Generate PWA icons and manifest.json</li></ul>
+      </section>
 
-    <h2>Resources & references</h2>
-    <ul>
-      <li><a href="https://developer.mozilla.org/">MDN Web Docs</a></li>
+      <section class="card">
+        <h2>Resources & references</h2>
+        <ul>
+          <li><a href="https://developer.mozilla.org/">MDN Web Docs</a></li>
 <li><a href="https://whatwg.org/">WHATWG Standards</a></li>
 <li><a href="https://schema.org/SoftwareApplication">Schema.org: SoftwareApplication</a></li>
 <li><a href="https://www.w3.org/TR/WCAG21/">W3C WCAG 2.1</a></li>
 <li><a href="https://web.dev/learn/">web.dev: Best Practices</a></li>
 <li><a href="https://www.rfc-editor.org/rfc/">RFC Editor</a></li>
-    </ul>
+        </ul>
+      </section>
 
-    <p style="margin-top:24px;">
-      <a href="http://localhost:3000/tools/uuid-generator" class="cta">Open this tool in DevToolsHub</a>
-    </p>
+      <section class="card">
+        <p style="margin:0;">
+          <a href="http://localhost:3000/tools/uuid-generator" class="cta">Open this tool in DevToolsHub</a>
+        </p>
+      </section>
+    </div>
   </main>
 
   <footer style="text-align:center;padding:16px;">

@@ -25,7 +25,7 @@
     <link rel="icon" href="http://localhost:3000/icons/favicon-32x32.png" />
     <link rel="apple-touch-icon" href="http://localhost:3000/icons/icon-192x192.png" />
   
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Compressor","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Compress and optimize images with advanced algorithms and format conversion. The best image compression tool for developers.","url":"https://image-compressor.devtoolshub.dev/","image":"http://localhost:3000/icons/icon-512x512.png","author":{"@type":"Organization","name":"DevToolsHub"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"keywords":["image","compress","optimize","convert","webp","avif","jpeg","png"],"dateModified":"2025-08-12T23:15:19.522Z"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Compressor","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Compress and optimize images with advanced algorithms and format conversion. The best image compression tool for developers.","url":"https://image-compressor.devtoolshub.dev/","image":"http://localhost:3000/icons/icon-512x512.png","author":{"@type":"Organization","name":"DevToolsHub"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"keywords":["image","compress","optimize","convert","webp","avif","jpeg","png"],"dateModified":"2025-08-12T23:58:17.095Z"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Image Compressor?","acceptedAnswer":{"@type":"Answer","text":"Compress and optimize images with advanced algorithms and format conversion. The best image compression tool for developers."}},{"@type":"Question","name":"Is Image Compressor free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes, core features are free. Some advanced features are available with a premium plan in the DevToolsHub app."}},{"@type":"Question","name":"How do I open this tool in DevToolsHub?","acceptedAnswer":{"@type":"Answer","text":"Use the “Open this tool in DevToolsHub” button which links directly to the app interface."}}]}</script>
     <style>
     :root {
@@ -51,6 +51,8 @@
     h3 { font-size: 1rem; font-weight: 700; margin: 18px 0 8px; }
     p { margin: 0 0 16px; }
     .muted { color: var(--muted); }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .stack { display: grid; gap: 16px; }
     ul { margin: 0 0 16px 1.25rem; padding: 0; }
     ol { margin: 0 0 16px 1.25rem; padding: 0; }
     li { margin: 6px 0; }
@@ -75,14 +77,18 @@
   </header>
 
   <main class="container">
-    <h1>Image Compressor</h1>
-    <p class="muted">Compress and optimize images with advanced algorithms and format conversion. The best image compression tool for developers.</p>
-    <p><strong>Image Compressor</strong> optimizes assets for the web without compromising quality. Tune quality, resize, and convert formats (JPEG/PNG/WebP/AVIF) with instant previews so you can ship fast pages confidently.</p>
+    <div class="stack">
+      <section class="card">
+        <h1>Image Compressor</h1>
+        <p class="muted">Compress and optimize images with advanced algorithms and format conversion. The best image compression tool for developers.</p>
+        <p><strong>Image Compressor</strong> optimizes assets for the web without compromising quality. Tune quality, resize, and convert formats (JPEG/PNG/WebP/AVIF) with instant previews so you can ship fast pages confidently.</p>
 
+      </section>
 
-    <h2>Key features</h2>
-    <ul>
-      <li>Single image upload with drag &amp; drop</li>
+      <section class="card">
+        <h2>Key features</h2>
+        <ul>
+          <li>Single image upload with drag &amp; drop</li>
 <li>Basic compression with quality control</li>
 <li>JPEG and PNG support</li>
 <li>Before/after comparison</li>
@@ -90,22 +96,28 @@
 <li>File size reduction display</li>
 <li>Image metadata display</li>
 <li>Help panel with examples and shortcuts</li>
-    </ul>
+        </ul>
+      </section>
 
-    <h2>How it works</h2>
-    <p>Compression runs locally using Canvas/WebCodecs where available to keep data private and interactions snappy. Batch processing and ZIP export (premium) streamline multi‑asset pipelines.</p>
+      <section class="card">
+        <h2>How it works</h2>
+        <p>Compression runs locally using Canvas/WebCodecs where available to keep data private and interactions snappy. Batch processing and ZIP export (premium) streamline multi‑asset pipelines.</p>
 
+      </section>
 
-    <h2>Step-by-step usage</h2>
-    <ol>
+      <section class="card">
+        <h2>Step-by-step usage</h2>
+        <ol>
   <li>Drop an image or select files (premium for batch).</li>
   <li>Adjust quality and format; preview before/after.</li>
   <li>Resize if needed and download the optimized output.</li>
 </ol>
 
+      </section>
 
-    <h2>Examples</h2>
-    <h3>Convert PNG to WebP</h3>
+      <section class="card">
+        <h2>Examples</h2>
+        <h3>Convert PNG to WebP</h3>
 <p>Drop a PNG, select <strong>WebP</strong>, set quality to 80, and compare sizes before downloading.</p>
 
 <h3>Resize hero image</h3>
@@ -114,19 +126,27 @@
 <h3>(Premium) Batch optimize</h3>
 <p>Select a folder of images, apply a preset, and download a ZIP with optimized assets.</p>
 
+      </section>
 
-    <h2>Security & privacy</h2>
-    <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
+      <section class="card">
+        <h2>Security & privacy</h2>
+        <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
+      </section>
 
-    <h2>Accessibility</h2>
-    <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
+      <section class="card">
+        <h2>Accessibility</h2>
+        <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
+      </section>
 
-    <h2>Limitations & disclaimers</h2>
-    <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+      <section class="card">
+        <h2>Limitations & disclaimers</h2>
+        <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+      </section>
 
-    <h2>Related tools</h2>
-    <p>Explore other DevToolsHub modules that complement Image Compressor:</p>
-    <ul><li><a href="http://localhost:3000/tools/world-clock" rel="nofollow">World Clock &amp; Time Zones</a> – World clock with meeting planner &amp; weather integration</li>
+      <section class="card">
+        <h2>Related tools</h2>
+        <p>Explore other DevToolsHub modules that complement Image Compressor:</p>
+        <ul><li><a href="http://localhost:3000/tools/world-clock" rel="nofollow">World Clock &amp; Time Zones</a> – World clock with meeting planner &amp; weather integration</li>
 <li><a href="http://localhost:3000/tools/json-formatter" rel="nofollow">JSON Formatter</a> – Format and validate JSON data</li>
 <li><a href="http://localhost:3000/tools/regex-tester" rel="nofollow">Regex Tester</a> – Test regex patterns with live matching</li>
 <li><a href="http://localhost:3000/tools/jwt-decoder" rel="nofollow">JWT Decoder/Encoder</a> – JWT decode, encode, verify</li>
@@ -136,20 +156,26 @@
 <li><a href="http://localhost:3000/tools/base64-encoder" rel="nofollow">Base64 Encoder/Decoder</a> – Base64 encoding/decoding with file support &amp; premium features</li>
 <li><a href="http://localhost:3000/tools/password-generator" rel="nofollow">Password &amp; Key-like Generator</a> – Generate passwords, passphrases, and key-like strings</li>
 <li><a href="http://localhost:3000/tools/pwa-assets" rel="nofollow">PWA Assets &amp; Manifest Generator</a> – Generate PWA icons and manifest.json</li></ul>
+      </section>
 
-    <h2>Resources & references</h2>
-    <ul>
-      <li><a href="https://developer.mozilla.org/">MDN Web Docs</a></li>
+      <section class="card">
+        <h2>Resources & references</h2>
+        <ul>
+          <li><a href="https://developer.mozilla.org/">MDN Web Docs</a></li>
 <li><a href="https://whatwg.org/">WHATWG Standards</a></li>
 <li><a href="https://schema.org/SoftwareApplication">Schema.org: SoftwareApplication</a></li>
 <li><a href="https://www.w3.org/TR/WCAG21/">W3C WCAG 2.1</a></li>
 <li><a href="https://web.dev/learn/">web.dev: Best Practices</a></li>
 <li><a href="https://www.rfc-editor.org/rfc/">RFC Editor</a></li>
-    </ul>
+        </ul>
+      </section>
 
-    <p style="margin-top:24px;">
-      <a href="http://localhost:3000/tools/image-compressor" class="cta">Open this tool in DevToolsHub</a>
-    </p>
+      <section class="card">
+        <p style="margin:0;">
+          <a href="http://localhost:3000/tools/image-compressor" class="cta">Open this tool in DevToolsHub</a>
+        </p>
+      </section>
+    </div>
   </main>
 
   <footer style="text-align:center;padding:16px;">

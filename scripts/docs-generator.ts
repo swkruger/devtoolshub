@@ -327,45 +327,69 @@ function buildBody(tool: ToolConfig, allTools: ToolConfig[], ctx: BuildContext):
   </header>
 
   <main class="container">
-    <h1>${htmlEscape(tool.name)}</h1>
-    <p class="muted">${htmlEscape(tool.description)}</p>
-    ${generateIntro(tool, ctx)}
+    <div class="stack">
+      <section class="card">
+        <h1>${htmlEscape(tool.name)}</h1>
+        <p class="muted">${htmlEscape(tool.description)}</p>
+        ${generateIntro(tool, ctx)}
+      </section>
 
-    <h2>Key features</h2>
-    <ul>
-      ${(tool.features.free || []).slice(0, 8).map(f => `<li>${htmlEscape(f)}</li>`).join('\n')}
-    </ul>
+      <section class="card">
+        <h2>Key features</h2>
+        <ul>
+          ${(tool.features.free || []).slice(0, 8).map(f => `<li>${htmlEscape(f)}</li>`).join('\n')}
+        </ul>
+      </section>
 
-    <h2>How it works</h2>
-    ${generateHowItWorks(tool, ctx)}
+      <section class="card">
+        <h2>How it works</h2>
+        ${generateHowItWorks(tool, ctx)}
+      </section>
 
-    <h2>Step-by-step usage</h2>
-    ${generateSteps(tool, ctx)}
+      <section class="card">
+        <h2>Step-by-step usage</h2>
+        ${generateSteps(tool, ctx)}
+      </section>
 
-    <h2>Examples</h2>
-    ${renderExamples(tool, ctx)}
+      <section class="card">
+        <h2>Examples</h2>
+        ${renderExamples(tool, ctx)}
+      </section>
 
-    <h2>Security & privacy</h2>
-    <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
+      <section class="card">
+        <h2>Security & privacy</h2>
+        <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
+      </section>
 
-    <h2>Accessibility</h2>
-    <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
+      <section class="card">
+        <h2>Accessibility</h2>
+        <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
+      </section>
 
-    <h2>Limitations & disclaimers</h2>
-    <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+      <section class="card">
+        <h2>Limitations & disclaimers</h2>
+        <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+      </section>
 
-    <h2>Related tools</h2>
-    <p>Explore other DevToolsHub modules that complement ${htmlEscape(tool.name)}:</p>
-    ${related}
+      <section class="card">
+        <h2>Related tools</h2>
+        <p>Explore other DevToolsHub modules that complement ${htmlEscape(tool.name)}:</p>
+        ${related}
+      </section>
 
-    <h2>Resources & references</h2>
-    <ul>
-      ${resources}
-    </ul>
+      <section class="card">
+        <h2>Resources & references</h2>
+        <ul>
+          ${resources}
+        </ul>
+      </section>
 
-    <p style="margin-top:24px;">
-      <a href="${appUrl}" class="cta">Open this tool in DevToolsHub</a>
-    </p>
+      <section class="card">
+        <p style="margin:0;">
+          <a href="${appUrl}" class="cta">Open this tool in DevToolsHub</a>
+        </p>
+      </section>
+    </div>
   </main>
 
   <footer style="text-align:center;padding:16px;">
@@ -406,6 +430,8 @@ function buildHtml(tool: ToolConfig, allTools: ToolConfig[], ctx: BuildContext):
     h3 { font-size: 1rem; font-weight: 700; margin: 18px 0 8px; }
     p { margin: 0 0 16px; }
     .muted { color: var(--muted); }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .stack { display: grid; gap: 16px; }
     ul { margin: 0 0 16px 1.25rem; padding: 0; }
     ol { margin: 0 0 16px 1.25rem; padding: 0; }
     li { margin: 6px 0; }

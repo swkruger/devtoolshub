@@ -218,7 +218,6 @@ export default async function HomePage() {
               <ul className="space-y-2 text-gray-400">
                 <li><Link href="https://github.com/swkruger/devtoolshub" className="hover:text-white transition-colors">GitHub</Link></li>
                 <li><Link href="/docs" className="hover:text-white transition-colors">Documentation</Link></li>
-                <li><Link href="/api" className="hover:text-white transition-colors">API Reference</Link></li>
                 <li><Link href="/changelog" className="hover:text-white transition-colors">Changelog</Link></li>
               </ul>
             </div>

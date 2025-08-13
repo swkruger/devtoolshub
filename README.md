@@ -872,6 +872,75 @@ npm run docs:gen     # Generate static docs into /docs
 - Generate static docs with `npm run docs:gen` (writes to `docs/`)
 - Configure hosting for `docs/` (any static host). See `docs/README.md` for mapping to per-tool subdomains and sitemaps/feed
 
+## 📚 Documentation Generator & Personalization
+
+DevToolsHub includes a static documentation generator for every tool.
+
+- Run generation: `npm run docs:gen`
+  - Outputs to `docs/` and mirrors into `public/docs/` so pages are served at `/docs/*` locally and in production
+  - Produces per-tool pages, `sitemap.xml`, `robots.txt`, and an Atom `feed.xml`
+- Light/dark mode is supported (prefers-color-scheme).
+- Public access: Unauthenticated `/tools/<slug>` requests are redirected to `/docs/<slug>` for a frictionless, crawlable experience.
+
+### Per‑tool Content Overrides (Personalized Docs)
+
+Place optional HTML fragments under `docs-content/<tool-slug>/` to override sections for any tool:
+
+- `intro.html`: Introduction and value
+- `how-it-works.html`: High‑level explanation of behavior
+- `steps.html`: Step‑by‑step usage
+- `examples.html`: Full HTML block for Examples (rendered verbatim)
+
+Example:
+
+```
+docs-content/
+  json-formatter/
+    intro.html
+    how-it-works.html
+    steps.html
+    examples.html
+```
+
+Re‑run `npm run docs:gen` to inject personalized content. If a file is absent, a sensible default is used.
+
+### `/docs` Landing Page
+
+- Auto‑generated professional index with a grid of tool cards
+- Header navigation links back to the main app and sign‑in
+
+### Linking From the App
+
+- The home page tool cards show a docs icon linking directly to `/docs/<tool-id>`
+- Top‑level shortcuts like `/world-clock` and `/json-formatter` rewrite to the corresponding docs for easy sharing
+
+## 📝 Changelog Process
+
+Changelog entries are code‑based for simple, reviewable updates.
+
+- Source: `lib/changelog.ts`
+- Type: `ChangelogEntry { date: string; title: string; tags?: string[]; items: string[] }`
+- Page: `/changelog` renders all entries with dates, tags, and bullet points
+
+Update policy:
+
+- After each major tool development or notable change, append a new entry to `getChangelog()` with a clear date, concise title, and bullet points
+- Keep entries user‑visible and task‑oriented; avoid internal refactors unless user‑impacting
+
+Example entry:
+
+```ts
+{
+  date: '2025-08-12',
+  title: 'Public Docs & SEO',
+  tags: ['docs', 'seo'],
+  items: [
+    'Added static docs with personalized overrides',
+    'Redirect unauthenticated /tools/* to /docs/*',
+  ],
+}
+```
+
 ### Other Platforms
 
 The app can be deployed to any platform supporting Next.js 14:

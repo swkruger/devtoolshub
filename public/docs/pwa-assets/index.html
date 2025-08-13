@@ -25,7 +25,7 @@
     <link rel="icon" href="http://localhost:3000/icons/favicon-32x32.png" />
     <link rel="apple-touch-icon" href="http://localhost:3000/icons/icon-192x192.png" />
   
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PWA Assets & Manifest Generator","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Generate PWA icons, favicons, maskable icons, iOS/Android assets, and a ready-to-use manifest.json and HTML tags","url":"https://pwa-assets.devtoolshub.dev/","image":"http://localhost:3000/icons/icon-512x512.png","author":{"@type":"Organization","name":"DevToolsHub"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"keywords":["pwa","icons","manifest","favicon","maskable","ios","android"],"dateModified":"2025-08-12T23:15:19.522Z"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PWA Assets & Manifest Generator","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Generate PWA icons, favicons, maskable icons, iOS/Android assets, and a ready-to-use manifest.json and HTML tags","url":"https://pwa-assets.devtoolshub.dev/","image":"http://localhost:3000/icons/icon-512x512.png","author":{"@type":"Organization","name":"DevToolsHub"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"keywords":["pwa","icons","manifest","favicon","maskable","ios","android"],"dateModified":"2025-08-12T23:58:17.095Z"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is PWA Assets & Manifest Generator?","acceptedAnswer":{"@type":"Answer","text":"Generate PWA icons, favicons, maskable icons, iOS/Android assets, and a ready-to-use manifest.json and HTML tags"}},{"@type":"Question","name":"Is PWA Assets & Manifest Generator free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes, core features are free. Some advanced features are available with a premium plan in the DevToolsHub app."}},{"@type":"Question","name":"How do I open this tool in DevToolsHub?","acceptedAnswer":{"@type":"Answer","text":"Use the “Open this tool in DevToolsHub” button which links directly to the app interface."}}]}</script>
     <style>
     :root {
@@ -51,6 +51,8 @@
     h3 { font-size: 1rem; font-weight: 700; margin: 18px 0 8px; }
     p { margin: 0 0 16px; }
     .muted { color: var(--muted); }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .stack { display: grid; gap: 16px; }
     ul { margin: 0 0 16px 1.25rem; padding: 0; }
     ol { margin: 0 0 16px 1.25rem; padding: 0; }
     li { margin: 6px 0; }
@@ -75,35 +77,45 @@
   </header>
 
   <main class="container">
-    <h1>PWA Assets &amp; Manifest Generator</h1>
-    <p class="muted">Generate PWA icons, favicons, maskable icons, iOS/Android assets, and a ready-to-use manifest.json and HTML tags</p>
-    <p><strong>PWA Assets &amp; Manifest Generator</strong> produces a complete icon set and manifest.json for modern browsers. It’s ideal for shipping a high‑quality install experience quickly, with maskable icons and pinned‑tab support.</p>
+    <div class="stack">
+      <section class="card">
+        <h1>PWA Assets &amp; Manifest Generator</h1>
+        <p class="muted">Generate PWA icons, favicons, maskable icons, iOS/Android assets, and a ready-to-use manifest.json and HTML tags</p>
+        <p><strong>PWA Assets &amp; Manifest Generator</strong> produces a complete icon set and manifest.json for modern browsers. It’s ideal for shipping a high‑quality install experience quickly, with maskable icons and pinned‑tab support.</p>
 
+      </section>
 
-    <h2>Key features</h2>
-    <ul>
-      <li>Standard manifest icons (48..512)</li>
+      <section class="card">
+        <h2>Key features</h2>
+        <ul>
+          <li>Standard manifest icons (48..512)</li>
 <li>Favicons (16/32/48)</li>
 <li>Apple touch 180x180</li>
 <li>Optional maskable 192/512</li>
 <li>Manifest.json + basic link tags</li>
 <li>ZIP export</li>
-    </ul>
+        </ul>
+      </section>
 
-    <h2>How it works</h2>
-    <p>Upload a square source image, choose sizes, and generate platform‑ready outputs. Premium adds full iOS/Android matrices, splash screens, and themed manifests for light/dark variants.</p>
+      <section class="card">
+        <h2>How it works</h2>
+        <p>Upload a square source image, choose sizes, and generate platform‑ready outputs. Premium adds full iOS/Android matrices, splash screens, and themed manifests for light/dark variants.</p>
 
+      </section>
 
-    <h2>Step-by-step usage</h2>
-    <ol>
+      <section class="card">
+        <h2>Step-by-step usage</h2>
+        <ol>
   <li>Upload a high‑resolution square logo (at least 1024×1024).</li>
   <li>Pick the desired targets (favicons, maskable, iOS/Android).</li>
   <li>Download the ZIP and wire the generated HTML tags and manifest.json.</li>
 </ol>
 
+      </section>
 
-    <h2>Examples</h2>
-    <h3>Generate favicons and manifest</h3>
+      <section class="card">
+        <h2>Examples</h2>
+        <h3>Generate favicons and manifest</h3>
 <p>Upload a 1024×1024 SVG/PNG, select favicon sizes, and export <code>manifest.json</code> plus HTML tags.</p>
 
 <h3>Maskable icons</h3>
@@ -112,19 +124,27 @@
 <h3>(Premium) Full platform set</h3>
 <p>Produce iOS/Android assets and splash screens, then wire the provided tags.</p>
 
+      </section>
 
-    <h2>Security & privacy</h2>
-    <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
+      <section class="card">
+        <h2>Security & privacy</h2>
+        <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
+      </section>
 
-    <h2>Accessibility</h2>
-    <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
+      <section class="card">
+        <h2>Accessibility</h2>
+        <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
+      </section>
 
-    <h2>Limitations & disclaimers</h2>
-    <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+      <section class="card">
+        <h2>Limitations & disclaimers</h2>
+        <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+      </section>
 
-    <h2>Related tools</h2>
-    <p>Explore other DevToolsHub modules that complement PWA Assets &amp; Manifest Generator:</p>
-    <ul><li><a href="http://localhost:3000/tools/world-clock" rel="nofollow">World Clock &amp; Time Zones</a> – World clock with meeting planner &amp; weather integration</li>
+      <section class="card">
+        <h2>Related tools</h2>
+        <p>Explore other DevToolsHub modules that complement PWA Assets &amp; Manifest Generator:</p>
+        <ul><li><a href="http://localhost:3000/tools/world-clock" rel="nofollow">World Clock &amp; Time Zones</a> – World clock with meeting planner &amp; weather integration</li>
 <li><a href="http://localhost:3000/tools/json-formatter" rel="nofollow">JSON Formatter</a> – Format and validate JSON data</li>
 <li><a href="http://localhost:3000/tools/regex-tester" rel="nofollow">Regex Tester</a> – Test regex patterns with live matching</li>
 <li><a href="http://localhost:3000/tools/jwt-decoder" rel="nofollow">JWT Decoder/Encoder</a> – JWT decode, encode, verify</li>
@@ -134,20 +154,26 @@
 <li><a href="http://localhost:3000/tools/timestamp-converter" rel="nofollow">Timestamp Converter</a> – Convert timestamps and dates with timezone support</li>
 <li><a href="http://localhost:3000/tools/base64-encoder" rel="nofollow">Base64 Encoder/Decoder</a> – Base64 encoding/decoding with file support &amp; premium features</li>
 <li><a href="http://localhost:3000/tools/password-generator" rel="nofollow">Password &amp; Key-like Generator</a> – Generate passwords, passphrases, and key-like strings</li></ul>
+      </section>
 
-    <h2>Resources & references</h2>
-    <ul>
-      <li><a href="https://developer.mozilla.org/">MDN Web Docs</a></li>
+      <section class="card">
+        <h2>Resources & references</h2>
+        <ul>
+          <li><a href="https://developer.mozilla.org/">MDN Web Docs</a></li>
 <li><a href="https://whatwg.org/">WHATWG Standards</a></li>
 <li><a href="https://schema.org/SoftwareApplication">Schema.org: SoftwareApplication</a></li>
 <li><a href="https://www.w3.org/TR/WCAG21/">W3C WCAG 2.1</a></li>
 <li><a href="https://web.dev/learn/">web.dev: Best Practices</a></li>
 <li><a href="https://www.rfc-editor.org/rfc/">RFC Editor</a></li>
-    </ul>
+        </ul>
+      </section>
 
-    <p style="margin-top:24px;">
-      <a href="http://localhost:3000/tools/pwa-assets" class="cta">Open this tool in DevToolsHub</a>
-    </p>
+      <section class="card">
+        <p style="margin:0;">
+          <a href="http://localhost:3000/tools/pwa-assets" class="cta">Open this tool in DevToolsHub</a>
+        </p>
+      </section>
+    </div>
   </main>
 
   <footer style="text-align:center;padding:16px;">

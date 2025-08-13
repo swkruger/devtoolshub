@@ -2,14 +2,14 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>DevToolsHub – Docs Updates</title>
   <id>https://devtoolshub.dev/</id>
-  <updated>2025-08-12T23:15:19.522Z</updated>
+  <updated>2025-08-12T23:58:17.095Z</updated>
   <link href="https://devtoolshub.dev/feed.xml" rel="self" />
   
     <entry>
       <title>World Clock &amp; Time Zones</title>
       <id>https://world-clock.devtoolshub.dev/</id>
       <link href="https://world-clock.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>World clock with meeting planner &amp; weather integration</summary>
     </entry>
 
@@ -17,7 +17,7 @@
       <title>JSON Formatter</title>
       <id>https://json-formatter.devtoolshub.dev/</id>
       <link href="https://json-formatter.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>Format and validate JSON data</summary>
     </entry>
 
@@ -25,7 +25,7 @@
       <title>Regex Tester</title>
       <id>https://regex-tester.devtoolshub.dev/</id>
       <link href="https://regex-tester.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>Test regex patterns with live matching</summary>
     </entry>
 
@@ -33,7 +33,7 @@
       <title>JWT Decoder/Encoder</title>
       <id>https://jwt-decoder.devtoolshub.dev/</id>
       <link href="https://jwt-decoder.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>JWT decode, encode, verify</summary>
     </entry>
 
@@ -41,7 +41,7 @@
       <title>Image Compressor</title>
       <id>https://image-compressor.devtoolshub.dev/</id>
       <link href="https://image-compressor.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>Compress and optimize images</summary>
     </entry>
 
@@ -49,7 +49,7 @@
       <title>UUID Generator</title>
       <id>https://uuid-generator.devtoolshub.dev/</id>
       <link href="https://uuid-generator.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>Generate unique identifiers</summary>
     </entry>
 
@@ -57,7 +57,7 @@
       <title>XPath/CSS Selector Tester</title>
       <id>https://xpath-tester.devtoolshub.dev/</id>
       <link href="https://xpath-tester.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>Test XPath and CSS selectors against HTML</summary>
     </entry>
 
@@ -65,7 +65,7 @@
       <title>Timestamp Converter</title>
       <id>https://timestamp-converter.devtoolshub.dev/</id>
       <link href="https://timestamp-converter.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>Convert timestamps and dates with timezone support</summary>
     </entry>
 
@@ -73,7 +73,7 @@
       <title>Base64 Encoder/Decoder</title>
       <id>https://base64-encoder.devtoolshub.dev/</id>
       <link href="https://base64-encoder.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>Base64 encoding/decoding with file support &amp; premium features</summary>
     </entry>
 
@@ -81,7 +81,7 @@
       <title>Password &amp; Key-like Generator</title>
       <id>https://password-generator.devtoolshub.dev/</id>
       <link href="https://password-generator.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>Generate passwords, passphrases, and key-like strings</summary>
     </entry>
 
@@ -89,7 +89,7 @@
       <title>PWA Assets &amp; Manifest Generator</title>
       <id>https://pwa-assets.devtoolshub.dev/</id>
       <link href="https://pwa-assets.devtoolshub.dev/" />
-      <updated>2025-08-12T23:15:19.522Z</updated>
+      <updated>2025-08-12T23:58:17.095Z</updated>
       <summary>Generate PWA icons and manifest.json</summary>
     </entry>
 </feed>
