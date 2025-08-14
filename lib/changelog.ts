@@ -8,6 +8,21 @@ export type ChangelogEntry = {
 // Update this list after each major tool development or release
 export const getChangelog = (): ChangelogEntry[] => [
   {
+    date: '2025-08-14',
+    title: 'Blog System – Complete Implementation',
+    tags: ['blog', 'cms', 'admin', 'seo'],
+    items: [
+      'Full-featured blog system with admin-only CRUD operations and public read access',
+      'Database schema with blogs table, admin profiles, RLS policies, and image support',
+      'Modern blog overview page with featured articles, search, pagination, and responsive design',
+      'Professional blog detail pages with author info, engagement icons, and related posts',
+      'Admin dashboard for blog management with WYSIWYG editor and image uploads',
+      'SEO integration with dynamic sitemap generation and structured data',
+      'Blog integration on landing page with featured and popular articles sections',
+      'Comprehensive seed data with 5 sample blog posts and placeholder images',
+    ],
+  },
+  {
     date: '2025-08-12',
     title: 'Public Docs, SEO, and Routing Improvements',
     tags: ['docs', 'seo', 'routing'],

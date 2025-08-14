@@ -233,65 +233,63 @@ function MainFeaturedBlogCard({ blog }: { blog: any }) {
   )
 }
 
-// Enhanced Blog Card Components
+// Enhanced Blog Card Components - Using Landing Page Style
 function BlogCard({ blog }: { blog: any }) {
   return (
     <article className="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div className="flex flex-col md:flex-row">
-        {/* Image Section */}
-        <div className="md:w-1/3">
-          <div className="relative h-48 md:h-full overflow-hidden">
-            {blog.image_url ? (
-              <img
-                src={blog.image_url}
-                alt={blog.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
-                <span className="text-gray-400 dark:text-gray-500 text-4xl">📝</span>
-              </div>
-            )}
+      {/* Blog Image */}
+      <div className="aspect-video overflow-hidden">
+        {blog.image_url ? (
+          <img
+            src={blog.image_url}
+            alt={blog.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
+            <span className="text-gray-400 dark:text-gray-500 text-4xl">📝</span>
           </div>
+        )}
+      </div>
+      
+      {/* Blog Content */}
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-3">
+          {blog.is_featured && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+              ⭐ Featured
+            </span>
+          )}
+          {blog.is_popular && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+              🔥 Popular
+            </span>
+          )}
         </div>
         
-        {/* Content Section */}
-        <div className="md:w-2/3 p-6">
-          <div className="flex items-center gap-2 mb-3">
-            {blog.is_featured && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                Featured
-              </span>
-            )}
-            {blog.is_popular && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
-                Popular
-              </span>
-            )}
-          </div>
-          
-          <Link href={`/blog/${blog.slug}`} className="block group-hover:no-underline">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-              {blog.title}
-            </h3>
+        <Link href={`/blog/${blog.slug}`} className="block group-hover:no-underline">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+            {blog.title}
+          </h3>
+        </Link>
+        
+        <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+          {blog.content_html.replace(/<[^>]*>/g, '').substring(0, 100)}...
+        </div>
+        
+        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+          <time dateTime={blog.published_at}>
+            {blog.published_at ? new Date(blog.published_at).toLocaleDateString('en-US', { 
+              month: 'short', 
+              day: 'numeric' 
+            }) : 'Draft'}
+          </time>
+          <Link 
+            href={`/blog/${blog.slug}`}
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+          >
+            Read →
           </Link>
-          
-          <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-            {blog.content_html.replace(/<[^>]*>/g, '').substring(0, 120)}...
-          </div>
-          
-          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-            <time dateTime={blog.published_at}>
-              {blog.published_at ? new Date(blog.published_at).toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric' 
-              }) : 'Draft'}
-            </time>
-            <span className="flex items-center gap-1">
-              <span>👁️</span>
-              <span>Read</span>
-            </span>
-          </div>
         </div>
       </div>
     </article>
@@ -358,54 +356,52 @@ function FeaturedBlogCard({ blog }: { blog: any }) {
 function PopularBlogCard({ blog }: { blog: any }) {
   return (
     <article className="group bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-amber-200 dark:border-amber-800">
-      <div className="flex flex-col md:flex-row">
-        {/* Image Section */}
-        <div className="md:w-1/3">
-          <div className="relative h-48 md:h-full overflow-hidden">
-            {blog.image_url ? (
-              <img
-                src={blog.image_url}
-                alt={blog.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-800 dark:to-orange-800 flex items-center justify-center">
-                <span className="text-amber-400 dark:text-amber-300 text-4xl">🔥</span>
-              </div>
-            )}
+      {/* Blog Image */}
+      <div className="aspect-video overflow-hidden">
+        {blog.image_url ? (
+          <img
+            src={blog.image_url}
+            alt={blog.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-800 dark:to-orange-800 flex items-center justify-center">
+            <span className="text-amber-400 dark:text-amber-300 text-4xl">🔥</span>
           </div>
+        )}
+      </div>
+      
+      {/* Blog Content */}
+      <div className="p-6">
+        <div className="mb-3">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+            🔥 Popular
+          </span>
         </div>
         
-        {/* Content Section */}
-        <div className="md:w-2/3 p-6">
-          <div className="mb-3">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
-              🔥 Popular
-            </span>
-          </div>
-          
-          <Link href={`/blog/${blog.slug}`} className="block group-hover:no-underline">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
-              {blog.title}
-            </h3>
+        <Link href={`/blog/${blog.slug}`} className="block group-hover:no-underline">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+            {blog.title}
+          </h3>
+        </Link>
+        
+        <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+          {blog.content_html.replace(/<[^>]*>/g, '').substring(0, 100)}...
+        </div>
+        
+        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+          <time dateTime={blog.published_at}>
+            {blog.published_at ? new Date(blog.published_at).toLocaleDateString('en-US', { 
+              month: 'short', 
+              day: 'numeric' 
+            }) : 'Draft'}
+          </time>
+          <Link 
+            href={`/blog/${blog.slug}`}
+            className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+          >
+            Read →
           </Link>
-          
-          <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-            {blog.content_html.replace(/<[^>]*>/g, '').substring(0, 120)}...
-          </div>
-          
-          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-            <time dateTime={blog.published_at}>
-              {blog.published_at ? new Date(blog.published_at).toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric' 
-              }) : 'Draft'}
-            </time>
-            <span className="flex items-center gap-1">
-              <span>👥</span>
-              <span>Popular</span>
-            </span>
-          </div>
         </div>
       </div>
     </article>
