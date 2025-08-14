@@ -2,8 +2,9 @@ import Link from 'next/link'
 import { authServer } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { getAllTools } from '@/lib/tools'
-import { BookOpen } from 'lucide-react'
+import { BookOpen, ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
+import { listFeaturedBlogs, listPopularBlogs } from '@/lib/services/blogs'
 
 export const metadata: Metadata = {
   title: 'DevToolsHub – Essential Developer Tools',
@@ -28,6 +29,19 @@ export default async function HomePage() {
 
   const tools = getAllTools()
   const availableCount = tools.length
+
+  // Fetch blog data
+  let featuredBlogs: any[] = []
+  let popularBlogs: any[] = []
+  
+  try {
+    [featuredBlogs, popularBlogs] = await Promise.all([
+      listFeaturedBlogs(1), // Get just the main featured blog
+      listPopularBlogs(3),  // Get 3 popular blogs
+    ])
+  } catch (error) {
+    console.log('Could not fetch blog data:', error)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -163,6 +177,170 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Featured Blog Section */}
+      {featuredBlogs.length > 0 && (
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                Featured Article
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300">
+                Latest insights and updates from DevToolsHub
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              {/* Featured Blog Card */}
+              <div className="order-2 lg:order-1">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+                  <div className="mb-4">
+                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+                      ⭐ Featured Article
+                    </span>
+                  </div>
+                  
+                  <Link href={`/blog/${featuredBlogs[0].slug}`} className="block group">
+                    <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-3">
+                      {featuredBlogs[0].title}
+                    </h3>
+                  </Link>
+                  
+                  <div className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3">
+                    {featuredBlogs[0].content_html.replace(/<[^>]*>/g, '').substring(0, 150)}...
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <time className="text-sm text-gray-500 dark:text-gray-400">
+                      {featuredBlogs[0].published_at ? new Date(featuredBlogs[0].published_at).toLocaleDateString('en-US', { 
+                        month: 'long', 
+                        day: 'numeric',
+                        year: 'numeric'
+                      }) : 'Draft'}
+                    </time>
+                    <Link 
+                      href={`/blog/${featuredBlogs[0].slug}`}
+                      className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                    >
+                      Read Article
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Featured Blog Image */}
+              <div className="order-1 lg:order-2">
+                <div className="aspect-video rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+                  {featuredBlogs[0].image_url ? (
+                    <img
+                      src={featuredBlogs[0].image_url}
+                      alt={featuredBlogs[0].title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
+                      <span className="text-blue-400 dark:text-blue-300 text-6xl">⭐</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            <div className="text-center mt-8">
+              <Link 
+                href="/blog" 
+                className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+              >
+                View All Articles
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Popular Blogs Section */}
+      {popularBlogs.length > 0 && (
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                Popular Articles
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300">
+                Most read and shared content from our blog
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {popularBlogs.map((blog) => (
+                <article key={blog.id} className="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                  {/* Blog Image */}
+                  <div className="aspect-video overflow-hidden">
+                    {blog.image_url ? (
+                      <img
+                        src={blog.image_url}
+                        alt={blog.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-800 dark:to-orange-800 flex items-center justify-center">
+                        <span className="text-amber-400 dark:text-amber-300 text-4xl">🔥</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Blog Content */}
+                  <div className="p-6">
+                    <div className="mb-3">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+                        🔥 Popular
+                      </span>
+                    </div>
+                    
+                    <Link href={`/blog/${blog.slug}`} className="block group-hover:no-underline">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+                        {blog.title}
+                      </h3>
+                    </Link>
+                    
+                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                      {blog.content_html.replace(/<[^>]*>/g, '').substring(0, 100)}...
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                      <time dateTime={blog.published_at}>
+                        {blog.published_at ? new Date(blog.published_at).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric' 
+                        }) : 'Draft'}
+                      </time>
+                      <Link 
+                        href={`/blog/${blog.slug}`}
+                        className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+                      >
+                        Read →
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+            
+            <div className="text-center mt-12">
+              <Link 
+                href="/blog" 
+                className="inline-flex items-center gap-2 bg-amber-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-amber-700 transition-colors"
+              >
+                Explore All Articles
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
