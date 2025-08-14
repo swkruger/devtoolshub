@@ -62,6 +62,12 @@ export default async function HomePage() {
             </div>
             <nav className="flex items-center space-x-6">
               <Link 
+                href="/blog" 
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Blog
+              </Link>
+              <Link 
                 href="https://github.com/swkruger/devtoolshub" 
                 className="text-gray-600 hover:text-gray-900 transition-colors"
                 target="_blank"
@@ -216,6 +222,7 @@ export default async function HomePage() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-gray-400">
+                <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
                 <li><Link href="https://github.com/swkruger/devtoolshub" className="hover:text-white transition-colors">GitHub</Link></li>
                 <li><Link href="/docs" className="hover:text-white transition-colors">Documentation</Link></li>
                 <li><Link href="/changelog" className="hover:text-white transition-colors">Changelog</Link></li>

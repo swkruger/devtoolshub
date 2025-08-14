@@ -882,6 +882,36 @@ DevToolsHub includes a static documentation generator for every tool.
 - Light/dark mode is supported (prefers-color-scheme).
 - Public access: Unauthenticated `/tools/<slug>` requests are redirected to `/docs/<slug>` for a frictionless, crawlable experience.
 
+## 📝 Blogging System
+
+Admin-managed blog with public read access and SEO integration.
+
+### Data Model (Supabase)
+- `public.blogs` with RLS: published posts readable by everyone; admins can CRUD
+- `public.users.is_admin` boolean for admin flag (migration adds if missing)
+- Storage: public bucket `blogs` (read public; writes via server actions)
+
+### Server & Security
+- RLS-only enforcement with user-context Supabase client in server actions/routes
+- No service role keys in the browser
+
+### Editor
+- Minimal contenteditable + toolbar (Bold/Italic/Link/Image)
+- Sanitization on save (e.g., DOMPurify) to ensure safe `content_html`
+
+### Routes
+- Public: `/blog` (search, featured, popular, all), `/blog/[slug]` (detail)
+- Admin: `/dashboard/blogs`, `/dashboard/blogs/new`, `/dashboard/blogs/[id]/edit`
+
+### SEO
+- `app/sitemap.ts` includes `/blog` and each published blog (`/blog/[slug]`) with `lastModified = published_at`
+- `app/robots.ts` allows indexing of blog routes
+
+### Setup
+1. Run SQL migrations in Supabase SQL Editor: `db/migrations/006..009_*.sql`
+2. Optionally create Storage bucket `blogs` and set policies (public read; write via authenticated server actions)
+3. Seed data creates 5 example posts
+
 ### Per‑tool Content Overrides (Personalized Docs)
 
 Place optional HTML fragments under `docs-content/<tool-slug>/` to override sections for any tool:

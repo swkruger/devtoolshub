@@ -276,6 +276,22 @@ export const authServer = {
   async isPremiumUser(userId?: string): Promise<boolean> {
     const profile = await this.getUserProfile(userId)
     return profile?.plan === 'premium'
+  },
+
+  // Check if user is admin (users.is_admin)
+  async isAdmin(userId?: string): Promise<boolean> {
+    const supabase = createSupabaseServerClient()
+    if (!userId) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return false
+      userId = user.id
+    }
+    const { data } = await supabase
+      .from('users')
+      .select('is_admin')
+      .eq('id', userId)
+      .single()
+    return Boolean(data?.is_admin)
   }
 }
 

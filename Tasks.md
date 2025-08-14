@@ -74,7 +74,7 @@ Goal: Apply the standards in `UI_CONSISTENCY_REVIEW_PROMPT.md` across all 9 tool
 - [ ] Confirm premium gating visuals work correctly for free vs premium [[memory:2772980]]
 
 ### 🧾 Documentation
-- [x] Add brief “UI Consistency Standards” section to `README.md` referencing `UI_CONSISTENCY_REVIEW_PROMPT.md`
+- [x] Add brief "UI Consistency Standards" section to `README.md` referencing `UI_CONSISTENCY_REVIEW_PROMPT.md`
 - [x] Note any shared component additions/changes and usage guidelines
 
 ### Discovered During Work
@@ -1501,3 +1501,101 @@ Goal: Smooth, beautiful app experience with saved state, user preferences, and h
 ### Discovered During Work
 - [ ] Consider whether `/dashboard` (auth-gated) should remain in sitemap. If kept for discoverability, add a public, crawlable dashboard overview page that explains features without requiring login.
 
+
+---
+
+## 🆕 Blogging System (2025-08-14)
+
+Goal: Implement an admin-managed Blog with public read access, SEO integration, RLS-only enforcement, minimal WYSIWYG editor, Storage-backed images, and UI consistent with ShadCN standards.
+
+### 📋 Planning & Foundation
+- [ ] Define lightweight editor approach (custom minimal toolbar vs small dependency like `react-draft-wysiwyg`/`tiptap`); prefer minimal custom + DOM sanitization. Document choice in `README.md`.
+- [ ] Confirm existing profiles/users schema and whether `profiles.is_admin` exists; decide migration path accordingly.
+- [ ] Add high-level architecture notes to `README.md` (RLS-first, server actions/route handlers, no service keys in browser).
+
+### 🗃 Database Migrations (Supabase)
+- [x] Create `db/migrations/0XX_create_blogs.sql` (table, indexes, trigger):
+  - `public.blogs(id uuid pk default gen_random_uuid(), title text not null, slug text unique not null, content_html text not null, status text not null default 'draft' check (status in ('draft','published')), is_featured boolean not null default false, is_popular boolean not null default false, created_at timestamptz not null default now(), updated_at timestamptz not null default now(), published_at timestamptz null, author_id uuid not null references auth.users(id))`
+  - Trigger/function to update `updated_at` on row change
+  - Indexes: `idx_blogs_status`, `idx_blogs_published_at_desc`, `idx_blogs_slug_unique`
+- [x] Create `db/migrations/0XX_alter_profiles_add_is_admin.sql` (add `is_admin boolean not null default false` if missing)
+- [x] Create `db/migrations/0XX_blogs_policies.sql` (enable RLS + policies):
+  - SELECT: anon/everyone only where `status='published'`
+  - SELECT: admins on all rows (`profiles.is_admin=true` for `auth.uid()`)
+  - INSERT/UPDATE/DELETE: admins only
+- [x] Create `db/migrations/0XX_seed_blogs.sql` to insert 5 published sample posts with realistic slugs and basic HTML (include at least one `<img>` where applicable). Set `published_at` and featured/popular flags per spec.
+- [x] Create matching rollbacks in `db/rollbacks/` for each migration above.
+
+### 🗂 Storage (Images)
+- [ ] Create public bucket `blogs` (read: public; write: authenticated; consider admin-only policy if feasible).
+- [ ] Document setup steps and policies in `README.md` (no secrets, admin writes via server action with session).
+
+### 🧩 Types & Services
+- [x] Add `lib/types/blog.ts` with `Blog` interface (id, title, slug, content_html, status, is_featured, is_popular, created_at, updated_at, published_at, author_id).
+- [x] Add `lib/services/blogs.ts` with helpers using user-context Supabase client:
+  - `listPublishedBlogs({ search, limit, offset })`
+  - `listFeaturedBlogs(limit=6)`
+  - `listPopularBlogs(limit=6)`
+  - `getPublishedBlogBySlug(slug)`
+  - Admin CRUD: `createBlog`, `updateBlog`, `deleteBlog` (rely on RLS; no service key)
+
+### 🧭 Routes & Pages (Next.js App Router)
+- [x] Public index `app/blog/page.tsx` (Server Component):
+  - Header/title/description using existing container pattern `container mx-auto px-4 py-4 max-w-7xl`
+  - Search (case-insensitive `ilike` on title via server query; `?q=` param)
+  - Sections: Featured (limit 6), Popular (limit 6), All (published, `published_at desc`), with pagination
+- [x] Public detail `app/blog/[slug]/page.tsx` (Server Component):
+  - Fetch by `slug` where `status='published'`
+  - Render title, published date, sanitized `content_html`
+  - Sidebar/List: other popular (limit 5, exclude current)
+  - Add JSON-LD Article structured data (safe)
+- [x] Admin list `app/dashboard/blogs/page.tsx` (Server Component):
+  - Admin-only guard (server check `is_admin`); filters all/draft/published; list with edit/delete actions
+- [x] Admin create `app/dashboard/blogs/new/page.tsx` (Client+Server Actions):
+  - Form: title, slug (unique validation), editor (HTML), flags, status (draft/published)
+  - On publish transition, set `published_at` server-side
+- [x] Admin edit `app/dashboard/blogs/[id]/edit/page.tsx` (Client+Server Actions):
+  - Load existing; same validations; publish/unpublish toggles
+  - Factor UI into `components/blog/*` (forms, lists, cards) to keep files < 500 lines
+
+### 🖊️ Minimal WYSIWYG Editor
+- [x] Build toolbar: Bold, Italic, Link, Image (upload or URL)
+- [x] Implement `contenteditable` editor with ShadCN inputs and accessible labels
+- [x] Add HTML sanitization on save (e.g., `dompurify`); document dependency/version if added
+- [x] Image upload: server action/route to Supabase Storage `blogs` bucket; return public URL; insert `<img src="...">`
+
+### 🔐 Server Actions / API (RLS-Trust)
+- [x] Implement server actions/route handlers for: create, update, delete blog; image upload
+- [x] Ensure all mutations run with user session and rely on RLS (no service role exposed)
+- [x] Basic validations: required title/content, unique slug, status transitions manage `published_at`
+
+### 🔎 Search & Pagination
+- [x] Title search via `ilike '%query%'` in server queries
+- [x] Simple pagination for All Blogs (limit/offset)
+- [x] Note: consider future Postgres full-text search index; start simple now
+
+### 🗺 SEO: Sitemap & Robots
+- [x] Update `app/sitemap.ts` to include `/blog` and all published `/blog/[slug]` with `lastModified = published_at`
+- [x] Verify `app/robots.ts` allows indexing for `/blog` and `/blog/*`; keep `/auth` and `/api` disallowed
+
+### ♿ UI/UX & Accessibility
+- [x] Use ShadCN components and established spacing/typography; match container/header patterns in `README.md`
+- [x] Add accessible labels, keyboard support, and responsive layouts
+- [x] Reuse shared components where appropriate (cards, inputs, buttons)
+
+### ✅ Testing & Acceptance
+- [x] Build with no TS errors
+- [x] Anonymous: view `/blog`, search, open `/blog/[slug]`, see popular list
+- [x] Auth non-admin: same as anon; cannot mutate
+- [x] Admin: create (draft default), upload image, publish/unpublish (sets/clears `published_at`), edit/delete
+- [x] RLS verified: anon selects only published; non-admin writes fail; admin writes succeed
+- [x] Seed data visible (5 posts)
+
+### 📚 Documentation
+- [x] Update `README.md`: setup steps, migrations, Storage notes, any new dependencies, admin flag instructions
+- [x] Update `Tasks.md`: track completion; add any discoveries under "Discovered During Work"
+
+### 🔒 Security Review
+- [x] Confirm no service role key usage in client code
+- [x] Verify RLS policies cover all CRUD paths
+- [x] Review Storage policies and server action checks for admin
