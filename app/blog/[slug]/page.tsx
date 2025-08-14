@@ -16,8 +16,68 @@ import {
   ArrowLeft
 } from 'lucide-react'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 
 export const revalidate = 0
+
+// Generate dynamic metadata for each blog post
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const blog = await getPublishedBlogBySlug(params.slug)
+  
+  if (!blog) {
+    return {
+      title: 'Blog Post Not Found - DevToolsHub',
+      description: 'The requested blog post could not be found.',
+    }
+  }
+
+  // Generate dynamic metadata
+  const metaDescription = blog.meta_description || 
+    blog.content_html.replace(/<[^>]*>/g, '').substring(0, 160) + '...'
+  
+  const metaKeywords = blog.meta_keywords || 
+    'DevToolsHub, developer tools, ' + blog.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ', ')
+
+  const ogTitle = blog.og_title || blog.title
+  const ogDescription = blog.og_description || metaDescription
+  const ogImage = blog.og_image || blog.image_url || '/icons/icon-192x192.png'
+  
+  const twitterTitle = blog.twitter_title || blog.title
+  const twitterDescription = blog.twitter_description || metaDescription
+  const twitterImage = blog.twitter_image || blog.image_url || '/icons/icon-192x192.png'
+
+  return {
+    title: blog.title,
+    description: metaDescription,
+    keywords: metaKeywords,
+    openGraph: {
+      title: ogTitle,
+      description: ogDescription,
+      type: 'article',
+      url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'}/blog/${blog.slug}`,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: blog.title,
+        },
+      ],
+      publishedTime: blog.published_at || undefined,
+      modifiedTime: blog.updated_at,
+      authors: ['DevToolsHub'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: twitterTitle,
+      description: twitterDescription,
+      images: [twitterImage],
+    },
+    alternates: {
+      canonical: `${process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'}/blog/${blog.slug}`,
+    },
+  }
+}
 
 export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
   const blog = await getPublishedBlogBySlug(params.slug)
@@ -35,16 +95,26 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
   const publishedDate = blog.published_at ? new Date(blog.published_at) : null
   const timeAgo = publishedDate ? getTimeAgo(publishedDate) : 'Draft'
 
+  // Generate dynamic metadata
+  const metaDescription = blog.meta_description || 
+    blog.content_html.replace(/<[^>]*>/g, '').substring(0, 160) + '...'
+  
+  const metaKeywords = blog.meta_keywords || 
+    'DevToolsHub, developer tools, ' + blog.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ', ')
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: blog.title,
+    headline: blog.og_title || blog.title,
+    description: blog.og_description || metaDescription,
     datePublished: blog.published_at || undefined,
     dateModified: blog.updated_at,
     author: {
       '@type': 'Person',
       name: 'DevToolsHub',
     },
+    image: blog.og_image || blog.image_url,
+    keywords: metaKeywords,
   }
 
   return (
