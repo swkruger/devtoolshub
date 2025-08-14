@@ -10,7 +10,8 @@ import {
   Home, 
   Wrench, 
   Crown,
-  Settings
+  Settings,
+  FileText
 } from "lucide-react"
 import * as React from 'react'
 
@@ -109,6 +110,44 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
               ))}
             </div>
           </ScrollArea>
+        </div>
+
+        {/* Blog Management */}
+        <div className="px-3 py-2">
+          <h2 className={cn(
+            "mb-2 px-4 text-lg font-semibold tracking-tight",
+            isCollapsed && "hidden"
+          )}>
+            Blog Management
+          </h2>
+          <div className="space-y-1">
+            <Button
+              variant={pathname === "/dashboard/blogs" ? "secondary" : "ghost"}
+              className={cn(
+                "w-full justify-start",
+                isCollapsed && "justify-center px-2"
+              )}
+              asChild
+            >
+              <Link href="/dashboard/blogs">
+                <FileText className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
+                {!isCollapsed && "Manage Blogs"}
+              </Link>
+            </Button>
+            <Button
+              variant={pathname === "/dashboard/blogs/new" ? "secondary" : "ghost"}
+              className={cn(
+                "w-full justify-start",
+                isCollapsed && "justify-center px-2"
+              )}
+              asChild
+            >
+              <Link href="/dashboard/blogs/new">
+                <FileText className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
+                {!isCollapsed && "New Blog Post"}
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Bottom Actions */}

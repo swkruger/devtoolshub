@@ -90,7 +90,6 @@ export function WysiwygEditor({ value, onChange, placeholder }: WysiwygEditorPro
         onInput={handleInput}
         onPaste={handlePaste}
         dangerouslySetInnerHTML={{ __html: value }}
-        placeholder={placeholder}
       />
 
       {isImageDialogOpen && (

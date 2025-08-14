@@ -12,3 +12,4 @@ ADD COLUMN IF NOT EXISTS twitter_image TEXT;
 -- Add indexes for SEO queries
 CREATE INDEX IF NOT EXISTS idx_blogs_meta_description ON public.blogs(meta_description);
 CREATE INDEX IF NOT EXISTS idx_blogs_meta_keywords ON public.blogs(meta_keywords);
+

@@ -53,7 +53,7 @@ export function BlogCard({ blog }: BlogCardProps) {
           </div>
           
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-            <time dateTime={blog.published_at}>
+            <time dateTime={blog.published_at || undefined}>
               {blog.published_at ? new Date(blog.published_at).toLocaleDateString('en-US', { 
                 month: 'short', 
                 day: 'numeric' 

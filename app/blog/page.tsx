@@ -215,7 +215,7 @@ function MainFeaturedBlogCard({ blog }: { blog: any }) {
           </div>
           
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-            <time dateTime={blog.published_at}>
+            <time dateTime={blog.published_at || undefined}>
               {blog.published_at ? new Date(blog.published_at).toLocaleDateString('en-US', { 
                 month: 'long', 
                 day: 'numeric',
@@ -278,7 +278,7 @@ function BlogCard({ blog }: { blog: any }) {
         </div>
         
         <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-          <time dateTime={blog.published_at}>
+          <time dateTime={blog.published_at || undefined}>
             {blog.published_at ? new Date(blog.published_at).toLocaleDateString('en-US', { 
               month: 'short', 
               day: 'numeric' 
@@ -336,7 +336,7 @@ function FeaturedBlogCard({ blog }: { blog: any }) {
           </div>
           
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-            <time dateTime={blog.published_at}>
+            <time dateTime={blog.published_at || undefined}>
               {blog.published_at ? new Date(blog.published_at).toLocaleDateString('en-US', { 
                 month: 'short', 
                 day: 'numeric' 
@@ -390,7 +390,7 @@ function PopularBlogCard({ blog }: { blog: any }) {
         </div>
         
         <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-          <time dateTime={blog.published_at}>
+          <time dateTime={blog.published_at || undefined}>
             {blog.published_at ? new Date(blog.published_at).toLocaleDateString('en-US', { 
               month: 'short', 
               day: 'numeric' 

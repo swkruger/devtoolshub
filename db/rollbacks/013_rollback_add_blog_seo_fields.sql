@@ -14,3 +14,4 @@ DROP COLUMN IF EXISTS og_description,
 DROP COLUMN IF EXISTS og_title,
 DROP COLUMN IF EXISTS meta_keywords,
 DROP COLUMN IF EXISTS meta_description;
+
