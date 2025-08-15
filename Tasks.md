@@ -1504,6 +1504,31 @@ Goal: Smooth, beautiful app experience with saved state, user preferences, and h
 
 ---
 
+## 🆕 Dashboard Enhancement: Featured & Popular Blogs (2025-08-15)
+
+Goal: Add Featured and Popular blog sections to the Tools Dashboard, styled consistently with the blog overview page, positioned below the tools grid.
+
+- [ ] Fetch featured blogs via `listFeaturedBlogs(6)` in `app/dashboard/page.tsx`
+- [ ] Fetch popular blogs via `listPopularBlogs(6)` in `app/dashboard/page.tsx`
+- [ ] Convert `DashboardPage` to an async server component to support data fetching
+- [ ] Render sections below tools grid using headings and grid styles matching `/blog` overview
+- [ ] Reuse `components/blog/BlogCard` for cards to maintain consistency and avoid duplication
+- [ ] Ensure sections are placed above the Premium CTA card
+- [ ] Build and lint to verify no TypeScript or ESLint errors
+- [ ] Mark tasks completed once sections render with real data
+
+
+## 🆕 Dashboard Enhancement: Search, Filters & What's New (2025-08-15)
+
+Goal: Improve dashboard UX with tool search + category filters and a concise "What’s New" card.
+
+- [ ] Add client `ToolsBrowser` component with search input and category chips
+- [ ] Render filtered tools grid with identical card layout as before
+- [ ] Wire `ToolsBrowser` into `app/dashboard/page.tsx` and remove server-side grid mapping
+- [ ] Add a "What’s New" card pulling latest entry from `getChangelog()` with link to `/changelog`
+- [ ] Ensure layout spacing consistent with existing page (header → search/filters → grid → blogs → premium CTA)
+- [ ] Build and lint to verify no TypeScript/ESLint errors
+
 ## 🆕 Blogging System (2025-08-14)
 
 Goal: Implement an admin-managed Blog with public read access, SEO integration, RLS-only enforcement, minimal WYSIWYG editor, Storage-backed images, and UI consistent with ShadCN standards.

@@ -4,16 +4,19 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { getAllTools } from "@/lib/tools"
+import { getAllTools, getCategories, getCategoryDisplayName } from "@/lib/tools"
 import { 
   Home, 
   Wrench, 
   Crown,
   Settings,
-  FileText
+  FileText,
+  Star
 } from "lucide-react"
 import * as React from 'react'
+import { loadLocalFavorites, loadServerFavorites, saveLocalFavorites, toggleServerFavorite } from "@/lib/services/user-favorites"
 
 const navigation = [
   {
@@ -38,11 +41,54 @@ interface SidebarProps {
 export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
   const pathname = usePathname()
   const tools = React.useMemo(() => getAllTools().map(tool => ({
+    id: tool.id,
     name: tool.name,
     href: tool.path,
     icon: tool.icon,
     isPremium: tool.isPremium,
+    tags: tool.tags,
+    description: tool.description,
+    category: tool.category,
   })), [])
+  const categories = React.useMemo(() => getCategories(), [])
+  const [query, setQuery] = React.useState("")
+  const [favorites, setFavorites] = React.useState<Set<string>>(() => loadLocalFavorites())
+
+  // Load and persist favorites in localStorage
+  React.useEffect(() => {
+    (async () => {
+      const server = await loadServerFavorites()
+      if (server.size > 0) setFavorites(server)
+    })()
+  }, [])
+
+  React.useEffect(() => {
+    saveLocalFavorites(favorites)
+  }, [favorites])
+
+  const toggleFavorite = React.useCallback(async (id: string) => {
+    setFavorites(prev => {
+      const next = new Set(prev)
+      const willFavorite = !next.has(id)
+      if (willFavorite) next.add(id)
+      else next.delete(id)
+      // fire-and-forget server sync
+      toggleServerFavorite(id, willFavorite).catch(() => {})
+      return next
+    })
+  }, [])
+
+  const filteredByQuery = React.useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return tools
+    return tools.filter(t =>
+      t.name.toLowerCase().includes(q) ||
+      (t.description?.toLowerCase() || "").includes(q) ||
+      (t.tags || []).some(tag => tag.toLowerCase().includes(q))
+    )
+  }, [tools, query])
+
+  const favoriteItems = React.useMemo(() => filteredByQuery.filter(t => favorites.has(t.id)), [filteredByQuery, favorites])
 
   return (
     <div className={cn("pb-12", className)}>
@@ -83,31 +129,94 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
           )}>
             Tools
           </h2>
-          <ScrollArea className="h-[300px] px-1">
-            <div className="space-y-1">
-              {tools.map((tool) => (
-                <Button
-                  key={tool.href}
-                  variant={pathname === tool.href ? "secondary" : "ghost"}
-                  className={cn(
-                    "w-full justify-start relative",
-                    isCollapsed && "justify-center px-2"
+          {!isCollapsed && (
+            <div className="px-4 pb-2">
+              <Input
+                placeholder="Search tools..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                aria-label="Search tools"
+              />
+            </div>
+          )}
+          <ScrollArea className="h-[70vh] px-1">
+            <div className="space-y-3">
+              {/* Favorites Section */}
+              {favoriteItems.length > 0 && (
+                <div className="space-y-1">
+                  {!isCollapsed && (
+                    <div className="px-4 text-xs uppercase text-muted-foreground flex items-center gap-1">
+                      <Star className="h-3 w-3 text-yellow-500" /> Favorites
+                    </div>
                   )}
-                  asChild
-                >
-                  <Link href={tool.href}>
-                    <tool.icon className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                    {!isCollapsed && (
-                      <>
-                        <span className="flex-1 text-left">{tool.name}</span>
-                        {tool.isPremium && (
-                          <Crown className="h-3 w-3 text-primary" />
+                  {favoriteItems.map((tool) => (
+                    <Button
+                      key={`fav-${tool.href}`}
+                      variant={pathname === tool.href ? "secondary" : "ghost"}
+                      className={cn(
+                        "w-full justify-start relative border border-yellow-200/60 dark:border-yellow-500/20 bg-yellow-50/50 dark:bg-yellow-500/5",
+                        isCollapsed && "justify-center px-2"
+                      )}
+                      asChild
+                    >
+                      <Link href={tool.href}>
+                        <tool.icon className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
+                        {!isCollapsed && (
+                          <>
+                            <span className="flex-1 text-left">{tool.name}</span>
+                            <Star
+                              className="h-3.5 w-3.5 text-yellow-500"
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(tool.id) }}
+                            />
+                          </>
                         )}
-                      </>
+                      </Link>
+                    </Button>
+                  ))}
+                </div>
+              )}
+              {categories.map((cat) => {
+                const items = filteredByQuery.filter(t => t.category === cat && !favorites.has(t.id))
+                if (items.length === 0) return null
+                return (
+                  <div key={cat} className="space-y-1">
+                    {!isCollapsed && (
+                      <div className="px-4 text-xs uppercase text-muted-foreground">
+                        {getCategoryDisplayName(cat)}
+                      </div>
                     )}
-                  </Link>
-                </Button>
-              ))}
+                    {items.map((tool) => (
+                      <Button
+                        key={tool.href}
+                        variant={pathname === tool.href ? "secondary" : "ghost"}
+                        className={cn(
+                          "w-full justify-start relative",
+                          isCollapsed && "justify-center px-2"
+                        )}
+                        asChild
+                      >
+                        <Link href={tool.href}>
+                          <tool.icon className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
+                          {!isCollapsed && (
+                            <>
+                              <span className="flex-1 text-left">{tool.name}</span>
+                              <div className="flex items-center gap-2">
+                                {tool.isPremium && (
+                                  <Crown className="h-3 w-3 text-primary" />
+                                )}
+                                <Star
+                                  className={cn("h-3.5 w-3.5", favorites.has(tool.id) ? "text-yellow-500" : "text-muted-foreground")}
+                                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(tool.id) }}
+                                />
+                              </div>
+                            </>
+                          )}
+                        </Link>
+                      </Button>
+                    ))}
+                  </div>
+                )
+              })}
             </div>
           </ScrollArea>
         </div>
