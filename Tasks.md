@@ -27,6 +27,262 @@ Full implementation with date picker for any past/future dates, live weather dat
 
 ---
 
+## 🆕 **User Settings & Profile Management System (2025-01-XX)**
+
+**Goal**: Create a comprehensive user settings page where users can manage their profile, subscription, and account settings with the ability to completely delete their account. This will be a critical user management feature for the production platform.
+
+### 📋 **Core Infrastructure Tasks**
+
+⬜ **Task 1**: Create settings page structure and routing
+- [ ] Create `app/settings/page.tsx` with proper auth protection and layout
+- [ ] Implement settings navigation with tabs (Profile, Subscription, Security, Account)
+- [ ] Add settings link to sidebar navigation (already exists in sidebar.tsx)
+- [ ] Set up proper metadata and SEO for settings page
+
+⬜ **Task 2**: Create settings layout and navigation components
+- [ ] Build `components/settings/SettingsLayout.tsx` with tab navigation
+- [ ] Create `components/settings/SettingsTabs.tsx` for tab switching
+- [ ] Implement responsive design for mobile and desktop
+- [ ] Add breadcrumb navigation back to dashboard
+
+⬜ **Task 3**: Set up settings-specific UI components
+- [ ] Create `components/settings/ProfileForm.tsx` for profile editing
+- [ ] Create `components/settings/SubscriptionCard.tsx` for plan management
+- [ ] Create `components/settings/SecuritySettings.tsx` for security options
+- [ ] Create `components/settings/AccountDeletion.tsx` for account deletion
+
+### 👤 **Profile Management Tasks**
+
+⬜ **Task 4**: Implement profile information editing
+- [ ] Display current user profile data (name, email, avatar, plan)
+- [ ] Create editable form for name, display name, and bio
+- [ ] Add avatar upload functionality with Supabase Storage
+- [ ] Implement profile picture cropping and optimization
+- [ ] Add email change functionality with verification
+
+⬜ **Task 5**: Profile data validation and error handling
+- [ ] Add client-side validation for all profile fields
+- [ ] Implement server-side validation in API routes
+- [ ] Add proper error messages and success notifications
+- [ ] Handle avatar upload errors and size limits
+- [ ] Add loading states for all profile operations
+
+⬜ **Task 6**: Profile preferences and settings
+- [ ] Add timezone preference setting
+- [ ] Implement theme preference (light/dark mode)
+- [ ] Add email notification preferences
+- [ ] Create language/locale selection
+- [ ] Add developer-specific preferences (default tool, shortcuts)
+
+### 💳 **Subscription Management Tasks**
+
+⬜ **Task 7**: Display current subscription status
+- [ ] Show current plan (Free/Premium) with clear indicators
+- [ ] Display subscription details (start date, next billing, amount)
+- [ ] Add plan comparison table (Free vs Premium features)
+- [ ] Show usage statistics and limits
+- [ ] Display billing history and invoices
+
+⬜ **Task 8**: Subscription upgrade and management
+- [ ] Add "Upgrade to Premium" button with Stripe integration
+- [ ] Implement subscription cancellation functionality
+- [ ] Add plan change options (monthly/yearly billing)
+- [ ] Create billing portal integration for payment management
+- [ ] Add subscription renewal reminders
+
+⬜ **Task 9**: Usage analytics and limits
+- [ ] Display tool usage statistics for premium users
+- [ ] Show remaining API calls or feature usage
+- [ ] Add usage graphs and trends
+- [ ] Implement usage alerts and notifications
+- [ ] Create usage export functionality
+
+### 🔒 **Security Settings Tasks**
+
+⬜ **Task 10**: Password management
+- [ ] Add password change functionality
+- [ ] Implement password strength validation
+- [ ] Add two-factor authentication setup (optional)
+- [ ] Create password reset functionality
+- [ ] Add session management and logout options
+
+⬜ **Task 11**: Account security features
+- [ ] Display active sessions and devices
+- [ ] Add ability to revoke sessions
+- [ ] Implement login history and activity log
+- [ ] Add security notifications and alerts
+- [ ] Create account lockout settings
+
+⬜ **Task 12**: API key management (for future use)
+- [ ] Create API key generation interface
+- [ ] Add API key permissions and scopes
+- [ ] Implement API key rotation
+- [ ] Add API usage monitoring
+- [ ] Create API key revocation
+
+### 🗑️ **Account Deletion Tasks**
+
+⬜ **Task 13**: Account deletion interface
+- [ ] Create comprehensive account deletion form
+- [ ] Add data export functionality before deletion
+- [ ] Implement deletion confirmation with multiple steps
+- [ ] Add final password confirmation for deletion
+- [ ] Create deletion reason collection (optional)
+
+⬜ **Task 14**: Data cleanup and deletion logic
+- [ ] Implement complete user data deletion from Supabase
+- [ ] Delete user profile, preferences, and saved data
+- [ ] Remove user from all tool-specific tables
+- [ ] Clean up uploaded files and storage
+- [ ] Add deletion audit trail for compliance
+
+⬜ **Task 15**: Account recovery and safety measures
+- [ ] Add account deletion grace period (7-30 days)
+- [ ] Implement account recovery during grace period
+- [ ] Create deletion cancellation functionality
+- [ ] Add email notifications for deletion process
+- [ ] Implement permanent deletion after grace period
+
+### 🎨 **UI/UX Enhancement Tasks**
+
+⬜ **Task 16**: Settings page design and layout
+- [ ] Implement consistent design with existing app theme
+- [ ] Add proper spacing and typography hierarchy
+- [ ] Create responsive card layouts for each section
+- [ ] Add visual indicators for changes and saved states
+- [ ] Implement smooth transitions and animations
+
+⬜ **Task 17**: Form validation and user feedback
+- [ ] Add real-time form validation with helpful messages
+- [ ] Implement success/error toast notifications
+- [ ] Add loading states for all async operations
+- [ ] Create confirmation dialogs for destructive actions
+- [ ] Add progress indicators for multi-step processes
+
+⬜ **Task 18**: Accessibility and keyboard navigation
+- [ ] Implement full keyboard navigation support
+- [ ] Add ARIA labels and screen reader support
+- [ ] Create focus management for modals and forms
+- [ ] Add skip links and navigation shortcuts
+- [ ] Ensure WCAG 2.1 AA compliance
+
+### 🔧 **Technical Implementation Tasks**
+
+⬜ **Task 19**: Database schema updates
+- [ ] Create migration for user preferences table
+- [ ] Add user settings and preferences columns
+- [ ] Create audit log table for account changes
+- [ ] Add soft delete functionality for user data
+- [ ] Implement proper RLS policies for all new tables
+
+⬜ **Task 20**: API routes and server actions
+- [ ] Create `/api/settings/profile` for profile updates
+- [ ] Create `/api/settings/subscription` for subscription management
+- [ ] Create `/api/settings/security` for security operations
+- [ ] Create `/api/settings/account-deletion` for account deletion
+- [ ] Implement proper error handling and validation
+
+⬜ **Task 21**: Integration with existing systems
+- [ ] Integrate with existing auth system
+- [ ] Connect with Stripe for subscription management
+- [ ] Integrate with Supabase Storage for file uploads
+- [ ] Connect with email system for notifications
+- [ ] Integrate with existing tool data and preferences
+
+### 🧪 **Testing and Documentation Tasks**
+
+⬜ **Task 22**: Comprehensive testing
+- [ ] Test all profile management functionality
+- [ ] Test subscription upgrade and cancellation flows
+- [ ] Test security features and password changes
+- [ ] Test account deletion process and recovery
+- [ ] Test responsive design across all devices
+
+⬜ **Task 23**: Error handling and edge cases
+- [ ] Test network failures and retry mechanisms
+- [ ] Test concurrent user sessions and conflicts
+- [ ] Test data validation and sanitization
+- [ ] Test rate limiting and abuse prevention
+- [ ] Test accessibility with screen readers
+
+⬜ **Task 24**: Documentation and help
+- [ ] Create comprehensive help documentation
+- [ ] Add tooltips and contextual help
+- [ ] Create user guide for settings management
+- [ ] Document security best practices
+- [ ] Add FAQ section for common issues
+
+### 🔒 **Security and Compliance Tasks**
+
+⬜ **Task 25**: Security review and implementation
+- [ ] Implement proper CSRF protection
+- [ ] Add rate limiting for sensitive operations
+- [ ] Implement proper session management
+- [ ] Add audit logging for all user actions
+- [ ] Ensure GDPR compliance for data deletion
+
+⬜ **Task 26**: Data privacy and compliance
+- [ ] Implement data export functionality (GDPR)
+- [ ] Add data retention policies
+- [ ] Create privacy policy updates
+- [ ] Implement consent management
+- [ ] Add data processing transparency
+
+### 📱 **Mobile and Responsive Tasks**
+
+⬜ **Task 27**: Mobile optimization
+- [ ] Optimize settings forms for mobile devices
+- [ ] Implement touch-friendly controls
+- [ ] Add mobile-specific navigation patterns
+- [ ] Optimize image upload for mobile
+- [ ] Test on various mobile devices and browsers
+
+⬜ **Task 28**: Progressive enhancement
+- [ ] Ensure core functionality works without JavaScript
+- [ ] Add offline support for basic settings
+- [ ] Implement service worker for caching
+- [ ] Add push notifications for important updates
+- [ ] Create PWA manifest for mobile installation
+
+### 🎯 **Implementation Phases**
+
+**Phase 1: Foundation (Tasks 1-3)**
+- Basic page structure and navigation
+- Component architecture setup
+- Routing and layout implementation
+
+**Phase 2: Core Features (Tasks 4-9)**
+- Profile management functionality
+- Subscription display and management
+- Basic security features
+
+**Phase 3: Advanced Features (Tasks 10-15)**
+- Security settings and password management
+- Account deletion with safety measures
+- Data cleanup and recovery options
+
+**Phase 4: Polish & Testing (Tasks 16-28)**
+- UI/UX improvements and accessibility
+- Comprehensive testing and error handling
+- Security review and compliance
+- Mobile optimization and documentation
+
+---
+
+**Success Criteria**:
+- ✅ Complete profile management with avatar upload
+- ✅ Subscription management with Stripe integration
+- ✅ Comprehensive security settings
+- ✅ Safe account deletion with recovery options
+- ✅ Full accessibility and mobile responsiveness
+- ✅ GDPR compliance and data privacy
+- ✅ Comprehensive error handling and validation
+- ✅ Professional UI consistent with app design
+
+**Priority**: High - This is a critical user management feature needed for production readiness and user trust.
+
+---
+
 ## 🎨 UI Consistency Standardization Plan (2025-08-08)
 
 Goal: Apply the standards in `UI_CONSISTENCY_REVIEW_PROMPT.md` across all 9 tools without changing functionality. Use compact headers, consistent cards/grids, standardized buttons, tabs, help panels, accessibility, and premium gating with crown indicator for free users [[memory:2772980]].
@@ -1520,12 +1776,12 @@ Goal: Add Featured and Popular blog sections to the Tools Dashboard, styled cons
 
 ## 🆕 Dashboard Enhancement: Search, Filters & What's New (2025-08-15)
 
-Goal: Improve dashboard UX with tool search + category filters and a concise "What’s New" card.
+Goal: Improve dashboard UX with tool search + category filters and a concise "What's New" card.
 
 - [ ] Add client `ToolsBrowser` component with search input and category chips
 - [ ] Render filtered tools grid with identical card layout as before
 - [ ] Wire `ToolsBrowser` into `app/dashboard/page.tsx` and remove server-side grid mapping
-- [ ] Add a "What’s New" card pulling latest entry from `getChangelog()` with link to `/changelog`
+- [ ] Add a "What's New" card pulling latest entry from `getChangelog()` with link to `/changelog`
 - [ ] Ensure layout spacing consistent with existing page (header → search/filters → grid → blogs → premium CTA)
 - [ ] Build and lint to verify no TypeScript/ESLint errors
 

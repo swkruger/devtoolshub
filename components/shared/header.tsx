@@ -57,12 +57,7 @@ export function Header({ user }: HeaderProps) {
               >
                 Dashboard
               </Link>
-              <Link 
-                href="/tools" 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Tools
-              </Link>
+              
             </nav>
           )}
         </div>

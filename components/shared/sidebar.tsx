@@ -39,11 +39,6 @@ const navigation = [
     href: "/dashboard",
     icon: Home,
   },
-  {
-    name: "All Tools",
-    href: "/tools",
-    icon: Wrench,
-  },
 ]
 
 // Tools will be derived dynamically inside the component so the menu reflects any config changes
