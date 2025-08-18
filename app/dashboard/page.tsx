@@ -5,6 +5,8 @@ import { listFeaturedBlogs, listPopularBlogs } from "@/lib/services/blogs"
 import { BlogCard } from "@/components/blog/blog-card"
 import type { Metadata } from 'next'
 import { ArrowRight } from 'lucide-react'
+import { marked } from 'marked'
+import DOMPurify from 'isomorphic-dompurify'
 import ToolsBrowser from "./ToolsBrowser"
 import { getChangelog } from "@/lib/changelog"
 
@@ -178,8 +180,27 @@ function MainFeaturedBlogCard({ blog }: { blog: any }) {
               {blog.title}
             </h3>
           </a>
-          <div className="text-lg text-gray-600 dark:text-gray-300 mb-6 line-clamp-4">
-            {String(blog.content_html || '').replace(/<[^>]*>/g, '').substring(0, 200)}...
+          <div className="text-lg text-gray-600 dark:text-gray-300 mb-6 line-clamp-4 prose dark:prose-invert max-w-none">
+            {(() => {
+              try {
+                const md: any = blog.content_markdown
+                const html = md ? (marked.parse(md) as string) : (blog.content_html || '')
+                const safe = DOMPurify.sanitize(html, { 
+                  USE_PROFILES: { html: true },
+                  ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+                  ALLOWED_ATTR: []
+                })
+                return (
+                  <div
+                    dangerouslySetInnerHTML={{ __html: safe }}
+                  />
+                )
+              } catch (error) {
+                // Fallback to plain text if markdown parsing fails
+                const content = blog.content_html || blog.content_markdown || ''
+                return content.replace(/<[^>]*>/g, '').substring(0, 200) + '...'
+              }
+            })()}
           </div>
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <time dateTime={blog.published_at || undefined}>

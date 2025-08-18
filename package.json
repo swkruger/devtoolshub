@@ -58,6 +58,7 @@
     "react-dom": "^18",
     "react-json-tree": "^0.20.0",
     "isomorphic-dompurify": "^2.7.0",
+    "marked": "^12.0.2",
     "react-syntax-highlighter": "^15.6.1",
     "resend": "^4.6.0",
     "tailwind-merge": "^2.2.1",

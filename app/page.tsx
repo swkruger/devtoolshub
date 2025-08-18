@@ -5,6 +5,14 @@ import { getAllTools } from '@/lib/tools'
 import { BookOpen, ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
 import { listFeaturedBlogs, listPopularBlogs } from '@/lib/services/blogs'
+import { marked } from 'marked'
+import DOMPurify from 'isomorphic-dompurify'
+
+// Configure marked for consistent output
+marked.setOptions({
+  gfm: true,
+  breaks: true
+})
 
 export const metadata: Metadata = {
   title: 'DevToolsHub – Essential Developer Tools',
@@ -208,7 +216,27 @@ export default async function HomePage() {
                   </Link>
                   
                   <div className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3">
-                    {featuredBlogs[0].content_html.replace(/<[^>]*>/g, '').substring(0, 150)}...
+                    {(() => {
+                      try {
+                        const md: any = featuredBlogs[0].content_markdown
+                        const html = md ? (marked.parse(md) as string) : (featuredBlogs[0].content_html || '')
+                        const safe = DOMPurify.sanitize(html, { 
+                          USE_PROFILES: { html: true },
+                          ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+                          ALLOWED_ATTR: []
+                        })
+                        return (
+                          <div
+                            className="prose dark:prose-invert max-w-none"
+                            dangerouslySetInnerHTML={{ __html: safe }}
+                          />
+                        )
+                      } catch (error) {
+                        // Fallback to plain text if markdown parsing fails
+                        const content = featuredBlogs[0].content_html || featuredBlogs[0].content_markdown || ''
+                        return content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'
+                      }
+                    })()}
                   </div>
                   
                   <div className="flex items-center justify-between">
@@ -307,7 +335,27 @@ export default async function HomePage() {
                     </Link>
                     
                     <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                      {blog.content_html.replace(/<[^>]*>/g, '').substring(0, 100)}...
+                      {(() => {
+                        try {
+                          const md: any = (blog as any).content_markdown
+                          const html = md ? (marked.parse(md) as string) : (blog.content_html || '')
+                          const safe = DOMPurify.sanitize(html, { 
+                            USE_PROFILES: { html: true },
+                            ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+                            ALLOWED_ATTR: []
+                          })
+                          return (
+                            <div
+                              className="prose dark:prose-invert max-w-none"
+                              dangerouslySetInnerHTML={{ __html: safe }}
+                            />
+                          )
+                        } catch (error) {
+                          // Fallback to plain text if markdown parsing fails
+                          const content = blog.content_html || (blog as any).content_markdown || ''
+                          return content.replace(/<[^>]*>/g, '').substring(0, 100) + '...'
+                        }
+                      })()}
                     </div>
                     
                     <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">

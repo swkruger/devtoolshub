@@ -5,12 +5,15 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { WysiwygEditor } from '@/components/blog/wysiwyg-editor'
 import { createSupabaseClient } from '@/lib/supabase'
+import { Textarea } from '@/components/ui/textarea'
 
 export default function NewBlogPage() {
   const router = useRouter()
   const [title, setTitle] = useState('')
   const [slug, setSlug] = useState('')
   const [content, setContent] = useState('')
+  const [useMarkdown, setUseMarkdown] = useState(false)
+  const [contentMarkdown, setContentMarkdown] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [isPopular, setIsPopular] = useState(false)
   const [isFeatured, setIsFeatured] = useState(false)
@@ -36,7 +39,9 @@ export default function NewBlogPage() {
         .insert({
           title,
           slug,
-          content_html: content,
+          // content_html is NOT NULL in DB, so always send content (markdown when enabled)
+          content_html: useMarkdown ? contentMarkdown : content,
+          content_markdown: useMarkdown ? contentMarkdown : null,
           image_url: imageUrl || null,
           status: 'draft',
           is_featured: isFeatured,
@@ -78,9 +83,29 @@ export default function NewBlogPage() {
             placeholder="https://example.com/image.jpg"
           />
         </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">Content</label>
-          <WysiwygEditor value={content} onChange={setContent} placeholder="Write your blog post..." />
+        <div className="space-y-2">
+          <div className="flex items-center gap-3 text-sm">
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={useMarkdown} onChange={(e) => setUseMarkdown(e.target.checked)} />
+              Write in Markdown
+            </label>
+          </div>
+          {useMarkdown ? (
+            <div>
+              <label className="mb-1 block text-sm font-medium">Content (Markdown)</label>
+              <Textarea
+                value={contentMarkdown}
+                onChange={(e) => setContentMarkdown(e.target.value)}
+                placeholder="# My Post\n\nWrite your content in Markdown..."
+                rows={16}
+              />
+            </div>
+          ) : (
+            <div>
+              <label className="mb-1 block text-sm font-medium">Content (HTML)</label>
+              <WysiwygEditor value={content} onChange={setContent} placeholder="Write your blog post..." />
+            </div>
+          )}
         </div>
         
         {/* SEO Section */}

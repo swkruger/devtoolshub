@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import DOMPurify from 'isomorphic-dompurify'
+import { marked } from 'marked'
 import { getPublishedBlogBySlug, listPopularBlogs } from '@/lib/services/blogs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -85,10 +86,13 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
 
   const popular = (await listPopularBlogs(5)).filter((b) => b.id !== blog.id)
 
-  const sanitized = DOMPurify.sanitize(blog.content_html, { USE_PROFILES: { html: true } })
+  const isMarkdown = Boolean((blog as any).content_markdown)
+  const htmlFromMarkdown = isMarkdown ? marked.parse((blog as any).content_markdown || '') : ''
+  const sanitized = DOMPurify.sanitize(isMarkdown ? (htmlFromMarkdown as string) : blog.content_html, { USE_PROFILES: { html: true } })
 
   // Calculate read time (rough estimate: 200 words per minute)
-  const wordCount = blog.content_html.replace(/<[^>]*>/g, '').split(/\s+/).length
+  const textForCount = isMarkdown ? (blog as any).content_markdown : blog.content_html
+  const wordCount = (textForCount || '').replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length
   const readTime = Math.max(1, Math.round(wordCount / 200))
 
   // Format date
@@ -97,7 +101,7 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
 
   // Generate dynamic metadata
   const metaDescription = blog.meta_description || 
-    blog.content_html.replace(/<[^>]*>/g, '').substring(0, 160) + '...'
+    (textForCount || '').replace(/<[^>]*>/g, '').substring(0, 160) + '...'
   
   const metaKeywords = blog.meta_keywords || 
     'DevToolsHub, developer tools, ' + blog.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ', ')

@@ -28,9 +28,13 @@ export async function toggleServerFavorite(toolId: string, shouldFavorite: boole
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return
   if (shouldFavorite) {
-    await supabase.from('user_tool_favorites').insert({ user_id: user.id, tool_id: toolId }).select('tool_id').single().catch(() => {})
+    try {
+      await supabase.from('user_tool_favorites').insert({ user_id: user.id, tool_id: toolId })
+    } catch {}
   } else {
-    await supabase.from('user_tool_favorites').delete().eq('tool_id', toolId).eq('user_id', user.id).catch(() => {})
+    try {
+      await supabase.from('user_tool_favorites').delete().eq('tool_id', toolId).eq('user_id', user.id)
+    } catch {}
   }
 }
 

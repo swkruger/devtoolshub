@@ -25,11 +25,15 @@ type Props = { initialTools: SerializableTool[] }
 export default function ToolsBrowser({ initialTools }: Props) {
   const [query, setQuery] = useState("")
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
-  const [favorites, setFavorites] = useState<Set<string>>(() => loadLocalFavorites())
+  // Start empty to ensure server-rendered HTML matches client on first paint
+  // Then hydrate favorites from localStorage and Supabase after mount
+  const [favorites, setFavorites] = useState<Set<string>>(new Set())
 
-  // Load persisted favorites shared with sidebar
+  // Load local favorites first (client-only), then server favorites
   useEffect(() => {
-    (async () => {
+    const local = loadLocalFavorites()
+    if (local.size > 0) setFavorites(local)
+    ;(async () => {
       const server = await loadServerFavorites()
       if (server.size > 0) setFavorites(server)
     })()

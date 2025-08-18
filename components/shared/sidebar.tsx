@@ -18,6 +18,21 @@ import {
 import * as React from 'react'
 import { loadLocalFavorites, loadServerFavorites, saveLocalFavorites, toggleServerFavorite } from "@/lib/services/user-favorites"
 
+// Client-only wrapper to prevent hydration issues
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [hasMounted, setHasMounted] = React.useState(false)
+  
+  React.useEffect(() => {
+    setHasMounted(true)
+  }, [])
+  
+  if (!hasMounted) {
+    return null
+  }
+  
+  return <>{children}</>
+}
+
 const navigation = [
   {
     name: "Dashboard",
@@ -122,75 +137,40 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
         </div>
 
         {/* Tools */}
-        <div className="px-3 py-2">
-          <h2 className={cn(
-            "mb-2 px-4 text-lg font-semibold tracking-tight",
-            isCollapsed && "hidden"
-          )}>
-            Tools
-          </h2>
-          {!isCollapsed && (
-            <div className="px-4 pb-2">
-              <Input
-                placeholder="Search tools..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                aria-label="Search tools"
-              />
-            </div>
-          )}
-          <ScrollArea className="h-[70vh] px-1">
-            <div className="space-y-3">
-              {/* Favorites Section */}
-              {favoriteItems.length > 0 && (
-                <div className="space-y-1">
-                  {!isCollapsed && (
-                    <div className="px-4 text-xs uppercase text-muted-foreground flex items-center gap-1">
-                      <Star className="h-3 w-3 text-yellow-500" /> Favorites
-                    </div>
-                  )}
-                  {favoriteItems.map((tool) => (
-                    <Button
-                      key={`fav-${tool.href}`}
-                      variant={pathname === tool.href ? "secondary" : "ghost"}
-                      className={cn(
-                        "w-full justify-start relative border border-yellow-200/60 dark:border-yellow-500/20 bg-yellow-50/50 dark:bg-yellow-500/5",
-                        isCollapsed && "justify-center px-2"
-                      )}
-                      asChild
-                    >
-                      <Link href={tool.href}>
-                        <tool.icon className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                        {!isCollapsed && (
-                          <>
-                            <span className="flex-1 text-left">{tool.name}</span>
-                            <Star
-                              className="h-3.5 w-3.5 text-yellow-500"
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(tool.id) }}
-                            />
-                          </>
-                        )}
-                      </Link>
-                    </Button>
-                  ))}
-                </div>
-              )}
-              {categories.map((cat) => {
-                const items = filteredByQuery.filter(t => t.category === cat && !favorites.has(t.id))
-                if (items.length === 0) return null
-                return (
-                  <div key={cat} className="space-y-1">
+        <ClientOnly>
+          <div className="px-3 py-2">
+            <h2 className={cn(
+              "mb-2 px-4 text-lg font-semibold tracking-tight",
+              isCollapsed && "hidden"
+            )}>
+              Tools
+            </h2>
+            {!isCollapsed && (
+              <div className="px-4 pb-2">
+                <Input
+                  placeholder="Search tools..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  aria-label="Search tools"
+                />
+              </div>
+            )}
+            <ScrollArea className="h-[70vh] px-1">
+              <div className="space-y-3">
+                {/* Favorites Section */}
+                {favoriteItems.length > 0 && (
+                  <div className="space-y-1">
                     {!isCollapsed && (
-                      <div className="px-4 text-xs uppercase text-muted-foreground">
-                        {getCategoryDisplayName(cat)}
+                      <div className="px-4 text-xs uppercase text-muted-foreground flex items-center gap-1">
+                        <Star className="h-3 w-3 text-yellow-500" /> Favorites
                       </div>
                     )}
-                    {items.map((tool) => (
+                    {favoriteItems.map((tool) => (
                       <Button
-                        key={tool.href}
+                        key={`fav-${tool.href}`}
                         variant={pathname === tool.href ? "secondary" : "ghost"}
                         className={cn(
-                          "w-full justify-start relative",
+                          "w-full justify-start relative border border-yellow-200/60 dark:border-yellow-500/20 bg-yellow-50/50 dark:bg-yellow-500/5",
                           isCollapsed && "justify-center px-2"
                         )}
                         asChild
@@ -200,26 +180,63 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
                           {!isCollapsed && (
                             <>
                               <span className="flex-1 text-left">{tool.name}</span>
-                              <div className="flex items-center gap-2">
-                                {tool.isPremium && (
-                                  <Crown className="h-3 w-3 text-primary" />
-                                )}
-                                <Star
-                                  className={cn("h-3.5 w-3.5", favorites.has(tool.id) ? "text-yellow-500" : "text-muted-foreground")}
-                                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(tool.id) }}
-                                />
-                              </div>
+                              <Star
+                                className="h-3.5 w-3.5 text-yellow-500"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(tool.id) }}
+                              />
                             </>
                           )}
                         </Link>
                       </Button>
                     ))}
                   </div>
-                )
-              })}
-            </div>
-          </ScrollArea>
-        </div>
+                )}
+                {categories.map((cat) => {
+                  const items = filteredByQuery.filter(t => t.category === cat && !favorites.has(t.id))
+                  if (items.length === 0) return null
+                  return (
+                    <div key={cat} className="space-y-1">
+                      {!isCollapsed && (
+                        <div className="px-4 text-xs uppercase text-muted-foreground">
+                          {getCategoryDisplayName(cat)}
+                        </div>
+                      )}
+                      {items.map((tool) => (
+                        <Button
+                          key={tool.href}
+                          variant={pathname === tool.href ? "secondary" : "ghost"}
+                          className={cn(
+                            "w-full justify-start relative",
+                            isCollapsed && "justify-center px-2"
+                          )}
+                          asChild
+                        >
+                          <Link href={tool.href}>
+                            <tool.icon className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
+                            {!isCollapsed && (
+                              <>
+                                <span className="flex-1 text-left">{tool.name}</span>
+                                <div className="flex items-center gap-2">
+                                  {tool.isPremium && (
+                                    <Crown className="h-3 w-3 text-primary" />
+                                  )}
+                                  <Star
+                                    className={cn("h-3.5 w-3.5", favorites.has(tool.id) ? "text-yellow-500" : "text-muted-foreground")}
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(tool.id) }}
+                                  />
+                                </div>
+                              </>
+                            )}
+                          </Link>
+                        </Button>
+                      ))}
+                    </div>
+                  )
+                })}
+              </div>
+            </ScrollArea>
+          </div>
+        </ClientOnly>
 
         {/* Blog Management */}
         <div className="px-3 py-2">
