@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { ToastProvider } from '@/components/ui/toast'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -163,9 +163,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className={inter.className}>
-        <ToastProvider>
-          {children}
-        </ToastProvider>
+        {children}
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   )

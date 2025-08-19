@@ -1,94 +1,32 @@
 "use client"
 
-import { cn } from "@/lib/utils"
+import * as React from "react"
+import * as ProgressPrimitive from "@radix-ui/react-progress"
 import { Loader2 } from "lucide-react"
 
-interface ProgressProps {
-  value?: number
-  max?: number
-  className?: string
-  variant?: 'default' | 'success' | 'warning' | 'error'
-  size?: 'sm' | 'md' | 'lg'
-  showValue?: boolean
-  indeterminate?: boolean
-}
+import { cn } from "@/lib/utils"
 
-export function Progress({
-  value = 0,
-  max = 100,
-  className,
-  variant = 'default',
-  size = 'md',
-  showValue = false,
-  indeterminate = false,
-  ...props
-}: ProgressProps) {
-  const percentage = Math.min(Math.max((value / max) * 100, 0), 100)
+const Progress = React.forwardRef<
+  React.ElementRef<typeof ProgressPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
+>(({ className, value, ...props }, ref) => (
+  <ProgressPrimitive.Root
+    ref={ref}
+    className={cn(
+      "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
+      className
+    )}
+    {...props}
+  >
+    <ProgressPrimitive.Indicator
+      className="h-full w-full flex-1 bg-primary transition-all"
+      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+    />
+  </ProgressPrimitive.Root>
+))
+Progress.displayName = ProgressPrimitive.Root.displayName
 
-  const getVariantStyles = () => {
-    switch (variant) {
-      case 'success':
-        return 'bg-green-500 dark:bg-green-400'
-      case 'warning':
-        return 'bg-yellow-500 dark:bg-yellow-400'
-      case 'error':
-        return 'bg-red-500 dark:bg-red-400'
-      default:
-        return 'bg-blue-500 dark:bg-blue-400'
-    }
-  }
-
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'sm':
-        return 'h-1'
-      case 'lg':
-        return 'h-3'
-      default:
-        return 'h-2'
-    }
-  }
-
-  if (indeterminate) {
-    return (
-      <div className={cn("w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden", getSizeStyles(), className)}>
-        <div 
-          className={cn(
-            "h-full rounded-full animate-pulse",
-            getVariantStyles()
-          )}
-          style={{
-            width: '30%',
-            animation: 'progress-indeterminate 1.5s ease-in-out infinite'
-          }}
-        />
-        <style jsx>{`
-          @keyframes progress-indeterminate {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(300%); }
-          }
-        `}</style>
-      </div>
-    )
-  }
-
-  return (
-    <div className={cn("w-full bg-gray-200 dark:bg-gray-700 rounded-full", getSizeStyles(), className)} {...props}>
-      <div
-        className={cn(
-          "h-full rounded-full transition-all duration-300 ease-out",
-          getVariantStyles()
-        )}
-        style={{ width: `${percentage}%` }}
-      />
-      {showValue && (
-        <div className="text-xs text-gray-600 dark:text-gray-400 mt-1 text-center">
-          {Math.round(percentage)}%
-        </div>
-      )}
-    </div>
-  )
-}
+export { Progress }
 
 interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg'
@@ -140,7 +78,8 @@ export function LoadingOverlay({
               </p>
               {progress !== undefined && (
                 <div className="w-full max-w-xs">
-                  <Progress value={progress} showValue />
+                  <Progress value={progress} />
+                  <div className="text-xs text-center mt-1">{Math.round(progress)}%</div>
                 </div>
               )}
             </div>
