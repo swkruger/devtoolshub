@@ -4,6 +4,13 @@ import { deleteUserAccount } from '@/app/actions/delete-user'
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if we're in a static generation context (build time)
+    const isStaticGeneration = process.env.NEXT_PHASE === 'phase-production-build'
+    
+    if (isStaticGeneration) {
+      return NextResponse.json({ error: 'API not available during build' }, { status: 503 })
+    }
+
     const supabase = createSupabaseServerClient()
     
     // Check authentication
@@ -139,6 +146,13 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if we're in a static generation context (build time)
+    const isStaticGeneration = process.env.NEXT_PHASE === 'phase-production-build'
+    
+    if (isStaticGeneration) {
+      return NextResponse.json({ error: 'API not available during build' }, { status: 503 })
+    }
+
     const supabase = createSupabaseServerClient()
     
     // Check authentication

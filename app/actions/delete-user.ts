@@ -1,10 +1,20 @@
 'use server'
 
 import { createSupabaseServerClient } from '@/lib/supabase-server'
-import { cookies } from 'next/headers'
 
 export async function deleteUserAccount(userId: string, reason?: string) {
   try {
+    // Check if we're in a static generation context (build time)
+    const isStaticGeneration = process.env.NEXT_PHASE === 'phase-production-build'
+    
+    if (isStaticGeneration) {
+      // During build time, return a mock response
+      return {
+        success: false,
+        error: 'Cannot delete account during build process'
+      }
+    }
+
     const supabase = createSupabaseServerClient()
     
     // Check authentication
@@ -21,7 +31,7 @@ export async function deleteUserAccount(userId: string, reason?: string) {
 
     if (error) {
       console.error('Error calling delete_my_account function:', error)
-      throw new Error('Failed to delete account')
+      throw new Error(`Failed to delete account: ${error.message}`)
     }
 
     if (!data || !data.success) {

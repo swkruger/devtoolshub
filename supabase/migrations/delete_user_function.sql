@@ -163,7 +163,7 @@ BEGIN
     
     -- If successful, add sign out flag
     IF (result->>'success')::BOOLEAN THEN
-        result := result || json_build_object('sign_out_required', true);
+        result := (result::jsonb || jsonb_build_object('sign_out_required', true))::json;
     END IF;
     
     RETURN result;
