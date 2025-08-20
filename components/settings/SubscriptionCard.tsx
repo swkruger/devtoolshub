@@ -53,6 +53,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
   const [isManagingBilling, setIsManagingBilling] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
   const [showCancelModal, setShowCancelModal] = useState(false)
+  const [premiumPrice, setPremiumPrice] = useState<number>(9.99)
 
 
   // Helper function to format subscription date
@@ -83,6 +84,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
 
   useEffect(() => {
     fetchSubscriptionData()
+    fetchPremiumPrice()
     
     // Check for success URL parameter and show success message
     const urlParams = new URLSearchParams(window.location.search)
@@ -141,6 +143,20 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
       toast.error('Failed to load subscription information')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchPremiumPrice = async () => {
+    try {
+      const response = await fetch('/api/premium-price')
+      if (!response.ok) {
+        throw new Error('Failed to fetch premium price')
+      }
+      const data = await response.json()
+      setPremiumPrice(data.price)
+    } catch (error) {
+      console.error('Error fetching premium price:', error)
+      // Keep default price if fetch fails
     }
   }
 
@@ -321,20 +337,20 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
                   'Free Plan'
                 )}
               </h3>
-                             <p className="text-sm text-muted-foreground">
-                 {currentPlan === 'premium' ? (
-                   <>
-                     ${SUBSCRIPTION_PLANS.premium.price / 100}/month
-                                           {subscription && (
+                                             <p className="text-sm text-muted-foreground">
+                  {currentPlan === 'premium' ? (
+                    <>
+                      ${premiumPrice}/month
+                      {subscription && (
                         <span className="ml-2">
                           • {subscription.cancel_at_period_end ? 'Access until' : 'Next billing'}: {formatSubscriptionDate(subscription.current_period_end)}
                         </span>
                       )}
-                   </>
-                 ) : (
-                   'No monthly charge'
-                 )}
-               </p>
+                    </>
+                  ) : (
+                    'No monthly charge'
+                  )}
+                </p>
             </div>
                          <Badge variant={currentPlan === 'premium' ? 'default' : 'secondary'}>
                {currentPlan === 'premium' ? (
@@ -419,18 +435,18 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
                     : 'border-border'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-semibold flex items-center gap-2">
-                    {planKey === 'premium' && <Crown className="h-4 w-4 text-yellow-500" />}
-                    {plan.name}
-                  </h4>
-                  <div className="text-right">
-                    <div className="font-bold">
-                      {plan.price === 0 ? 'Free' : formatPrice(plan.price)}
-                    </div>
-                    {plan.price > 0 && <div className="text-xs text-muted-foreground">per month</div>}
-                  </div>
-                </div>
+                                 <div className="flex items-center justify-between mb-3">
+                   <h4 className="font-semibold flex items-center gap-2">
+                     {planKey === 'premium' && <Crown className="h-4 w-4 text-yellow-500" />}
+                     {plan.name}
+                   </h4>
+                   <div className="text-right">
+                     <div className="font-bold">
+                       {planKey === 'premium' ? `$${premiumPrice}` : (plan.price === 0 ? 'Free' : formatPrice(plan.price))}
+                     </div>
+                     {planKey === 'premium' || plan.price > 0 ? <div className="text-xs text-muted-foreground">per month</div> : null}
+                   </div>
+                 </div>
 
                 <ul className="space-y-2 mb-4">
                   {plan.features.map((feature, index) => (

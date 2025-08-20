@@ -63,6 +63,7 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
   const [isManagingBilling, setIsManagingBilling] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
   const [showCancelModal, setShowCancelModal] = useState(false)
+  const [premiumPrice, setPremiumPrice] = useState<number>(9.99)
 
   // Helper function to format subscription date
   const formatSubscriptionDate = (timestamp: any): string => {
@@ -92,6 +93,7 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
 
   useEffect(() => {
     fetchSubscriptionData()
+    fetchPremiumPrice()
     
     // Check for success URL parameter and show success message
     const urlParams = new URLSearchParams(window.location.search)
@@ -156,6 +158,21 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
       toast.error('Failed to load subscription information')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchPremiumPrice = async () => {
+    try {
+      const response = await fetch('/api/premium-price')
+      if (!response.ok) {
+        throw new Error('Failed to fetch premium price')
+      }
+      const data = await response.json()
+      console.log('Fetched premium price:', data.price) // Debug log
+      setPremiumPrice(data.price)
+    } catch (error) {
+      console.error('Error fetching premium price:', error)
+      // Keep default price if fetch fails
     }
   }
 
@@ -288,6 +305,8 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
   const subscription = subscriptionData?.subscription
   const customer = subscriptionData?.customer
   const billingHistory = subscriptionData?.billingHistory || []
+  
+  console.log('Current premiumPrice state:', premiumPrice) // Debug log
 
   return (
     <div className="space-y-8">
@@ -317,7 +336,7 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
         <CardContent className="text-center">
           <div className="flex items-baseline justify-center gap-2 mb-6">
             <span className="text-4xl font-bold text-gray-900 dark:text-gray-100">
-              ${SUBSCRIPTION_PLANS.premium.price / 100}
+              ${premiumPrice}
             </span>
             <span className="text-lg text-gray-600 dark:text-gray-300">/month</span>
           </div>
@@ -388,20 +407,20 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
                   'Free Plan'
                 )}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                {currentPlan === 'premium' ? (
-                  <>
-                    ${SUBSCRIPTION_PLANS.premium.price / 100}/month
-                    {subscription && (
-                      <span className="ml-2">
-                        • {subscription.cancel_at_period_end ? 'Access until' : 'Next billing'}: {formatSubscriptionDate(subscription.current_period_end)}
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  'No monthly charge'
-                )}
-              </p>
+                             <p className="text-sm text-gray-600 dark:text-gray-300">
+                 {currentPlan === 'premium' ? (
+                   <>
+                     ${premiumPrice}/month
+                     {subscription && (
+                       <span className="ml-2">
+                         • {subscription.cancel_at_period_end ? 'Access until' : 'Next billing'}: {formatSubscriptionDate(subscription.current_period_end)}
+                       </span>
+                     )}
+                   </>
+                 ) : (
+                   'No monthly charge'
+                 )}
+               </p>
             </div>
             <Badge variant={currentPlan === 'premium' ? 'default' : 'secondary'}>
               {currentPlan === 'premium' ? (
@@ -483,18 +502,18 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
                     : 'border-gray-200 dark:border-gray-700'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                    {planKey === 'premium' && <Crown className="h-4 w-4 text-blue-600" />}
-                    {plan.name}
-                  </h4>
-                  <div className="text-right">
-                    <div className="font-bold text-gray-900 dark:text-gray-100">
-                      {plan.price === 0 ? 'Free' : formatPrice(plan.price)}
-                    </div>
-                    {plan.price > 0 && <div className="text-xs text-gray-500 dark:text-gray-400">per month</div>}
-                  </div>
-                </div>
+                                 <div className="flex items-center justify-between mb-3">
+                   <h4 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                     {planKey === 'premium' && <Crown className="h-4 w-4 text-blue-600" />}
+                     {plan.name}
+                   </h4>
+                   <div className="text-right">
+                     <div className="font-bold text-gray-900 dark:text-gray-100">
+                       {planKey === 'premium' ? `$${premiumPrice}` : (plan.price === 0 ? 'Free' : formatPrice(plan.price))}
+                     </div>
+                     {planKey === 'premium' || plan.price > 0 ? <div className="text-xs text-gray-500 dark:text-gray-400">per month</div> : null}
+                   </div>
+                 </div>
 
                 <ul className="space-y-2 mb-4">
                   {plan.features.map((feature, index) => (

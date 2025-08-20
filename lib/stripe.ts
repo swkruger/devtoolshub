@@ -16,6 +16,26 @@ export const getStripe = () => {
   return null
 }
 
+// Helper function to get premium price from environment variable
+export const getPremiumPrice = () => {
+  // Try both server-side and client-side environment variables
+  const envPrice = process.env.STRIPE_PREMIUM_PRICE || process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE
+  
+  if (envPrice) {
+    const price = parseFloat(envPrice)
+    if (!isNaN(price) && price > 0) {
+      return Math.round(price * 100) // Convert dollars to cents
+    }
+  }
+  // Fallback to default price ($9.99)
+  return 999
+}
+
+// Helper function to get premium price in dollars
+export const getPremiumPriceInDollars = () => {
+  return getPremiumPrice() / 100
+}
+
 // Subscription plans configuration
 export const SUBSCRIPTION_PLANS = {
   free: {
@@ -35,7 +55,7 @@ export const SUBSCRIPTION_PLANS = {
   },
   premium: {
     name: 'Premium',
-    price: 999, // $9.99 in cents
+    price: getPremiumPrice(), // Dynamic price from environment variable
     priceId: process.env.STRIPE_PREMIUM_PRICE_ID!,
     features: [
       'Everything in Free',
