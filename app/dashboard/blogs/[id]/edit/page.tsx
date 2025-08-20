@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { WysiwygEditor } from '@/components/blog/wysiwyg-editor'
-import { createSupabaseClient } from '@/lib/supabase'
+
 import { Textarea } from '@/components/ui/textarea'
 
 export default function EditBlogPage() {
@@ -29,36 +29,71 @@ export default function EditBlogPage() {
   const [twitterDescription, setTwitterDescription] = useState('')
   const [twitterImage, setTwitterImage] = useState('')
   const [isPending, startTransition] = useTransition()
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Check admin status on component mount
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        const response = await fetch('/api/user/admin-status')
+        if (response.ok) {
+          const data = await response.json()
+          setIsAdmin(data.isAdmin)
+        } else {
+          setIsAdmin(false)
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error)
+        setIsAdmin(false)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    checkAdminStatus()
+  }, [])
+
+  // Redirect if not admin
+  useEffect(() => {
+    if (!isLoading && !isAdmin) {
+      router.push('/dashboard')
+    }
+  }, [isLoading, isAdmin, router])
 
   useEffect(() => {
     (async () => {
-      const supabase = createSupabaseClient()
-      const { data } = await supabase
-        .from('blogs')
-        .select('*')
-        .eq('id', params.id)
-        .single()
-      if (data) {
-        setTitle(data.title)
-        setSlug(data.slug)
-        setContent(data.content_html || '')
-        setImageUrl(data.image_url || '')
-        setStatus(data.status)
-        setIsPopular(Boolean(data.is_popular))
-        setIsFeatured(Boolean(data.is_featured))
-        if (data.content_markdown) {
-          setUseMarkdown(true)
-          setContentMarkdown(data.content_markdown)
+      try {
+        const response = await fetch(`/api/blogs/${params.id}`)
+        if (response.ok) {
+          const { blog } = await response.json()
+          if (blog) {
+            setTitle(blog.title)
+            setSlug(blog.slug)
+            setContent(blog.content_html || '')
+            setImageUrl(blog.image_url || '')
+            setStatus(blog.status)
+            setIsPopular(Boolean(blog.is_popular))
+            setIsFeatured(Boolean(blog.is_featured))
+            if (blog.content_markdown) {
+              setUseMarkdown(true)
+              setContentMarkdown(blog.content_markdown)
+            }
+            // SEO
+            setMetaDescription(blog.meta_description || '')
+            setMetaKeywords(blog.meta_keywords || '')
+            setOgTitle(blog.og_title || '')
+            setOgDescription(blog.og_description || '')
+            setOgImage(blog.og_image || '')
+            setTwitterTitle(blog.twitter_title || '')
+            setTwitterDescription(blog.twitter_description || '')
+            setTwitterImage(blog.twitter_image || '')
+          }
+        } else {
+          console.error('Failed to fetch blog:', response.status)
         }
-        // SEO
-        setMetaDescription(data.meta_description || '')
-        setMetaKeywords(data.meta_keywords || '')
-        setOgTitle(data.og_title || '')
-        setOgDescription(data.og_description || '')
-        setOgImage(data.og_image || '')
-        setTwitterTitle(data.twitter_title || '')
-        setTwitterDescription(data.twitter_description || '')
-        setTwitterImage(data.twitter_image || '')
+      } catch (error) {
+        console.error('Error fetching blog:', error)
       }
     })()
   }, [params.id])
@@ -66,7 +101,6 @@ export default function EditBlogPage() {
   function handleSave(e: React.FormEvent) {
     e.preventDefault()
     startTransition(async () => {
-      const supabase = createSupabaseClient()
       const payload: any = {
         title,
         slug,
@@ -88,17 +122,61 @@ export default function EditBlogPage() {
         twitter_description: twitterDescription || null,
         twitter_image: twitterImage || null,
       }
-      const { error } = await supabase.from('blogs').update(payload).eq('id', params.id)
-      if (!error) router.push('/dashboard/blogs')
+      
+      try {
+        const response = await fetch(`/api/blogs/${params.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        })
+        
+        if (response.ok) {
+          router.push('/dashboard/blogs')
+        } else {
+          console.error('Failed to update blog:', response.status)
+        }
+      } catch (error) {
+        console.error('Error updating blog:', error)
+      }
     })
   }
 
   function handleDelete() {
     startTransition(async () => {
-      const supabase = createSupabaseClient()
-      const { error } = await supabase.from('blogs').delete().eq('id', params.id)
-      if (!error) router.push('/dashboard/blogs')
+      try {
+        const response = await fetch(`/api/blogs/${params.id}`, {
+          method: 'DELETE',
+        })
+        
+        if (response.ok) {
+          router.push('/dashboard/blogs')
+        } else {
+          console.error('Failed to delete blog:', response.status)
+        }
+      } catch (error) {
+        console.error('Error deleting blog:', error)
+      }
     })
+  }
+
+  // Show loading or redirect if not admin
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-4 max-w-3xl">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Checking permissions...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!isAdmin) {
+    return null // Will redirect via useEffect
   }
 
   return (
@@ -237,6 +315,14 @@ export default function EditBlogPage() {
         </div>
         <div className="flex gap-2">
           <Button type="submit" disabled={isPending}>Save</Button>
+          <Button 
+            type="button" 
+            variant="outline" 
+            disabled={isPending}
+            onClick={() => router.push(`/dashboard/blogs/preview/${slug}`)}
+          >
+            Preview
+          </Button>
           <Button type="button" variant="outline" disabled={isPending} onClick={handleDelete}>Delete</Button>
         </div>
       </form>

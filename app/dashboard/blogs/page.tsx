@@ -48,7 +48,9 @@ export default async function AdminBlogsListPage({ searchParams }: { searchParam
               <td className="py-2">
                 <div className="flex gap-3">
                   <Link className="hover:underline" href={`/dashboard/blogs/${b.id}/edit`}>Edit</Link>
-                  {b.status === 'published' && (
+                  {b.status === 'draft' ? (
+                    <Link className="text-blue-600 hover:underline" href={`/dashboard/blogs/preview/${b.slug}`}>Preview</Link>
+                  ) : (
                     <a className="text-muted-foreground hover:underline" href={`/blog/${b.slug}`} target="_blank">View</a>
                   )}
                 </div>

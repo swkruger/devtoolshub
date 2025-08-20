@@ -53,10 +53,12 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
   const pathname = usePathname()
   const { user, loading } = useUser()
   const [apiPremiumStatus, setApiPremiumStatus] = React.useState<boolean | null>(null)
+  const [apiAdminStatus, setApiAdminStatus] = React.useState<boolean | null>(null)
   const [apiLoading, setApiLoading] = React.useState(true)
   
   // Determine premium status - prioritize API result since useUser is not working
   const isPremiumUser = apiPremiumStatus === true || user?.plan === 'premium'
+  const isAdminUser = apiAdminStatus === true
   const shouldShowGoPremium = !apiLoading && !isPremiumUser
   
   // Debug logging
@@ -64,35 +66,51 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
     user, 
     loading, 
     isPremiumUser, 
+    isAdminUser,
     plan: user?.plan, 
     apiPremiumStatus,
+    apiAdminStatus,
     apiLoading,
     shouldShowGoPremium,
     userId: user?.id 
   })
   
-  // Fetch premium status from API on component mount
+  // Fetch premium and admin status from API on component mount
   React.useEffect(() => {
-    const fetchPremiumStatus = async () => {
+    const fetchUserStatus = async () => {
       try {
-        console.log('Sidebar - Fetching premium status from API')
+        console.log('Sidebar - Fetching user status from API')
         setApiLoading(true)
-        const response = await fetch('/api/user/premium-status')
-        if (response.ok) {
-          const data = await response.json()
-          console.log('Sidebar - API premium status:', data)
-          setApiPremiumStatus(data.isPremium)
+        
+        // Fetch both premium and admin status in parallel
+        const [premiumResponse, adminResponse] = await Promise.all([
+          fetch('/api/user/premium-status'),
+          fetch('/api/user/admin-status')
+        ])
+        
+        if (premiumResponse.ok) {
+          const premiumData = await premiumResponse.json()
+          console.log('Sidebar - API premium status:', premiumData)
+          setApiPremiumStatus(premiumData.isPremium)
         } else {
-          console.error('Sidebar - API error:', response.status, response.statusText)
+          console.error('Sidebar - Premium API error:', premiumResponse.status, premiumResponse.statusText)
+        }
+        
+        if (adminResponse.ok) {
+          const adminData = await adminResponse.json()
+          console.log('Sidebar - API admin status:', adminData)
+          setApiAdminStatus(adminData.isAdmin)
+        } else {
+          console.error('Sidebar - Admin API error:', adminResponse.status, adminResponse.statusText)
         }
       } catch (error) {
-        console.error('Sidebar - Error fetching premium status:', error)
+        console.error('Sidebar - Error fetching user status:', error)
       } finally {
         setApiLoading(false)
       }
     }
     
-    fetchPremiumStatus()
+    fetchUserStatus()
   }, [])
   
   const tools = React.useMemo(() => getAllTools().map(tool => ({
@@ -278,43 +296,45 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
           </div>
         </ClientOnly>
 
-        {/* Blog Management */}
-        <div className="px-3 py-2">
-          <h2 className={cn(
-            "mb-2 px-4 text-lg font-semibold tracking-tight",
-            isCollapsed && "hidden"
-          )}>
-            Blog Management
-          </h2>
-          <div className="space-y-1">
-            <Button
-              variant={pathname === "/dashboard/blogs" ? "secondary" : "ghost"}
-              className={cn(
-                "w-full justify-start",
-                isCollapsed && "justify-center px-2"
-              )}
-              asChild
-            >
-              <Link href="/dashboard/blogs">
-                <FileText className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                {!isCollapsed && "Manage Blogs"}
-              </Link>
-            </Button>
-            <Button
-              variant={pathname === "/dashboard/blogs/new" ? "secondary" : "ghost"}
-              className={cn(
-                "w-full justify-start",
-                isCollapsed && "justify-center px-2"
-              )}
-              asChild
-            >
-              <Link href="/dashboard/blogs/new">
-                <FileText className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                {!isCollapsed && "New Blog Post"}
-              </Link>
-            </Button>
+        {/* Blog Management - Admin Only */}
+        {isAdminUser && (
+          <div className="px-3 py-2">
+            <h2 className={cn(
+              "mb-2 px-4 text-lg font-semibold tracking-tight",
+              isCollapsed && "hidden"
+            )}>
+              Blog Management
+            </h2>
+            <div className="space-y-1">
+              <Button
+                variant={pathname === "/dashboard/blogs" ? "secondary" : "ghost"}
+                className={cn(
+                  "w-full justify-start",
+                  isCollapsed && "justify-center px-2"
+                )}
+                asChild
+              >
+                <Link href="/dashboard/blogs">
+                  <FileText className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
+                  {!isCollapsed && "Manage Blogs"}
+                </Link>
+              </Button>
+              <Button
+                variant={pathname === "/dashboard/blogs/new" ? "secondary" : "ghost"}
+                className={cn(
+                  "w-full justify-start",
+                  isCollapsed && "justify-center px-2"
+                )}
+                asChild
+              >
+                <Link href="/dashboard/blogs/new">
+                  <FileText className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
+                  {!isCollapsed && "New Blog Post"}
+                </Link>
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Bottom Actions */}
         <div className="px-3 py-2">

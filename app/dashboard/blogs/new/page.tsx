@@ -1,5 +1,5 @@
 'use client'
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -27,6 +27,37 @@ export default function NewBlogPage() {
   const [twitterDescription, setTwitterDescription] = useState('')
   const [twitterImage, setTwitterImage] = useState('')
   const [isPending, startTransition] = useTransition()
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Check admin status on component mount
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        const response = await fetch('/api/user/admin-status')
+        if (response.ok) {
+          const data = await response.json()
+          setIsAdmin(data.isAdmin)
+        } else {
+          setIsAdmin(false)
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error)
+        setIsAdmin(false)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    checkAdminStatus()
+  }, [])
+
+  // Redirect if not admin
+  useEffect(() => {
+    if (!isLoading && !isAdmin) {
+      router.push('/dashboard')
+    }
+  }, [isLoading, isAdmin, router])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -60,6 +91,24 @@ export default function NewBlogPage() {
         })
       if (!error) router.push('/dashboard/blogs')
     })
+  }
+
+  // Show loading or redirect if not admin
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-4 max-w-3xl">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Checking permissions...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!isAdmin) {
+    return null // Will redirect via useEffect
   }
 
   return (
@@ -193,6 +242,16 @@ export default function NewBlogPage() {
         </div>
         <div className="flex gap-2">
           <Button type="submit" disabled={isPending}>Save Draft</Button>
+          {slug && (
+            <Button 
+              type="button" 
+              variant="outline" 
+              disabled={isPending}
+              onClick={() => router.push(`/dashboard/blogs/preview/${slug}`)}
+            >
+              Preview
+            </Button>
+          )}
         </div>
       </form>
     </div>
