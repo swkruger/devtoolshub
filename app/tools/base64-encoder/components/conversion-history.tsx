@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/components/ui/toast"
+import { toast } from "sonner"
 
 import { formatFileSize, isImageFile } from "../lib/base64-utils"
 
@@ -49,7 +49,7 @@ export function ConversionHistory({
   setHistory, 
   saveHistory 
 }: ConversionHistoryProps) {
-  const { toast } = useToast()
+
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState<'all' | 'text' | 'file'>('all')
   const [filterMode, setFilterMode] = useState<'all' | 'encode' | 'decode'>('all')
@@ -59,9 +59,7 @@ export function ConversionHistory({
   const clearHistory = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY)
     setHistory([])
-    toast({
-      type: "success",
-      title: "History Cleared",
+    toast.success("History Cleared", {
       description: "All conversion history has been removed"
     })
   }, [setHistory, toast])
@@ -70,9 +68,7 @@ export function ConversionHistory({
   const removeEntry = useCallback((id: string) => {
     const newHistory = history.filter(entry => entry.id !== id)
     saveHistory(newHistory)
-    toast({
-      type: "success",
-      title: "Entry Removed",
+    toast.success("Entry Removed", {
       description: "History entry has been deleted"
     })
   }, [history, saveHistory, toast])
@@ -81,15 +77,11 @@ export function ConversionHistory({
   const copyResult = useCallback(async (entry: HistoryEntry) => {
     try {
       await navigator.clipboard.writeText(entry.result)
-      toast({
-        type: "success",
-        title: "Copied!",
+      toast.success("Copied!", {
         description: "Result copied to clipboard"
       })
     } catch (error) {
-      toast({
-        type: "error",
-        title: "Copy Failed",
+      toast.error("Copy Failed", {
         description: "Unable to copy to clipboard"
       })
     }
@@ -108,15 +100,11 @@ export function ConversionHistory({
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
 
-      toast({
-        type: "success",
-        title: "Downloaded!",
+      toast.success("Downloaded!", {
         description: "Result downloaded successfully"
       })
     } catch (error) {
-      toast({
-        type: "error",
-        title: "Download Failed",
+      toast.error("Download Failed", {
         description: "Unable to download result"
       })
     }

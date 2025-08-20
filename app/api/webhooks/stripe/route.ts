@@ -169,7 +169,7 @@ async function handleSubscriptionCreated(subscription: any, supabase: any) {
       .not('stripe_customer_id', 'is', null)
     
     if (!allUsersError && allUsers) {
-      console.log(`📊 Found ${allUsers.length} users with stripe_customer_id:`, allUsers.map(u => ({ id: u.id, customer_id: u.stripe_customer_id })))
+      console.log(`📊 Found ${allUsers.length} users with stripe_customer_id:`, allUsers.map((u: any) => ({ id: u.id, customer_id: u.stripe_customer_id })))
     }
   }
 }

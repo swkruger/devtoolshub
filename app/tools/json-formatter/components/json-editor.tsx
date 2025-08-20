@@ -44,7 +44,7 @@ import { Tooltip } from "@/components/ui/tooltip"
 import { UpgradeModal } from "@/components/shared/upgrade-modal"
 import { ErrorBoundary } from "@/components/shared/error-boundary"
 import { LoadingOverlay, Spinner } from "@/components/ui/progress"
-import { useToast } from "@/components/ui/toast"
+import { toast } from "sonner"
 import { JsonSnippet, DEFAULT_CATEGORIES } from "@/lib/types/snippets"
 import { SnippetsService } from "@/lib/services/snippets"
 
@@ -179,7 +179,7 @@ const useMemoryMonitor = () => {
 }
 
 export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
-  const { toast } = useToast()
+
   
   // Performance monitoring and optimization hooks
   const { startTimer, endTimer } = usePerformanceMonitor()
@@ -613,11 +613,21 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
   // Show toast notification
   const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
-    toast({
-      type,
-      title: message,
-      duration: type === 'error' ? 6000 : 4000
-    })
+    const options = { duration: type === 'error' ? 6000 : 4000 }
+    switch (type) {
+      case 'success':
+        toast.success(message, options)
+        break
+      case 'error':
+        toast.error(message, options)
+        break
+      case 'warning':
+        toast.warning(message, options)
+        break
+      case 'info':
+        toast.info(message, options)
+        break
+    }
   }
 
   // Show progress for long operations
@@ -1540,9 +1550,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
     <ErrorBoundary
       onError={(error, errorInfo) => {
         console.error('JSON Editor Error:', error, errorInfo)
-        toast({
-          type: 'error',
-          title: 'An unexpected error occurred',
+        toast.error('An unexpected error occurred', {
           description: 'Please try refreshing the page or contact support if the problem persists.',
           duration: 8000
         })

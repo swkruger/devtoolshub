@@ -20,7 +20,7 @@ import {
   Shield,
   RefreshCw
 } from "lucide-react"
-import { useToast } from "@/components/ui/toast"
+import { toast } from "sonner"
 
 interface TestResult {
   id: string
@@ -50,7 +50,7 @@ export function JsonTester({
   onTestJson: (json: string) => { isValid: boolean; error?: string }
   onTestOperation: (operation: string, json: string) => Promise<{ success: boolean; result?: any; error?: string }>
 }) {
-  const { toast } = useToast()
+
   const [isRunning, setIsRunning] = useState(false)
   const [testSuites, setTestSuites] = useState<TestSuite[]>([])
   const [currentTest, setCurrentTest] = useState<string | null>(null)
@@ -595,32 +595,24 @@ export function JsonTester({
       
       if (hasFailures) {
         setOverallStatus('failed')
-        toast({
-          type: 'error',
-          title: 'Some tests failed',
+        toast.error('Some tests failed', {
           description: 'Check the results for details on failures'
         })
       } else if (hasWarnings) {
         setOverallStatus('warning')
-        toast({
-          type: 'warning',
-          title: 'Tests completed with warnings',
+        toast.warning('Tests completed with warnings', {
           description: 'Some tests require manual verification'
         })
       } else {
         setOverallStatus('passed')
-        toast({
-          type: 'success',
-          title: 'All tests passed!',
+        toast.success('All tests passed!', {
           description: 'JSON formatter is working correctly'
         })
       }
       
     } catch (error) {
       setOverallStatus('failed')
-      toast({
-        type: 'error',
-        title: 'Test execution failed',
+      toast.error('Test execution failed', {
         description: error instanceof Error ? error.message : 'Unknown error'
       })
     } finally {

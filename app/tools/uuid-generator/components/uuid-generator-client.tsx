@@ -27,7 +27,7 @@ import {
   History,
   Zap
 } from 'lucide-react';
-import { useToast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 import HelpPanel from './help-panel';
 import { Spinner } from '@/components/ui/spinner';
 import BulkGenerator from './bulk-generator';
@@ -53,9 +53,8 @@ type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5';
 type UuidFormat = 'standard' | 'compact' | 'base64' | 'binary';
 
 export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGeneratorClientProps) {
-  const { toast } = useToast();
-  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
-  const showError = (title: string, description?: string) => toast({ type: 'error', title, description })
+  const showSuccess = (title: string, description?: string) => toast.success(title, { description })
+  const showError = (title: string, description?: string) => toast.error(title, { description })
   const [currentUuid, setCurrentUuid] = useState<string>('');
   const [uuidVersion, setUuidVersion] = useState<UuidVersion>('v4');
   const [uuidFormat, setUuidFormat] = useState<UuidFormat>('standard');
@@ -197,9 +196,7 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
   // Download UUIDs
   const downloadUuids = (format: 'json' | 'csv' | 'txt') => {
     if (!isPremiumUser) {
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Download functionality is a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -263,9 +260,7 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
 
   const handleBulkGenerate = () => {
     if (!isPremiumUser) {
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Bulk generation is a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -275,9 +270,7 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
 
   const handleNamespaceManager = () => {
     if (!isPremiumUser) {
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Namespace management is a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -287,9 +280,7 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
 
   const handleHistory = () => {
     if (!isPremiumUser) {
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'UUID history is a premium feature. Please upgrade to access this feature.'
       });
       return;

@@ -6,27 +6,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { X, Copy, ExternalLink } from 'lucide-react'
-import { useToast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 
 interface HelpPanelProps {
   onClose: () => void
 }
 
 export default function HelpPanel({ onClose }: HelpPanelProps) {
-  const { toast } = useToast()
+
   
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
-      toast({
-        type: 'success',
-        title: 'Copied!',
+      toast.success('Copied!', {
         description: 'Copied to clipboard'
       })
     } catch (error) {
-      toast({
-        type: 'error',
-        title: 'Copy Failed',
+      toast.error('Copy Failed', {
         description: 'Failed to copy to clipboard'
       })
     }

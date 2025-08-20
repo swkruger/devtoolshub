@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { useToast } from "@/components/ui/toast"
+import { toast } from "sonner"
 
 import {
   encodeTextToBase64,
@@ -39,7 +39,7 @@ interface BatchProcessorProps {
 }
 
 export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: BatchProcessorProps) {
-  const { toast } = useToast()
+
   const [batchItems, setBatchItems] = useState<BatchItem[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -62,9 +62,7 @@ export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: 
     setBatchItems(prev => [...prev, ...newItems])
     setTextInput("")
 
-    toast({
-      type: "success",
-      title: "Text Entries Added",
+    toast.success("Text Entries Added", {
       description: `Added ${newItems.length} text entries for processing`
     })
   }, [textInput, batchItems.length, toast])
@@ -77,9 +75,7 @@ export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: 
     fileArray.forEach((file, index) => {
       // Check file size
       if (file.size > maxFileSize) {
-        toast({
-          type: "error",
-          title: "File Too Large",
+        toast.error("File Too Large", {
           description: `${file.name} exceeds size limit (${formatFileSize(maxFileSize)})`
         })
         return
@@ -96,11 +92,9 @@ export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: 
 
     if (newItems.length > 0) {
       setBatchItems(prev => [...prev, ...newItems])
-      toast({
-        type: "success",
-        title: "Files Added",
-        description: `Added ${newItems.length} files for processing`
-      })
+             toast.success("Files Added", {
+         description: `Added ${newItems.length} files for processing`
+       })
     }
   }, [maxFileSize, toast])
 
@@ -185,11 +179,15 @@ export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: 
     const successCount = updatedItems.filter(item => item.status === 'success').length
     const errorCount = updatedItems.filter(item => item.status === 'error').length
 
-    toast({
-      type: successCount > 0 ? "success" : "error",
-      title: "Batch Processing Complete",
-      description: `${successCount} successful, ${errorCount} failed`
-    })
+         if (successCount > 0) {
+       toast.success("Batch Processing Complete", {
+         description: `${successCount} successful, ${errorCount} failed`
+       })
+     } else {
+       toast.error("Batch Processing Complete", {
+         description: `${successCount} successful, ${errorCount} failed`
+       })
+     }
   }, [batchItems, encodingOptions, includeDataUrl, toast])
 
   // Export results
@@ -197,11 +195,9 @@ export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: 
     const successfulItems = batchItems.filter(item => item.status === 'success')
     
     if (successfulItems.length === 0) {
-      toast({
-        type: "error",
-        title: "No Results",
-        description: "No successful conversions to export"
-      })
+             toast.error("No Results", {
+         description: "No successful conversions to export"
+       })
       return
     }
 
@@ -252,11 +248,9 @@ export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: 
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 
-    toast({
-      type: "success",
-      title: "Export Complete",
-      description: `Results exported as ${format.toUpperCase()}`
-    })
+         toast.success("Export Complete", {
+       description: `Results exported as ${format.toUpperCase()}`
+     })
   }, [batchItems, toast])
 
   if (!isPremiumUser) {

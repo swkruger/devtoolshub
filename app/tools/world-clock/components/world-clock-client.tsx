@@ -23,7 +23,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react'
-import { useToast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 import { useWorldClock, useWorldClockKeyboard } from '../hooks/use-world-clock'
 import { getPopularCities } from '../lib/cities-data'
 import TimezoneCard from './timezone-card'
@@ -41,10 +41,9 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
   const [state, actions] = useWorldClock(isPremiumUser, userId)
   const [showHelp, setShowHelp] = useState(false)
   const [activeTab, setActiveTab] = useState('clock')
-  const { toast } = useToast()
-  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
-  const showError = (title: string, description?: string) => toast({ type: 'error', title, description })
-  const showWarning = (title: string, description?: string) => toast({ type: 'warning', title, description })
+  const showSuccess = (title: string, description?: string) => toast.success(title, { description })
+  const showError = (title: string, description?: string) => toast.error(title, { description })
+  const showWarning = (title: string, description?: string) => toast.warning(title, { description })
 
   // Initialize with popular cities for demo (only if no saved cities after hook has loaded)
   useEffect(() => {
@@ -100,29 +99,21 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
   const handleCityAdd = async (city: any) => {
     const success = await actions.addCity(city)
     if (success) {
-      toast({
-        type: "success",
-        title: "City Added",
+      toast.success("City Added", {
         description: `${city.name}, ${city.country} has been added to your world clock.`,
       })
     } else if (state.selectedCities.length >= state.maxCities) {
       if (isPremiumUser) {
-        toast({
-          type: "error",
-          title: "City Limit Reached",
+        toast.error("City Limit Reached", {
           description: "You've reached the maximum number of cities."
         })
       } else {
-        toast({
-          type: "warning",
-          title: "Free Limit Reached",
+        toast.warning("Free Limit Reached", {
           description: `Free users can add up to ${state.maxCities} cities. Upgrade to premium for unlimited cities.`
         })
       }
     } else {
-      toast({
-        type: "warning",
-        title: "City Already Added",
+      toast.warning("City Already Added", {
         description: `${city.name} is already in your world clock.`
       })
     }
@@ -131,15 +122,11 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
   const handleLabelUpdate = async (cityId: string, label: string): Promise<boolean> => {
     const success = await actions.updateCityLabel(cityId, label)
     if (success) {
-      toast({
-        type: "success",
-        title: "Label Updated",
+      toast.success("Label Updated", {
         description: "City label has been updated successfully.",
       })
     } else {
-      toast({
-        type: "error",
-        title: "Update Failed",
+      toast.error("Update Failed", {
         description: "Failed to update city label."
       })
     }
@@ -157,15 +144,11 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
       
       const success = await actions.reorderCities(newOrders)
       if (success) {
-        toast({
-          type: "success",
-          title: "Cities Reordered",
+        toast.success("Cities Reordered", {
           description: "City moved up successfully.",
         })
       } else {
-        toast({
-          type: "error",
-          title: "Reorder Failed",
+        toast.error("Reorder Failed", {
           description: "Failed to reorder cities."
         })
       }
@@ -185,15 +168,11 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
       
       const success = await actions.reorderCities(newOrders)
       if (success) {
-        toast({
-          type: "success",
-          title: "Cities Reordered",
+        toast.success("Cities Reordered", {
           description: "City moved down successfully.",
         })
       } else {
-        toast({
-          type: "error",
-          title: "Reorder Failed",
+        toast.error("Reorder Failed", {
           description: "Failed to reorder cities."
         })
       }
@@ -206,9 +185,7 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
     const city = state.selectedCities.find(c => c.id === cityId)
     await actions.removeCity(cityId)
     if (city) {
-      toast({
-        type: "info",
-        title: "City Removed",
+      toast.info("City Removed", {
         description: `${city.name} has been removed from your world clock.`,
       })
     }
@@ -218,15 +195,11 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
     const success = await actions.copyTimeToClipboard(cityId)
     if (success) {
       const city = state.cityTimezones.find(tz => tz.id === cityId)
-      toast({
-        type: "success",
-        title: "Time Copied",
+      toast.success("Time Copied", {
         description: `${city?.name} time copied to clipboard.`,
       })
     } else {
-      toast({
-        type: "error",
-        title: "Copy Failed",
+      toast.error("Copy Failed", {
         description: "Failed to copy time to clipboard."
       })
     }
@@ -245,9 +218,7 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
     
-    toast({
-      type: "success",
-      title: "Export Complete",
+    toast.success("Export Complete", {
       description: "World clock data exported as JSON file.",
     })
   }

@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { User as UserIcon, Camera, Save, CheckCircle, AlertCircle } from 'lucide-react'
+import { User as UserIcon, Camera, Save, CheckCircle, AlertCircle, Upload, X, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface Profile {
@@ -72,6 +72,9 @@ export default function ProfileForm({ user, profile, preferences, isPremiumUser 
   const [errors, setErrors] = useState<FormErrors>({})
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
 
   // Update form data when props change
   useEffect(() => {
@@ -83,6 +86,68 @@ export default function ProfileForm({ user, profile, preferences, isPremiumUser 
       language: preferences?.language || 'en'
     })
   }, [profile, preferences])
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file')
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB')
+      return
+    }
+
+    setAvatarFile(file)
+    
+    // Create preview
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setAvatarPreview(e.target?.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const removeAvatar = () => {
+    setAvatarFile(null)
+    setAvatarPreview(null)
+  }
+
+  const uploadAvatar = async (): Promise<string | null> => {
+    if (!avatarFile) return null
+
+    try {
+      setIsUploadingAvatar(true)
+      
+      const formData = new FormData()
+      formData.append('avatar', avatarFile)
+      formData.append('userId', user.id)
+
+      const response = await fetch('/api/settings/avatar', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to upload avatar')
+      }
+
+      const data = await response.json()
+      toast.success('Avatar uploaded successfully!')
+      return data.avatarUrl
+    } catch (error) {
+      console.error('Error uploading avatar:', error)
+      toast.error('Failed to upload avatar')
+      return null
+    } finally {
+      setIsUploadingAvatar(false)
+    }
+  }
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
@@ -141,6 +206,16 @@ export default function ProfileForm({ user, profile, preferences, isPremiumUser 
     setIsSuccess(false)
 
     try {
+      // Upload avatar first if there's a new one
+      let avatarUrl: string | undefined = profile?.avatar_url
+      if (avatarFile) {
+        const uploadedUrl = await uploadAvatar()
+        if (!uploadedUrl) {
+          throw new Error('Failed to upload avatar')
+        }
+        avatarUrl = uploadedUrl
+      }
+      
       const response = await fetch('/api/settings/profile', {
         method: 'PUT',
         headers: {
@@ -149,7 +224,7 @@ export default function ProfileForm({ user, profile, preferences, isPremiumUser 
         body: JSON.stringify({
           profile: {
             name: formData.name.trim(),
-            avatar_url: profile?.avatar_url
+            avatar_url: avatarUrl || undefined
           },
           preferences: {
             timezone: formData.timezone,
@@ -170,6 +245,12 @@ export default function ProfileForm({ user, profile, preferences, isPremiumUser 
 
       setIsSuccess(true)
       toast.success('Profile updated successfully!')
+      
+      // Clear avatar state after successful upload
+      if (avatarFile) {
+        setAvatarFile(null)
+        setAvatarPreview(null)
+      }
       
       // Clear success state after 3 seconds
       setTimeout(() => setIsSuccess(false), 3000)
@@ -204,25 +285,60 @@ export default function ProfileForm({ user, profile, preferences, isPremiumUser 
         <CardContent className="space-y-4">
           {/* Avatar Section */}
           <div className="flex items-center space-x-4">
-            <Avatar className="w-20 h-20">
-              <AvatarImage src={profile?.avatar_url || user.user_metadata?.avatar_url} />
-              <AvatarFallback>
-                {profile?.name?.charAt(0) || user.email?.charAt(0) || 'U'}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative">
+                             <Avatar className="w-20 h-20">
+                 <AvatarImage 
+                   src={avatarPreview || profile?.avatar_url} 
+                 />
+                 <AvatarFallback>
+                   {profile?.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                 </AvatarFallback>
+               </Avatar>
+              {isUploadingAvatar && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+                  <Loader2 className="w-6 h-6 animate-spin text-white" />
+                </div>
+              )}
+            </div>
             <div className="space-y-2">
-              <Button 
-                type="button"
-                variant="outline" 
-                size="sm" 
-                className="flex items-center space-x-2"
-                disabled
-              >
-                <Camera className="w-4 h-4" />
-                <span>Change Avatar</span>
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  size="sm" 
+                  className="flex items-center space-x-2"
+                  onClick={() => document.getElementById('avatar-upload')?.click()}
+                  disabled={isUploadingAvatar}
+                >
+                  <Upload className="w-4 h-4" />
+                  <span>{avatarFile ? 'Change Image' : 'Upload Avatar'}</span>
+                </Button>
+                {avatarFile && (
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    size="sm" 
+                    className="flex items-center space-x-2"
+                    onClick={removeAvatar}
+                    disabled={isUploadingAvatar}
+                  >
+                    <X className="w-4 h-4" />
+                    <span>Remove</span>
+                  </Button>
+                )}
+              </div>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
               <p className="text-sm text-muted-foreground">
-                Avatar upload coming soon
+                {avatarFile 
+                  ? `Selected: ${avatarFile.name}` 
+                  : 'Upload a profile picture (max 5MB)'
+                }
               </p>
             </div>
           </div>

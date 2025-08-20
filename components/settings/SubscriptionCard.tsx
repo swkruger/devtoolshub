@@ -21,7 +21,6 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatPrice, getPlanFeatures, SUBSCRIPTION_PLANS, PlanType } from '@/lib/stripe'
-import UsageAnalytics from './UsageAnalytics'
 import { ConfirmationModal } from '@/components/ui/confirmation-modal'
 
 interface Profile {
@@ -54,19 +53,12 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
   const [isManagingBilling, setIsManagingBilling] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
   const [showCancelModal, setShowCancelModal] = useState(false)
-  const [isFixing, setIsFixing] = useState(false)
+
 
   // Helper function to format subscription date
   const formatSubscriptionDate = (timestamp: any): string => {
     try {
       if (!timestamp) {
-        // If no timestamp, try to calculate based on subscription creation date
-        if (subscription?.created) {
-          const createdDate = new Date(subscription.created * 1000)
-          // Add 30 days to creation date as a fallback
-          const estimatedEndDate = new Date(createdDate.getTime() + (30 * 24 * 60 * 60 * 1000))
-          return estimatedEndDate.toLocaleDateString() + ' (estimated)'
-        }
         return 'the end of your current billing period'
       }
       
@@ -85,7 +77,6 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
       
       return date.toLocaleDateString()
     } catch (error) {
-      console.error('Error formatting subscription date:', error)
       return 'the end of your current billing period'
     }
   }
@@ -188,15 +179,35 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
         body: JSON.stringify({ action: 'create_portal_session' })
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error('Failed to create billing portal session')
+        throw new Error(data.error || 'Failed to create billing portal session')
       }
 
-      const { url } = await response.json()
-      window.open(url, '_blank')
+      if (data.url) {
+        window.open(data.url, '_blank')
+        toast.success('Billing portal opened in new tab')
+      } else {
+        throw new Error('No portal URL received')
+      }
     } catch (error) {
       console.error('Error creating billing portal session:', error)
-      toast.error('Failed to open billing portal')
+      
+      // Show specific error messages based on the error
+      if (error instanceof Error) {
+        if (error.message.includes('No subscription found')) {
+          toast.error('No subscription found. Please upgrade to premium first.')
+        } else if (error.message.includes('Customer not found')) {
+          toast.error('Subscription not found in Stripe. Please contact support.')
+        } else if (error.message.includes('Billing portal not configured')) {
+          toast.error('Billing portal not configured. Please contact support.')
+        } else {
+          toast.error(error.message || 'Failed to open billing portal')
+        }
+      } else {
+        toast.error('Failed to open billing portal')
+      }
     } finally {
       setIsManagingBilling(false)
     }
@@ -229,29 +240,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
     }
   }
 
-  const handleFixSubscription = async () => {
-    setIsFixing(true)
-    try {
-      const response = await fetch('/api/fix-subscription', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      })
 
-      const data = await response.json()
-
-      if (response.ok && data.success) {
-        toast.success('Subscription status fixed!')
-        await fetchSubscriptionData() // Refresh data
-      } else {
-        toast.error(data.message || 'Failed to fix subscription')
-      }
-    } catch (error) {
-      console.error('Error fixing subscription:', error)
-      toast.error('Failed to fix subscription')
-    } finally {
-      setIsFixing(false)
-    }
-  }
 
   const syncSubscriptionStatus = async () => {
     try {
@@ -297,17 +286,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
    const customer = subscriptionData?.customer
    const billingHistory = subscriptionData?.billingHistory || []
 
-   // Debug logging for subscription data
-   if (subscription) {
-     console.log('🔍 Subscription data:', {
-       current_period_end: subscription.current_period_end,
-       cancel_at_period_end: subscription.cancel_at_period_end,
-       status: subscription.status,
-       type: typeof subscription.current_period_end,
-       parsed_date: subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : null,
-       is_valid_date: subscription.current_period_end ? !isNaN(new Date(subscription.current_period_end * 1000).getTime()) : false
-     })
-   }
+   
 
   return (
     <div className="space-y-6">
@@ -391,32 +370,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
                    )}
                    Upgrade to Premium
                  </Button>
-                                   <Button 
-                    onClick={handleFixSubscription} 
-                    disabled={isFixing}
-                    variant="outline"
-                    className="flex items-center gap-2"
-                  >
-                    {isFixing ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <AlertTriangle className="h-4 w-4" />
-                    )}
-                    Fix Subscription
-                  </Button>
-                  <Button 
-                    onClick={fetchSubscriptionData} 
-                    disabled={isLoading}
-                    variant="outline"
-                    className="flex items-center gap-2"
-                  >
-                    {isLoading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Calendar className="h-4 w-4" />
-                    )}
-                    Refresh Data
-                  </Button>
+                 
                </>
                            ) : (
                 <>
@@ -517,26 +471,35 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {billingHistory.slice(0, 5).map((invoice) => (
-                <div key={invoice.id} className="flex items-center justify-between py-2">
-                  <div>
-                    <div className="font-medium">
-                      {new Date(invoice.created * 1000).toLocaleDateString()}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {invoice.description || 'Premium Subscription'}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-medium">
-                      {formatPrice(invoice.amount_paid)}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {invoice.status === 'paid' ? 'Paid' : invoice.status}
-                    </div>
-                  </div>
-                </div>
-              ))}
+                             {billingHistory.slice(0, 5).map((invoice) => (
+                 <div key={invoice.id} className="flex items-center justify-between py-2">
+                   <div>
+                     <div className="font-medium">
+                       {new Date(invoice.created * 1000).toLocaleDateString('en-US', {
+                         year: 'numeric',
+                         month: 'short',
+                         day: 'numeric'
+                       })}
+                     </div>
+                     <div className="text-sm text-muted-foreground">
+                       {invoice.description || 'Premium Subscription'}
+                     </div>
+                     {invoice.period_start && invoice.period_end && (
+                       <div className="text-xs text-muted-foreground">
+                         {new Date(invoice.period_start * 1000).toLocaleDateString()} - {new Date(invoice.period_end * 1000).toLocaleDateString()}
+                       </div>
+                     )}
+                   </div>
+                   <div className="text-right">
+                     <div className="font-medium">
+                       {invoice.amount_paid ? formatPrice(invoice.amount_paid) : 'N/A'}
+                     </div>
+                     <div className="text-sm text-muted-foreground">
+                       {invoice.status === 'paid' ? 'Paid' : invoice.status}
+                     </div>
+                   </div>
+                 </div>
+               ))}
             </div>
             {billingHistory.length > 5 && (
               <div className="mt-4 text-center">
@@ -548,9 +511,6 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
           </CardContent>
         </Card>
       )}
-
-      {/* Usage Analytics */}
-      <UsageAnalytics isPremiumUser={currentPlan === 'premium'} />
 
       {/* Cancel Subscription Confirmation Modal */}
              <ConfirmationModal

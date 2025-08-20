@@ -22,7 +22,7 @@ import {
   Copy,
   Edit3
 } from 'lucide-react';
-import { useToast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 
 interface JwtSnippetsManagerProps {
   isOpen: boolean;
@@ -55,7 +55,7 @@ export function JwtSnippetsManager({ isOpen, onClose, userId, currentJwt, onLoad
     description: '',
     tags: ''
   });
-  const { toast } = useToast();
+
 
   useEffect(() => {
     if (isOpen && userId) {
@@ -77,10 +77,10 @@ export function JwtSnippetsManager({ isOpen, onClose, userId, currentJwt, onLoad
       if (res.ok) {
         setSnippets(data.snippets);
       } else {
-        toast({ type: 'error', title: 'Error', description: data.error || 'Failed to load snippets' });
+        toast.error('Error', { description: data.error || 'Failed to load snippets' });
       }
     } catch (error) {
-      toast({ type: 'error', title: 'Error', description: 'Failed to load snippets' });
+      toast.error('Error', { description: 'Failed to load snippets' });
     } finally {
       setIsLoading(false);
     }
@@ -104,12 +104,12 @@ export function JwtSnippetsManager({ isOpen, onClose, userId, currentJwt, onLoad
       if (res.ok) {
         setSnippets(prev => [data.snippet, ...prev]);
         setSaveForm({ name: '', description: '', tags: '' });
-        toast({ type: 'success', title: 'Saved', description: 'JWT snippet saved successfully.' });
+        toast.success('Saved', { description: 'JWT snippet saved successfully.' });
       } else {
-        toast({ type: 'error', title: 'Error', description: data.error || 'Failed to save snippet' });
+        toast.error('Error', { description: data.error || 'Failed to save snippet' });
       }
     } catch (error) {
-      toast({ type: 'error', title: 'Error', description: 'Failed to save snippet' });
+      toast.error('Error', { description: 'Failed to save snippet' });
     } finally {
       setIsSaving(false);
     }
@@ -127,13 +127,13 @@ export function JwtSnippetsManager({ isOpen, onClose, userId, currentJwt, onLoad
       const res = await fetch(`/api/jwt-snippets/${snippetId}`, { method: 'DELETE' });
       if (res.ok) {
         setSnippets(prev => prev.filter(s => s.id !== snippetId));
-        toast({ type: 'success', title: 'Deleted', description: 'Snippet deleted.' });
+        toast.success('Deleted', { description: 'Snippet deleted.' });
       } else {
         const data = await res.json();
-        toast({ type: 'error', title: 'Error', description: data.error || 'Failed to delete snippet' });
+        toast.error('Error', { description: data.error || 'Failed to delete snippet' });
       }
     } catch (error) {
-      toast({ type: 'error', title: 'Error', description: 'Failed to delete snippet' });
+      toast.error('Error', { description: 'Failed to delete snippet' });
     }
   }
 
@@ -144,16 +144,16 @@ export function JwtSnippetsManager({ isOpen, onClose, userId, currentJwt, onLoad
       if (res.ok) {
         await loadSnippets();
       } else {
-        toast({ type: 'error', title: 'Error', description: data.error || 'Failed to update favorite' });
+        toast.error('Error', { description: data.error || 'Failed to update favorite' });
       }
     } catch (error) {
-      toast({ type: 'error', title: 'Error', description: 'Failed to update favorite' });
+      toast.error('Error', { description: 'Failed to update favorite' });
     }
   }
 
   function copySnippet(snippet: JwtSnippet) {
     navigator.clipboard.writeText(snippet.jwt_token);
-    toast({ type: 'success', title: 'Copied', description: 'JWT copied to clipboard.' });
+    toast.success('Copied', { description: 'JWT copied to clipboard.' });
   }
 
   // Filtering is now handled by the backend; use 'snippets' directly

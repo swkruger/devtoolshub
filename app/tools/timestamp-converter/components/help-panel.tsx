@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/components/ui/toast"
+import { toast } from "sonner"
 
 interface HelpPanelProps {
   isOpen: boolean
@@ -14,13 +14,11 @@ interface HelpPanelProps {
 }
 
 export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
-  const { toast } = useToast()
+
 
   const copyShortcut = (shortcut: string) => {
     navigator.clipboard.writeText(shortcut)
-    toast({
-      type: "success",
-      title: "Copied!",
+    toast.success("Copied!", {
       description: `Shortcut "${shortcut}" copied to clipboard`
     })
   }

@@ -16,7 +16,7 @@ import {
   Check,
   Hash
 } from 'lucide-react';
-import { useToast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 
 interface NamespaceManagerProps {
@@ -69,7 +69,7 @@ const DEFAULT_NAMESPACES: Namespace[] = [
 ];
 
 export default function NamespaceManager({ isOpen, onClose }: NamespaceManagerProps) {
-  const { toast } = useToast();
+
   const [namespaces, setNamespaces] = useState<Namespace[]>(DEFAULT_NAMESPACES);
   const [isAdding, setIsAdding] = useState(false);
   const [newNamespace, setNewNamespace] = useState({
@@ -130,9 +130,7 @@ export default function NamespaceManager({ isOpen, onClose }: NamespaceManagerPr
     setIsAdding(false);
     setValidationErrors([]);
 
-    toast({
-      type: 'success',
-      title: 'Namespace Added',
+    toast.success('Namespace Added', {
       description: `Namespace "${namespace.name}" added successfully`
     });
   };
@@ -140,18 +138,14 @@ export default function NamespaceManager({ isOpen, onClose }: NamespaceManagerPr
   const handleDeleteNamespace = (id: string) => {
     const namespace = namespaces.find(ns => ns.id === id);
     if (namespace?.isDefault) {
-      toast({
-        type: 'error',
-        title: 'Cannot Delete',
+      toast.error('Cannot Delete', {
         description: 'Default namespaces cannot be deleted'
       });
       return;
     }
 
     setNamespaces(prev => prev.filter(ns => ns.id !== id));
-    toast({
-      type: 'success',
-      title: 'Namespace Deleted',
+    toast.success('Namespace Deleted', {
       description: `Namespace "${namespace?.name}" deleted successfully`
     });
   };
@@ -159,15 +153,11 @@ export default function NamespaceManager({ isOpen, onClose }: NamespaceManagerPr
   const copyNamespaceUuid = async (uuid: string) => {
     try {
       await navigator.clipboard.writeText(uuid);
-      toast({
-        type: 'success',
-        title: 'Copied to Clipboard',
+      toast.success('Copied to Clipboard', {
         description: 'Namespace UUID copied successfully'
       });
     } catch (error) {
-      toast({
-        type: 'error',
-        title: 'Copy Failed',
+      toast.error('Copy Failed', {
         description: 'Failed to copy UUID to clipboard'
       });
     }

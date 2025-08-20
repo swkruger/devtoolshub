@@ -19,7 +19,7 @@ import {
   AlertTriangle,
   Trash2
 } from 'lucide-react'
-import { useToast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 import { getRegexEngine } from '../lib/regex-engines'
 import type { RegexLanguage, RegexMatch } from '../lib/regex-engines'
 
@@ -51,7 +51,7 @@ interface BulkTestingProps {
 }
 
 export function BulkTesting({ isOpen, onClose, isPremiumUser, pattern, language, flags }: BulkTestingProps) {
-  const { toast } = useToast()
+
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [testItems, setTestItems] = useState<BulkTestItem[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
@@ -63,9 +63,7 @@ export function BulkTesting({ isOpen, onClose, isPremiumUser, pattern, language,
 
   const addManualInput = useCallback(() => {
     if (!manualInput.trim()) {
-      toast({
-        type: 'warning',
-        title: 'Empty input',
+      toast.warning('Empty input', {
         description: 'Please enter some text to test'
       })
       return
@@ -81,9 +79,7 @@ export function BulkTesting({ isOpen, onClose, isPremiumUser, pattern, language,
     setTestItems(prev => [...prev, newItem])
     setManualInput('')
     
-    toast({
-      type: 'success',
-      title: 'Input added',
+    toast.success('Input added', {
       description: 'Text added to bulk testing queue'
     })
   }, [manualInput, testItems.length, toast])
@@ -106,9 +102,7 @@ export function BulkTesting({ isOpen, onClose, isPremiumUser, pattern, language,
 
           setTestItems(prev => [...prev, newItem])
           
-          toast({
-            type: 'success',
-            title: 'File uploaded',
+          toast.success('File uploaded', {
             description: `Added ${file.name} to bulk testing queue`
           })
         }
@@ -134,27 +128,21 @@ export function BulkTesting({ isOpen, onClose, isPremiumUser, pattern, language,
 
   const runBulkTest = useCallback(async () => {
     if (!isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Bulk testing requires a premium plan'
       })
       return
     }
 
     if (!pattern) {
-      toast({
-        type: 'warning',
-        title: 'No pattern',
+      toast.warning('No pattern', {
         description: 'Please enter a regex pattern to test'
       })
       return
     }
 
     if (testItems.length === 0) {
-      toast({
-        type: 'warning',
-        title: 'No test data',
+      toast.warning('No test data', {
         description: 'Please add some text inputs or upload files to test'
       })
       return
@@ -240,9 +228,7 @@ export function BulkTesting({ isOpen, onClose, isPremiumUser, pattern, language,
     setResults(finalResults)
     setIsProcessing(false)
     
-    toast({
-      type: 'success',
-      title: 'Bulk testing completed',
+    toast.success('Bulk testing completed', {
       description: `Processed ${testItems.length} items with ${totalMatches} total matches`
     })
   }, [isPremiumUser, pattern, language, flags, testItems, toast])
@@ -273,9 +259,7 @@ export function BulkTesting({ isOpen, onClose, isPremiumUser, pattern, language,
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 
-    toast({
-      type: 'success',
-      title: 'Results exported',
+    toast.success('Results exported', {
       description: 'Bulk testing results saved as CSV file'
     })
   }, [results, testItems, toast])
@@ -295,9 +279,7 @@ Success Rate: ${results.successRate.toFixed(1)}%
 Average Execution Time: ${results.averageExecutionTime.toFixed(2)}ms`
 
     navigator.clipboard.writeText(summary).then(() => {
-      toast({
-        type: 'success',
-        title: 'Copied to clipboard',
+      toast.success('Copied to clipboard', {
         description: 'Results summary copied to clipboard'
       })
     })

@@ -12,7 +12,7 @@ import { Copy, Crown, Eye, EyeOff, RotateCcw } from 'lucide-react'
 import { PasswordControls, PassphraseControls } from './components/Controls'
 import { generateKeyLike, generatePassphrase, generatePassword, type KeyLikeType } from './lib/generators'
 import { estimatePassphraseEntropyBits, estimatePasswordEntropyBits } from './lib/entropy'
-import { useToast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 import { SMALL_WORDLIST } from './lib/wordlist'
 
 interface Props {
@@ -24,7 +24,7 @@ interface Props {
 type Mode = 'password' | 'passphrase' | 'keylike'
 
 export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
-  const { toast } = useToast()
+
   const [mode, setMode] = useState<Mode>('password')
   const [masked, setMasked] = useState(false)
   const [output, setOutput] = useState('')
@@ -154,7 +154,7 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
       }
       setTimeout(() => outputRef.current?.focus(), 0)
     } catch (e: any) {
-      toast({ type: 'error', title: 'Generation failed', description: e.message || 'Unexpected error' })
+      toast.error('Generation failed', { description: e.message || 'Unexpected error' })
     }
   }, [mode, length, useUpper, useLower, useDigits, useSymbols, excludeAmbiguous, pronounceable, wordCount, separator, capitalize, addNumber, addSymbol, keyType, toast])
 
@@ -172,7 +172,7 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
 
   const copy = async () => {
     await navigator.clipboard.writeText(output)
-    toast({ type: 'success', title: 'Copied', description: 'Value copied to clipboard' })
+          toast.success('Copied', { description: 'Value copied to clipboard' })
   }
 
   const premiumDisabled = !isPremiumUser

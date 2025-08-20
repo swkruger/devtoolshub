@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/components/ui/toast"
+import { toast } from "sonner"
 import { EnhancedTooltip } from "./enhanced-tooltip"
 
 interface BatchConverterProps {
@@ -29,7 +29,7 @@ interface BatchResult {
 }
 
 export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat }: BatchConverterProps) {
-  const { toast } = useToast()
+
   const [batchInput, setBatchInput] = useState("")
   const [batchResults, setBatchResults] = useState<BatchResult[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
@@ -39,18 +39,14 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
   // Process batch input
   const processBatch = async () => {
     if (!isPremiumUser) {
-      toast({
-        type: "warning",
-        title: "Premium Required",
+      toast.warning("Premium Required", {
         description: "Batch conversion requires a premium plan"
       })
       return
     }
 
     if (!batchInput.trim()) {
-      toast({
-        type: "error",
-        title: "No Input",
+      toast.error("No Input", {
         description: "Please enter timestamps to convert"
       })
       return
@@ -158,16 +154,12 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
       const successCount = results.filter(r => !r.error).length
       const errorCount = results.filter(r => r.error).length
       
-      toast({
-        type: "success",
-        title: "Batch Processing Complete",
+      toast.success("Batch Processing Complete", {
         description: `${successCount} successful, ${errorCount} failed`
       })
       
     } catch (error) {
-      toast({
-        type: "error",
-        title: "Batch Processing Failed",
+      toast.error("Batch Processing Failed", {
         description: error instanceof Error ? error.message : "Unknown error"
       })
     } finally {
@@ -212,15 +204,11 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
       a.click()
       URL.revokeObjectURL(url)
 
-      toast({
-        type: "success",
-        title: "Export Complete",
+      toast.success("Export Complete", {
         description: `Results exported as ${filename}`
       })
     } catch (error) {
-      toast({
-        type: "error",
-        title: "Export Failed",
+      toast.error("Export Failed", {
         description: "Unable to export results"
       })
     }
@@ -236,15 +224,11 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
       
       await navigator.clipboard.writeText(content)
       
-      toast({
-        type: "success",
-        title: "Copied!",
+      toast.success("Copied!", {
         description: `${successfulResults.length} results copied to clipboard`
       })
     } catch (error) {
-      toast({
-        type: "error",
-        title: "Copy Failed",
+      toast.error("Copy Failed", {
         description: "Unable to copy to clipboard"
       })
     }

@@ -1,5 +1,7 @@
 import { Resend } from 'resend'
 import NewUserNotification from '@/components/emails/new-user-notification'
+import LoginAlertEmail from '@/components/emails/login-alert'
+import NewDeviceAlertEmail from '@/components/emails/new-device-alert'
 
 // Initialize Resend with API key (conditional)
 const RESEND_API_KEY = process.env.RESEND_API_KEY
@@ -21,6 +23,15 @@ export interface UserData {
   avatar_url: string | null
   signup_method: 'google' | 'github'
   created_at: string
+}
+
+export interface LoginData {
+  timestamp: string
+  ipAddress: string
+  userAgent: string
+  location?: string
+  deviceType: string
+  browser: string
 }
 
 export const sendNewUserNotification = async (userData: UserData): Promise<{ success: boolean; error?: string }> => {
@@ -126,6 +137,84 @@ export const sendTestEmail = async (testUserEmail?: string): Promise<{ success: 
     return { success: true }
   } catch (error) {
     console.error('Error sending test email:', error)
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
+// Security notification functions
+export const sendLoginAlert = async (
+  userData: Pick<UserData, 'id' | 'email' | 'name' | 'avatar_url'>,
+  loginData: LoginData
+): Promise<{ success: boolean; error?: string }> => {
+  // Convert null to undefined for email components
+  const emailUserData = {
+    ...userData,
+    name: userData.name || undefined,
+    avatar_url: userData.avatar_url || undefined
+  }
+  try {
+    // Check if email service is available
+    if (!isEmailServiceAvailable()) {
+      console.warn('Email service not available - missing RESEND_API_KEY. Skipping login alert.')
+      return { success: false, error: 'Email service not configured' }
+    }
+
+    // Send login alert email to user
+    const { data, error } = await resend!.emails.send({
+      from: FROM_EMAIL,
+      to: [userData.email],
+      subject: '🔐 Welcome Back to DevToolsHub!',
+      react: LoginAlertEmail({ userData: emailUserData, loginData }),
+    })
+
+    if (error) {
+      console.error('Failed to send login alert:', error)
+      return { success: false, error: error.message }
+    }
+
+    console.log('Login alert sent successfully:', data?.id)
+    return { success: true }
+  } catch (error) {
+    console.error('Error sending login alert:', error)
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
+export const sendNewDeviceAlert = async (
+  userData: Pick<UserData, 'id' | 'email' | 'name' | 'avatar_url'>,
+  loginData: LoginData,
+  previousLoginData?: LoginData
+): Promise<{ success: boolean; error?: string }> => {
+  // Convert null to undefined for email components
+  const emailUserData = {
+    ...userData,
+    name: userData.name || undefined,
+    avatar_url: userData.avatar_url || undefined
+  }
+  try {
+    // Check if email service is available
+    if (!isEmailServiceAvailable()) {
+      console.warn('Email service not available - missing RESEND_API_KEY. Skipping new device alert.')
+      return { success: false, error: 'Email service not configured' }
+    }
+
+    // Send new device alert email to user
+    const { data, error } = await resend!.emails.send({
+      from: FROM_EMAIL,
+      to: [userData.email],
+      subject: '⚠️ New Device Login Alert - DevToolsHub',
+      react: NewDeviceAlertEmail({ userData: emailUserData, loginData, previousLoginData }),
+    })
+
+    if (error) {
+      console.error('Failed to send new device alert:', error)
+      return { success: false, error: error.message }
+    }
+
+    console.log('New device alert sent successfully:', data?.id)
+    return { success: true }
+  } catch (error) {
+    console.error('Error sending new device alert:', error)
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 } 

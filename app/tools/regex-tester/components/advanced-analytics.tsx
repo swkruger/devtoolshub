@@ -18,7 +18,7 @@ import {
   Zap,
   Activity
 } from 'lucide-react'
-import { useToast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 import type { RegexMatch } from '../lib/regex-engines'
 
 interface MatchAnalytics {
@@ -69,7 +69,7 @@ export function AdvancedAnalytics({
   language, 
   flags 
 }: AdvancedAnalyticsProps) {
-  const { toast } = useToast()
+
 
   // Calculate match analytics
   const matchAnalytics = useMemo((): MatchAnalytics => {
@@ -235,9 +235,7 @@ export function AdvancedAnalytics({
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 
-    toast({
-      type: 'success',
-      title: 'Analytics exported',
+    toast.success('Analytics exported', {
       description: 'Analytics data saved as JSON file'
     })
   }, [pattern, language, flags, testText, matchAnalytics, performanceMetrics, toast])
@@ -269,9 +267,7 @@ ${performanceMetrics.optimizationSuggestions.length > 0 ?
 }`
 
     navigator.clipboard.writeText(summary).then(() => {
-      toast({
-        type: 'success',
-        title: 'Analytics copied',
+      toast.success('Analytics copied', {
         description: 'Analytics summary copied to clipboard'
       })
     })

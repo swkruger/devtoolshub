@@ -18,7 +18,7 @@ import {
   Check,
   Hash
 } from 'lucide-react';
-import { useToast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 
 interface BulkGeneratorProps {
   isOpen: boolean;
@@ -37,7 +37,7 @@ type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5';
 type UuidFormat = 'standard' | 'compact' | 'base64' | 'binary';
 
 export default function BulkGenerator({ isOpen, onClose }: BulkGeneratorProps) {
-  const { toast } = useToast();
+
   const [count, setCount] = useState<number>(10);
   const [version, setVersion] = useState<UuidVersion>('v4');
   const [format, setFormat] = useState<UuidFormat>('standard');
@@ -184,9 +184,7 @@ export default function BulkGenerator({ isOpen, onClose }: BulkGeneratorProps) {
     setIsGenerating(false);
     
     if (uuids.length > 0) {
-      toast({
-        type: 'success',
-        title: 'Bulk Generation Complete',
+      toast.success('Bulk Generation Complete', {
         description: `Generated ${uuids.length} UUIDs successfully`
       });
     }
@@ -196,15 +194,11 @@ export default function BulkGenerator({ isOpen, onClose }: BulkGeneratorProps) {
     const uuidList = generatedUuids.map(entry => entry.uuid).join('\n');
     try {
       await navigator.clipboard.writeText(uuidList);
-      toast({
-        type: 'success',
-        title: 'Copied to Clipboard',
+      toast.success('Copied to Clipboard', {
         description: `Copied ${generatedUuids.length} UUIDs to clipboard`
       });
     } catch (error) {
-      toast({
-        type: 'error',
-        title: 'Copy Failed',
+      toast.error('Copy Failed', {
         description: 'Failed to copy UUIDs to clipboard'
       });
     }
@@ -251,9 +245,7 @@ export default function BulkGenerator({ isOpen, onClose }: BulkGeneratorProps) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    toast({
-      type: 'success',
-      title: 'Download Complete',
+    toast.success('Download Complete', {
       description: `UUIDs downloaded as ${filename}`
     });
   };

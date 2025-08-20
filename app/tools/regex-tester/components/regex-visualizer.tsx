@@ -14,7 +14,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react'
-import { useToast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 
 interface RegexNode {
   id: string
@@ -36,7 +36,7 @@ interface RegexVisualizerProps {
 }
 
 export function RegexVisualizer({ isOpen, onClose, pattern, isPremiumUser }: RegexVisualizerProps) {
-  const { toast } = useToast()
+
   const [zoom, setZoom] = useState(1)
   const [showTooltips, setShowTooltips] = useState(true)
   const [selectedNode, setSelectedNode] = useState<string | null>(null)
@@ -276,9 +276,7 @@ export function RegexVisualizer({ isOpen, onClose, pattern, isPremiumUser }: Reg
     document.body.removeChild(downloadLink)
     URL.revokeObjectURL(svgUrl)
 
-    toast({
-      type: 'success',
-      title: 'Visualization exported',
+    toast.success('Visualization exported', {
       description: 'Regex diagram saved as SVG file'
     })
   }

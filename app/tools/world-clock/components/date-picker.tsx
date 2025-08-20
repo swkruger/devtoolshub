@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
-import { useToast } from "@/components/ui/toast"
+import { toast } from "sonner"
 
 interface DatePickerProps {
   selectedDate: Date
@@ -29,9 +29,8 @@ export function DatePicker({
 }: DatePickerProps) {
   const [inputValue, setInputValue] = useState("")
   const [isEditing, setIsEditing] = useState(false)
-  const { toast } = useToast()
-  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
-  const showWarning = (title: string, description?: string) => toast({ type: 'warning', title, description })
+  const showSuccess = (title: string, description?: string) => toast.success(title, { description })
+  const showWarning = (title: string, description?: string) => toast.warning(title, { description })
 
   // Update input value when selectedDate changes
   useEffect(() => {

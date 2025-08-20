@@ -19,7 +19,7 @@ import {
   Loader2,
   Star
 } from 'lucide-react';
-import { useToast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 
 interface UuidHistoryProps {
   isOpen: boolean;
@@ -68,7 +68,7 @@ const MOCK_HISTORY: HistoryEntry[] = [
 ];
 
 export default function UuidHistory({ isOpen, onClose }: UuidHistoryProps) {
-  const { toast } = useToast();
+
   const [history, setHistory] = useState<HistoryEntry[]>(MOCK_HISTORY);
   const [filteredHistory, setFilteredHistory] = useState<HistoryEntry[]>(MOCK_HISTORY);
   const [searchTerm, setSearchTerm] = useState('');
@@ -112,15 +112,11 @@ export default function UuidHistory({ isOpen, onClose }: UuidHistoryProps) {
   const copyUuid = async (uuid: string) => {
     try {
       await navigator.clipboard.writeText(uuid);
-      toast({
-        type: 'success',
-        title: 'Copied to Clipboard',
+      toast.success('Copied to Clipboard', {
         description: 'UUID copied successfully'
       });
     } catch (error) {
-      toast({
-        type: 'error',
-        title: 'Copy Failed',
+      toast.error('Copy Failed', {
         description: 'Failed to copy UUID to clipboard'
       });
     }
@@ -134,9 +130,7 @@ export default function UuidHistory({ isOpen, onClose }: UuidHistoryProps) {
 
   const deleteEntry = (id: string) => {
     setHistory(prev => prev.filter(entry => entry.id !== id));
-    toast({
-      type: 'success',
-      title: 'Entry Deleted',
+    toast.success('Entry Deleted', {
       description: 'History entry deleted successfully'
     });
   };
@@ -185,18 +179,14 @@ export default function UuidHistory({ isOpen, onClose }: UuidHistoryProps) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    toast({
-      type: 'success',
-      title: 'Download Complete',
+    toast.success('Download Complete', {
       description: `History downloaded as ${filename}`
     });
   };
 
   const clearHistory = () => {
     setHistory([]);
-    toast({
-      type: 'success',
-      title: 'History Cleared',
+    toast.success('History Cleared', {
       description: 'All history entries have been cleared'
     });
   };

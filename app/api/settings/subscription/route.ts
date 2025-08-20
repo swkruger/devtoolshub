@@ -45,14 +45,7 @@ export async function GET(request: NextRequest) {
             const fullSubscription = await stripe.subscriptions.retrieve(subscriptions.data[0].id)
             subscription = fullSubscription
             
-            console.log('📅 API: Full subscription data retrieved:', {
-              id: subscription.id,
-              current_period_end: subscription.current_period_end,
-              cancel_at_period_end: subscription.cancel_at_period_end,
-              status: subscription.status,
-              type: typeof subscription.current_period_end,
-              full_subscription_keys: Object.keys(subscription)
-            })
+            
           }
         }
       } catch (error) {
@@ -71,12 +64,15 @@ export async function GET(request: NextRequest) {
         
         billingHistory = invoices.data.map(invoice => ({
           id: invoice.id,
-          amount: invoice.amount_paid,
+          amount_paid: invoice.amount_paid,
           currency: invoice.currency,
           status: invoice.status,
           created: invoice.created,
           invoice_pdf: invoice.invoice_pdf,
-          hosted_invoice_url: invoice.hosted_invoice_url
+          hosted_invoice_url: invoice.hosted_invoice_url,
+          description: invoice.description || `Premium Subscription - ${invoice.currency.toUpperCase()} ${(invoice.amount_paid / 100).toFixed(2)}`,
+          period_start: invoice.period_start,
+          period_end: invoice.period_end
         }))
       } catch (error) {
         console.error('Error fetching billing history:', error)
@@ -208,19 +204,35 @@ async function createPortalSession(user: any, supabase: any) {
   try {
     // Check if Stripe is configured
     if (!stripe) {
+      console.error('Stripe not configured - missing STRIPE_SECRET_KEY')
       return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
     }
 
     // Get user profile
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('users')
       .select('*')
       .eq('id', user.id)
       .single()
 
-    if (!profile?.stripe_customer_id) {
-      return NextResponse.json({ error: 'No subscription found' }, { status: 404 })
+    if (profileError) {
+      console.error('Error fetching user profile:', profileError)
+      return NextResponse.json({ error: 'Failed to fetch user profile' }, { status: 500 })
     }
+
+    if (!profile) {
+      console.error('User profile not found for user:', user.id)
+      return NextResponse.json({ error: 'User profile not found' }, { status: 404 })
+    }
+
+    if (!profile.stripe_customer_id) {
+      console.error('No stripe_customer_id found for user:', user.id)
+      return NextResponse.json({ 
+        error: 'No subscription found. Please upgrade to premium first.' 
+      }, { status: 404 })
+    }
+
+    console.log('Creating portal session for customer:', profile.stripe_customer_id)
 
     // Create portal session
     const session = await stripe.billingPortal.sessions.create({
@@ -228,10 +240,28 @@ async function createPortalSession(user: any, supabase: any) {
       return_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings`,
     })
 
+    console.log('Portal session created successfully:', session.id)
     return NextResponse.json({ url: session.url })
   } catch (error) {
     console.error('Error creating portal session:', error)
-    return NextResponse.json({ error: 'Failed to create portal session' }, { status: 500 })
+    
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      if (error.message.includes('customer')) {
+        return NextResponse.json({ 
+          error: 'Customer not found in Stripe. Please contact support.' 
+        }, { status: 404 })
+      }
+      if (error.message.includes('billing_portal')) {
+        return NextResponse.json({ 
+          error: 'Billing portal not configured. Please contact support.' 
+        }, { status: 500 })
+      }
+    }
+    
+    return NextResponse.json({ 
+      error: 'Failed to create billing portal session. Please try again or contact support.' 
+    }, { status: 500 })
   }
 }
 
@@ -268,23 +298,15 @@ async function cancelSubscription(user: any, supabase: any) {
       cancel_at_period_end: true
     })
 
-    console.log('📅 API: Cancelled subscription data:', {
-      id: subscription.id,
-      current_period_end: subscription.current_period_end,
-      cancel_at_period_end: subscription.cancel_at_period_end,
-      status: subscription.status,
-      type: typeof subscription.current_period_end
-    })
-
     // Keep user as premium until the end of the billing period
     // The plan will be updated to 'free' when the subscription actually ends via webhook
     // This ensures premium features remain active until the billing period ends
 
     return NextResponse.json({ 
       message: 'Subscription cancelled successfully. You will remain premium until the end of your current billing period.',
-      subscription,
-      cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      currentPeriodEnd: subscription.current_period_end
+      subscription: subscription,
+      cancelAtPeriodEnd: (subscription as any).cancel_at_period_end,
+      currentPeriodEnd: (subscription as any).current_period_end
     })
   } catch (error) {
     console.error('Error cancelling subscription:', error)

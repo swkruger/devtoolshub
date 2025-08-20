@@ -26,7 +26,7 @@ import {
   BarChart3,
   Workflow
 } from 'lucide-react'
-import { useToast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 import { getRegexEngine, COMMON_PATTERNS } from '../lib/regex-engines'
 import type { RegexLanguage, RegexMatch } from '../lib/regex-engines'
 import { EnhancedTooltip, tooltipConfigs } from './enhanced-tooltip'
@@ -83,10 +83,10 @@ function useDebounce(value: any, delay: number) {
 }
 
 export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
-  const { toast } = useToast()
-  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
-  const showError = (title: string, description?: string) => toast({ type: 'error', title, description })
-  const showWarning = (title: string, description?: string) => toast({ type: 'warning', title, description })
+
+  const showSuccess = (title: string, description?: string) => toast.success(title, { description })
+  const showError = (title: string, description?: string) => toast.error(title, { description })
+  const showWarning = (title: string, description?: string) => toast.warning(title, { description })
   const [pattern, setPattern] = useState('')
   const [testText, setTestText] = useState('')
   const [matches, setMatches] = useState<RegexMatch[]>([])
@@ -413,9 +413,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
         clearMarkers()
         
         if (!isLive) {
-          toast({
-            type: 'error',
-            title: 'Invalid pattern',
+          toast.error('Invalid pattern', {
             description: result.error || 'Please check your regex syntax'
           })
         }
@@ -427,9 +425,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
       clearMarkers()
       
       if (!isLive) {
-        toast({
-          type: 'error',
-          title: 'Error',
+        toast.error('Error', {
           description: 'An unexpected error occurred while testing the pattern'
         })
       }
@@ -463,9 +459,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
   const copyMatches = useCallback(() => {
     if (matches.length === 0) {
-      toast({
-        type: 'warning',
-        title: 'No matches',
+      toast.warning('No matches', {
         description: 'No matches found to copy'
       })
       return
@@ -473,9 +467,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
     const matchStrings = matches.map(match => match.match).join('\n')
     navigator.clipboard.writeText(matchStrings).then(() => {
-      toast({
-        type: 'success',
-        title: 'Copied to clipboard',
+      toast.success('Copied to clipboard', {
         description: `Copied ${matches.length} matches to clipboard`
       })
     })
@@ -489,9 +481,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
       setLanguage('javascript')
       setFlags(emailPattern.flags)
       
-      toast({
-        type: 'success',
-        title: 'Sample loaded',
+      toast.success('Sample loaded', {
         description: 'Email validation pattern loaded'
       })
     }
@@ -506,18 +496,14 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
     setCurrentLine(0)
     clearMarkers()
     
-    toast({
-      type: 'success',
-      title: 'Cleared',
+    toast.success('Cleared', {
       description: 'Pattern and test text cleared'
     })
   }, [toast, clearMarkers])
 
   const handleLanguageChange = (newLanguage: RegexLanguage) => {
     if (newLanguage !== 'javascript' && !isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Multi-language support requires a premium plan'
       })
       return
@@ -532,18 +518,14 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
   const explainPattern = useCallback(() => {
     if (!isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Pattern explanations require a premium plan'
       })
       return
     }
 
     if (!pattern) {
-      toast({
-        type: 'warning',
-        title: 'No pattern',
+      toast.warning('No pattern', {
         description: 'Please enter a regex pattern to explain'
       })
       return
@@ -557,15 +539,11 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
       setPatternAnalysis(analysis)
       setShowExplanation(true)
       
-      toast({
-        type: 'success',
-        title: 'Pattern analyzed',
+      toast.success('Pattern analyzed', {
         description: `Analyzing "${currentPattern.slice(0, 30)}${currentPattern.length > 30 ? '...' : ''}" - Found ${analysis.components.length} components`
       })
     } catch (error) {
-      toast({
-        type: 'error',
-        title: 'Analysis failed',
+      toast.error('Analysis failed', {
         description: 'Unable to analyze the pattern'
       })
     }
@@ -581,18 +559,14 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
     setCurrentLine(0)
     clearMarkers()
 
-    toast({
-      type: 'success',
-      title: 'Pattern loaded from library',
+    toast.success('Pattern loaded from library', {
       description: `Loaded "${patternItem.name}" pattern`
     })
   }, [toast, clearMarkers])
 
   const openPatternLibrary = useCallback(() => {
     if (!isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Pattern library access requires a premium plan'
       })
       return
@@ -603,18 +577,14 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
   const openBulkTesting = useCallback(() => {
     if (!isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Bulk testing requires a premium plan'
       })
       return
     }
 
     if (!pattern) {
-      toast({
-        type: 'warning',
-        title: 'No pattern',
+      toast.warning('No pattern', {
         description: 'Please enter a regex pattern before starting bulk testing'
       })
       return
@@ -625,18 +595,14 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
   const openAdvancedAnalytics = useCallback(() => {
     if (!isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Advanced analytics requires a premium plan'
       })
       return
     }
 
     if (matches.length === 0) {
-      toast({
-        type: 'warning',
-        title: 'No matches',
+      toast.warning('No matches', {
         description: 'Please test your pattern first to generate analytics'
       })
       return
@@ -647,18 +613,14 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
   const openRegexVisualizer = useCallback(() => {
     if (!isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Regex visualization requires a premium plan'
       })
       return
     }
 
     if (!pattern) {
-      toast({
-        type: 'warning',
-        title: 'No pattern',
+      toast.warning('No pattern', {
         description: 'Please enter a regex pattern to visualize'
       })
       return
@@ -669,9 +631,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
   const toggleReplaceMode = useCallback(() => {
     if (!isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Replace functionality requires a premium plan'
       })
       return
@@ -686,18 +646,14 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
   const performReplace = useCallback((replaceAll: boolean = false) => {
     if (!isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Replace functionality requires a premium plan'
       })
       return
     }
 
     if (!pattern || !testText) {
-      toast({
-        type: 'warning',
-        title: 'Missing input',
+      toast.warning('Missing input', {
         description: 'Please enter both a pattern and test text to replace'
       })
       return
@@ -708,9 +664,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
       const testResult = engine.test(pattern, testText, flags)
       
       if (!testResult.isValid) {
-        toast({
-          type: 'error',
-          title: 'Invalid pattern',
+        toast.error('Invalid pattern', {
           description: testResult.error || 'Pattern validation failed'
         })
         return
@@ -718,9 +672,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
       if (testResult.matches.length === 0) {
         setReplaceResults(testText)
-        toast({
-          type: 'info',
-          title: 'No matches found',
+        toast.info('No matches found', {
           description: 'No text was replaced as no matches were found'
         })
         return
@@ -733,15 +685,11 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
       setReplaceResults(replacedText)
       
       const replacementCount = testResult.matches.length
-      toast({
-        type: 'success',
-        title: 'Replacement completed',
+      toast.success('Replacement completed', {
         description: `Replaced ${replaceAll ? replacementCount : 1} occurrence${replacementCount !== 1 ? 's' : ''}`
       })
     } catch (error) {
-      toast({
-        type: 'error',
-        title: 'Replace failed',
+      toast.error('Replace failed', {
         description: 'An error occurred during replacement'
       })
     }
@@ -750,9 +698,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
   const copyReplaceResults = useCallback(() => {
     if (replaceResults) {
       navigator.clipboard.writeText(replaceResults).then(() => {
-        toast({
-          type: 'success',
-          title: 'Copied to clipboard',
+        toast.success('Copied to clipboard', {
           description: 'Replace results copied to clipboard'
         })
       })
@@ -769,9 +715,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
   const toggleLiveTesting = () => {
     if (!isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Live pattern testing requires a premium plan. Upgrade to enable automatic testing as you type.'
       })
       return
@@ -783,9 +727,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
         setCurrentLine(0)
         clearMarkers()
       }
-      toast({
-        type: 'success',
-        title: newValue ? 'Live testing enabled' : 'Live testing disabled',
+      toast.success(newValue ? 'Live testing enabled' : 'Live testing disabled', {
         description: newValue 
           ? 'Pattern will be tested automatically as you type' 
           : 'Use Test Pattern button for manual testing'
@@ -824,9 +766,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
     setCurrentLine(0)
     clearMarkers()
     
-    toast({
-      type: 'success',
-      title: 'Pattern loaded',
+    toast.success('Pattern loaded', {
       description: `Loaded ${patternData.description} pattern`
     })
   }, [toast, clearMarkers])

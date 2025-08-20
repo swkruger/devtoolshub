@@ -13,7 +13,7 @@ import { getPresetTasks } from '../lib/presets'
 import { rasterizeFromFile } from '../lib/pipeline'
 import { toManifestIconEntry, buildHeadTags, buildPinnedTabSvg } from '../lib/naming'
 import { buildZip } from '../lib/zip'
-import { useToast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 
 interface Props {
   isPremiumUser: boolean
@@ -23,7 +23,7 @@ interface Props {
 type Preset = 'minimal' | 'recommended' | 'full'
 
 export default function PwaAssetsClient({ isPremiumUser }: Props) {
-  const { toast } = useToast()
+
   const [activeTab, setActiveTab] = useState<'configure' | 'preview' | 'export' | 'help'>('configure')
   const [sourceFile, setSourceFile] = useState<File | undefined>(undefined)
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
@@ -46,11 +46,11 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
   const handleFile = (file?: File) => {
     if (!file) return
     if (!/(image\/png|image\/svg\+xml|image\/webp)/.test(file.type)) {
-      toast({ type: 'error', title: 'Unsupported file', description: 'Please upload a PNG, SVG, or WebP image.' })
+      toast.error('Unsupported file', { description: 'Please upload a PNG, SVG, or WebP image.' })
       return
     }
     if (file.size > (isPremiumUser ? 30 : 10) * 1024 * 1024) {
-      toast({ type: 'error', title: 'File too large', description: `Max ${isPremiumUser ? 30 : 10}MB` })
+      toast.error('File too large', { description: `Max ${isPremiumUser ? 30 : 10}MB` })
       return
     }
     // Revoke previous preview URL
@@ -67,7 +67,7 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
 
   const generate = async () => {
     if (!sourceFile) {
-      toast({ type: 'warning', title: 'Upload required', description: 'Please upload a logo first.' })
+      toast.warning('Upload required', { description: 'Please upload a logo first.' })
       return
     }
     setIsProcessing(true)
@@ -104,7 +104,7 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
       }
       setManifest(JSON.stringify(manifestObj, null, 2))
       setHeadSnippet(buildHeadTags(theme, { includePinned, pinnedColor: theme }))
-      toast({ type: 'success', title: 'Generated', description: 'Preview and export are ready.' })
+      toast.success('Generated', { description: 'Preview and export are ready.' })
       setActiveTab('preview')
     } finally {
       setIsProcessing(false)
@@ -113,7 +113,7 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
 
   const copy = async (text: string, label = 'Copied') => {
     await navigator.clipboard.writeText(text)
-    toast({ type: 'success', title: label })
+          toast.success(label)
   }
 
   return (
@@ -207,7 +207,7 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
             <div className="flex gap-2">
               <Button
                 onClick={async () => {
-                  if (files.length === 0) { toast({ type: 'warning', title: 'Nothing to export' }); return }
+                  if (files.length === 0) { toast.warning('Nothing to export'); return }
                   const imageItems = await Promise.all(files.map(async f => ({ path: `/${f.path}`, blob: await (await fetch(f.url)).blob() })))
                   const pinnedItem = includePinned ? [{ path: '/safari-pinned-tab.svg', blob: new Blob([buildPinnedTabSvg(theme)], { type: 'image/svg+xml' }) }] : []
                   const textItems = [

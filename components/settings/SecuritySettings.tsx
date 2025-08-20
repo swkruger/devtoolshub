@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { User } from '@supabase/supabase-js'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Shield, Lock, Smartphone, Monitor, AlertTriangle, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react'
+import { Shield, Smartphone, Monitor, AlertTriangle, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface SecuritySettingsProps {
@@ -18,152 +18,70 @@ interface SecuritySettingsProps {
   isPremiumUser: boolean
 }
 
-interface PasswordForm {
-  currentPassword: string
-  newPassword: string
-  confirmPassword: string
-}
 
-interface PasswordErrors {
-  currentPassword?: string
-  newPassword?: string
-  confirmPassword?: string
+
+interface Session {
+  id: string
+  userAgent: string
+  ipAddress: string
+  createdAt: string
+  lastActive: string
+  isCurrent: boolean
 }
 
 interface SecurityNotifications {
   loginAlerts: boolean
-  passwordChanges: boolean
   newDeviceLogins: boolean
-  suspiciousActivity: boolean
 }
 
 export default function SecuritySettings({ user, isPremiumUser }: SecuritySettingsProps) {
-  const [passwordForm, setPasswordForm] = useState<PasswordForm>({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  })
-  
-  const [passwordErrors, setPasswordErrors] = useState<PasswordErrors>({})
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false
-  })
-  const [isChangingPassword, setIsChangingPassword] = useState(false)
+  const [sessions, setSessions] = useState<Session[]>([])
+  const [isLoadingSessions, setIsLoadingSessions] = useState(true)
+  const [isRevokingSession, setIsRevokingSession] = useState<string | null>(null)
   
   const [securityNotifications, setSecurityNotifications] = useState<SecurityNotifications>({
     loginAlerts: true,
-    passwordChanges: true,
-    newDeviceLogins: true,
-    suspiciousActivity: true
+    newDeviceLogins: true
   })
+  const [isLoadingPreferences, setIsLoadingPreferences] = useState(true)
 
-  const validatePassword = (password: string): string[] => {
-    const errors: string[] = []
-    
-    if (password.length < 8) {
-      errors.push('At least 8 characters')
-    }
-    if (!/[A-Z]/.test(password)) {
-      errors.push('One uppercase letter')
-    }
-    if (!/[a-z]/.test(password)) {
-      errors.push('One lowercase letter')
-    }
-    if (!/\d/.test(password)) {
-      errors.push('One number')
-    }
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      errors.push('One special character')
-    }
-    
-    return errors
-  }
 
-  const validatePasswordForm = (): boolean => {
-    const errors: PasswordErrors = {}
 
-    if (!passwordForm.currentPassword) {
-      errors.currentPassword = 'Current password is required'
-    }
+  // Fetch sessions and preferences on component mount
+  useEffect(() => {
+    fetchSessions()
+    fetchNotificationPreferences()
+  }, [])
 
-    if (!passwordForm.newPassword) {
-      errors.newPassword = 'New password is required'
-    } else {
-      const passwordErrors = validatePassword(passwordForm.newPassword)
-      if (passwordErrors.length > 0) {
-        errors.newPassword = `Password must contain: ${passwordErrors.join(', ')}`
-      }
-    }
-
-    if (!passwordForm.confirmPassword) {
-      errors.confirmPassword = 'Please confirm your new password'
-    } else if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match'
-    }
-
-    setPasswordErrors(errors)
-    return Object.keys(errors).length === 0
-  }
-
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!validatePasswordForm()) {
-      toast.error('Please fix the errors in the form')
-      return
-    }
-
-    setIsChangingPassword(true)
-
+  const fetchSessions = async () => {
     try {
-      const response = await fetch('/api/settings/security', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'change_password',
-          currentPassword: passwordForm.currentPassword,
-          newPassword: passwordForm.newPassword
-        })
-      })
+      setIsLoadingSessions(true)
+      const response = await fetch('/api/settings/sessions')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch sessions')
+      }
 
       const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to change password')
-      }
-
-      toast.success('Password changed successfully!')
-      
-      // Clear form
-      setPasswordForm({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-      })
-      setPasswordErrors({})
+      setSessions(data.sessions || [])
     } catch (error) {
-      console.error('Password change error:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to change password')
+      console.error('Error fetching sessions:', error)
+      toast.error('Failed to load sessions')
     } finally {
-      setIsChangingPassword(false)
+      setIsLoadingSessions(false)
     }
   }
 
   const handleRevokeSession = async (sessionId: string) => {
     try {
-      const response = await fetch('/api/settings/security', {
-        method: 'POST',
+      setIsRevokingSession(sessionId)
+      
+      const response = await fetch('/api/settings/sessions', {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          action: 'revoke_session',
-          sessionId
-        })
+        body: JSON.stringify({ sessionId })
       })
 
       const data = await response.json()
@@ -173,151 +91,156 @@ export default function SecuritySettings({ user, isPremiumUser }: SecuritySettin
       }
 
       toast.success('Session revoked successfully!')
+      
+      // Refresh sessions list
+      await fetchSessions()
     } catch (error) {
       console.error('Session revocation error:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to revoke session')
+    } finally {
+      setIsRevokingSession(null)
     }
   }
 
-  const handleNotificationToggle = (key: keyof SecurityNotifications) => {
-    setSecurityNotifications(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }))
-    
-    // In a real app, you would save this to the database
-    toast.success(`${key.replace(/([A-Z])/g, ' $1').toLowerCase()} ${!securityNotifications[key] ? 'enabled' : 'disabled'}`)
+  const handleClearAllSessions = async () => {
+    try {
+      setIsRevokingSession('all')
+      
+      // Revoke all sessions except the current one
+      const nonCurrentSessions = sessions.filter(session => !session.isCurrent)
+      
+      for (const session of nonCurrentSessions) {
+        const response = await fetch('/api/settings/sessions', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ sessionId: session.id })
+        })
+
+        if (!response.ok) {
+          const data = await response.json()
+          throw new Error(data.error || 'Failed to revoke session')
+        }
+      }
+
+      toast.success('All other sessions revoked successfully!')
+      
+      // Refresh sessions list
+      await fetchSessions()
+    } catch (error) {
+      console.error('Clear all sessions error:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to clear all sessions')
+    } finally {
+      setIsRevokingSession(null)
+    }
   }
 
-  const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
-    setShowPasswords(prev => ({
-      ...prev,
-      [field]: !prev[field]
-    }))
+  const parseUserAgent = (userAgent: string) => {
+    if (!userAgent) return 'Unknown Browser'
+    
+    // Simple parsing for common browsers
+    if (userAgent.includes('Chrome')) return 'Chrome'
+    if (userAgent.includes('Firefox')) return 'Firefox'
+    if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) return 'Safari'
+    if (userAgent.includes('Edge')) return 'Edge'
+    if (userAgent.includes('Opera')) return 'Opera'
+    
+    return 'Unknown Browser'
   }
+
+  const parseDevice = (userAgent: string) => {
+    if (!userAgent) return 'Unknown Device'
+    
+    if (userAgent.includes('Mobile') || userAgent.includes('Android') || userAgent.includes('iPhone')) {
+      return 'Mobile Device'
+    }
+    if (userAgent.includes('Windows')) return 'Windows'
+    if (userAgent.includes('Mac')) return 'macOS'
+    if (userAgent.includes('Linux')) return 'Linux'
+    
+    return 'Unknown Device'
+  }
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+    
+    if (diffInSeconds < 60) return 'Just now'
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`
+    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`
+    
+    return date.toLocaleDateString()
+  }
+
+  const fetchNotificationPreferences = async () => {
+    try {
+      setIsLoadingPreferences(true)
+      const response = await fetch('/api/settings/notifications')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch notification preferences')
+      }
+
+      const data = await response.json()
+      setSecurityNotifications({
+        loginAlerts: data.preferences.login_alerts,
+        newDeviceLogins: data.preferences.new_device_logins
+      })
+    } catch (error) {
+      console.error('Error fetching notification preferences:', error)
+      toast.error('Failed to load notification preferences')
+    } finally {
+      setIsLoadingPreferences(false)
+    }
+  }
+
+  const handleNotificationToggle = async (key: keyof SecurityNotifications) => {
+    try {
+      const newValue = !securityNotifications[key]
+      
+      // Optimistically update UI
+      setSecurityNotifications(prev => ({
+        ...prev,
+        [key]: newValue
+      }))
+
+      // Save to database
+      const response = await fetch('/api/settings/notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          login_alerts: key === 'loginAlerts' ? newValue : securityNotifications.loginAlerts,
+          new_device_logins: key === 'newDeviceLogins' ? newValue : securityNotifications.newDeviceLogins
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update notification preferences')
+      }
+
+      toast.success(`${key.replace(/([A-Z])/g, ' $1').toLowerCase()} ${newValue ? 'enabled' : 'disabled'}`)
+    } catch (error) {
+      console.error('Error updating notification preferences:', error)
+      toast.error('Failed to update notification preferences')
+      
+      // Revert optimistic update
+      setSecurityNotifications(prev => ({
+        ...prev,
+        [key]: !prev[key]
+      }))
+    }
+  }
+
+
 
   return (
     <div className="space-y-6">
-      {/* Password Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Lock className="w-5 h-5" />
-            <span>Password</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <form onSubmit={handlePasswordChange} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="currentPassword">Current Password *</Label>
-                <div className="relative">
-                  <Input 
-                    id="currentPassword" 
-                    type={showPasswords.current ? "text" : "password"}
-                    placeholder="Enter current password"
-                    value={passwordForm.currentPassword}
-                    onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
-                    className={passwordErrors.currentPassword ? 'border-red-500 pr-10' : 'pr-10'}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => togglePasswordVisibility('current')}
-                  >
-                    {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
-                {passwordErrors.currentPassword && (
-                  <p className="text-sm text-red-500 flex items-center space-x-1">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>{passwordErrors.currentPassword}</span>
-                  </p>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password *</Label>
-                <div className="relative">
-                  <Input 
-                    id="newPassword" 
-                    type={showPasswords.new ? "text" : "password"}
-                    placeholder="Enter new password"
-                    value={passwordForm.newPassword}
-                    onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
-                    className={passwordErrors.newPassword ? 'border-red-500 pr-10' : 'pr-10'}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => togglePasswordVisibility('new')}
-                  >
-                    {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
-                {passwordErrors.newPassword && (
-                  <p className="text-sm text-red-500 flex items-center space-x-1">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>{passwordErrors.newPassword}</span>
-                  </p>
-                )}
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password *</Label>
-              <div className="relative">
-                <Input 
-                  id="confirmPassword" 
-                  type={showPasswords.confirm ? "text" : "password"}
-                  placeholder="Confirm new password"
-                  value={passwordForm.confirmPassword}
-                  onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  className={passwordErrors.confirmPassword ? 'border-red-500 pr-10' : 'pr-10'}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => togglePasswordVisibility('confirm')}
-                >
-                  {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-              {passwordErrors.confirmPassword && (
-                <p className="text-sm text-red-500 flex items-center space-x-1">
-                  <AlertCircle className="w-3 h-3" />
-                  <span>{passwordErrors.confirmPassword}</span>
-                </p>
-              )}
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">
-                Password must be at least 8 characters with uppercase, lowercase, number, and special character
-              </div>
-              <Button 
-                type="submit"
-                disabled={isChangingPassword}
-              >
-                {isChangingPassword ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Changing...
-                  </>
-                ) : (
-                  'Change Password'
-                )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+
 
       {/* Two-Factor Authentication */}
       <Card>
@@ -350,89 +273,112 @@ export default function SecuritySettings({ user, isPremiumUser }: SecuritySettin
         </CardContent>
       </Card>
 
-      {/* Active Sessions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Monitor className="w-5 h-5" />
-            <span>Active Sessions</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
-            {/* Current Session */}
-            <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/50">
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-green-500 rounded-full" />
-                <div>
-                  <p className="font-medium">Current Session</p>
-                  <p className="text-sm text-muted-foreground">
-                    Chrome on Windows • {user.email}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Last active: Just now
-                  </p>
-                </div>
-              </div>
-              <Badge variant="default">Current</Badge>
-            </div>
+             {/* Active Sessions */}
+       <Card>
+         <CardHeader>
+           <CardTitle className="flex items-center space-x-2">
+             <Monitor className="w-5 h-5" />
+             <span>Active Sessions</span>
+           </CardTitle>
+         </CardHeader>
+         <CardContent className="space-y-4">
+           {isLoadingSessions ? (
+             <div className="flex items-center justify-center py-8">
+               <Loader2 className="w-6 h-6 animate-spin" />
+               <span className="ml-2">Loading sessions...</span>
+             </div>
+           ) : sessions.length === 0 ? (
+             <div className="text-center py-8">
+               <p className="text-muted-foreground">No active sessions found</p>
+             </div>
+           ) : (
+             <>
+               <div className="space-y-3">
+                 {sessions.map((session) => (
+                   <div 
+                     key={session.id} 
+                     className={`flex items-center justify-between p-3 border rounded-lg ${
+                       session.isCurrent ? 'bg-muted/50' : ''
+                     }`}
+                   >
+                     <div className="flex items-center space-x-3">
+                       <div className={`w-3 h-3 rounded-full ${
+                         session.isCurrent ? 'bg-green-500' : 'bg-blue-500'
+                       }`} />
+                       <div>
+                         <p className="font-medium">
+                           {parseDevice(session.userAgent)} • {parseUserAgent(session.userAgent)}
+                         </p>
+                         <p className="text-sm text-muted-foreground">
+                           IP: {session.ipAddress} • {user.email}
+                         </p>
+                         <p className="text-xs text-muted-foreground">
+                           Last active: {formatTimeAgo(session.lastActive)}
+                         </p>
+                       </div>
+                     </div>
+                     <div className="flex items-center space-x-2">
+                       {session.isCurrent && (
+                         <Badge variant="default">Current</Badge>
+                       )}
+                       {!session.isCurrent && (
+                         <Button 
+                           variant="outline" 
+                           size="sm"
+                           onClick={() => handleRevokeSession(session.id)}
+                           disabled={isRevokingSession === session.id}
+                         >
+                           {isRevokingSession === session.id ? (
+                             <>
+                               <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                               Revoking...
+                             </>
+                           ) : (
+                             'Revoke'
+                           )}
+                         </Button>
+                       )}
+                     </div>
+                   </div>
+                 ))}
+               </div>
 
-            {/* Other Sessions */}
-            <div className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-blue-500 rounded-full" />
-                <div>
-                  <p className="font-medium">Mobile Device</p>
+                               <div className="flex items-center justify-between pt-2">
                   <p className="text-sm text-muted-foreground">
-                    Safari on iPhone • {user.email}
+                    {sessions.length} active session{sessions.length !== 1 ? 's' : ''}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    Last active: 2 hours ago
-                  </p>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={fetchSessions}
+                      disabled={isLoadingSessions}
+                    >
+                      Refresh
+                    </Button>
+                    {sessions.length > 1 && (
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        onClick={handleClearAllSessions}
+                        disabled={isRevokingSession === 'all'}
+                      >
+                        {isRevokingSession === 'all' ? (
+                          <>
+                            <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                            Clearing...
+                          </>
+                        ) : (
+                          'Clear All Others'
+                        )}
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleRevokeSession('mobile-session')}
-              >
-                Revoke
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-gray-400 rounded-full" />
-                <div>
-                  <p className="font-medium">Work Computer</p>
-                  <p className="text-sm text-muted-foreground">
-                    Firefox on macOS • {user.email}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Last active: 1 day ago
-                  </p>
-                </div>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleRevokeSession('work-session')}
-              >
-                Revoke
-              </Button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between pt-2">
-            <p className="text-sm text-muted-foreground">
-              3 active sessions
-            </p>
-            <Button variant="outline" size="sm" disabled>
-              Revoke All Other Sessions
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+             </>
+           )}
+         </CardContent>
+       </Card>
 
       {/* Security Notifications */}
       <Card>
@@ -442,61 +388,42 @@ export default function SecuritySettings({ user, isPremiumUser }: SecuritySettin
             <span>Security Notifications</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Login Alerts</p>
-                <p className="text-sm text-muted-foreground">
-                  Get notified when someone logs into your account
-                </p>
-              </div>
-              <Switch 
-                checked={securityNotifications.loginAlerts}
-                onCheckedChange={() => handleNotificationToggle('loginAlerts')}
-              />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Password Changes</p>
-                <p className="text-sm text-muted-foreground">
-                  Notify when your password is changed
-                </p>
-              </div>
-              <Switch 
-                checked={securityNotifications.passwordChanges}
-                onCheckedChange={() => handleNotificationToggle('passwordChanges')}
-              />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">New Device Logins</p>
-                <p className="text-sm text-muted-foreground">
-                  Alert when logging in from a new device
-                </p>
-              </div>
-              <Switch 
-                checked={securityNotifications.newDeviceLogins}
-                onCheckedChange={() => handleNotificationToggle('newDeviceLogins')}
-              />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Suspicious Activity</p>
-                <p className="text-sm text-muted-foreground">
-                  Get alerts for unusual account activity
-                </p>
-              </div>
-              <Switch 
-                checked={securityNotifications.suspiciousActivity}
-                onCheckedChange={() => handleNotificationToggle('suspiciousActivity')}
-              />
-            </div>
-          </div>
-        </CardContent>
+                 <CardContent className="space-y-4">
+           {isLoadingPreferences ? (
+             <div className="flex items-center justify-center py-8">
+               <Loader2 className="w-6 h-6 animate-spin" />
+               <span className="ml-2">Loading notification preferences...</span>
+             </div>
+           ) : (
+             <div className="space-y-3">
+               <div className="flex items-center justify-between">
+                 <div>
+                   <p className="font-medium">Login Alerts</p>
+                   <p className="text-sm text-muted-foreground">
+                     Get notified when someone logs into your account
+                   </p>
+                 </div>
+                 <Switch 
+                   checked={securityNotifications.loginAlerts}
+                   onCheckedChange={() => handleNotificationToggle('loginAlerts')}
+                 />
+               </div>
+               <Separator />
+               <div className="flex items-center justify-between">
+                 <div>
+                   <p className="font-medium">New Device Logins</p>
+                   <p className="text-sm text-muted-foreground">
+                     Alert when logging in from a new device
+                   </p>
+                 </div>
+                 <Switch 
+                   checked={securityNotifications.newDeviceLogins}
+                   onCheckedChange={() => handleNotificationToggle('newDeviceLogins')}
+                 />
+               </div>
+             </div>
+           )}
+          </CardContent>
       </Card>
     </div>
   )

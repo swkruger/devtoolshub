@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { useToast } from "@/components/ui/toast"
+import { toast } from "sonner"
 import { HelpPanel } from "./help-panel"
 import { BatchConverter } from "./batch-converter"
 import { TimezoneComparison } from "./timezone-comparison"
@@ -54,9 +54,9 @@ const DATE_FORMATS = [
 ]
 
 export function TimestampConverterClient({ isPremiumUser, userId }: TimestampConverterClientProps) {
-  const { toast } = useToast()
-  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
-  const showError = (title: string, description?: string) => toast({ type: 'error', title, description })
+
+  const showSuccess = (title: string, description?: string) => toast.success(title, { description })
+  const showError = (title: string, description?: string) => toast.error(title, { description })
   const [unixInput, setUnixInput] = useState("")
   const [dateInput, setDateInput] = useState("")
   const [selectedTimezone, setSelectedTimezone] = useState("UTC")

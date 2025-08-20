@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useToast } from "@/components/ui/toast"
+import { toast } from "sonner"
 import { EnhancedTooltip } from "./enhanced-tooltip"
 import { TimezoneSlot } from "@/lib/types/user-timezones"
 
@@ -53,7 +53,7 @@ const DEFAULT_TIMEZONES = [
 ]
 
 export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpdate }: TimezoneComparisonProps) {
-  const { toast } = useToast()
+
   const [timezones, setTimezones] = useState<TimezoneSlot[]>(DEFAULT_TIMEZONES)
   const [selectedTimezone, setSelectedTimezone] = useState('')
   const [customLabel, setCustomLabel] = useState('')
@@ -88,9 +88,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
       }
     } catch (error) {
       console.error('Error loading user timezones:', error)
-      toast({
-        type: "error",
-        title: "Failed to Load",
+      toast.error("Failed to Load", {
         description: "Could not load your saved timezones"
       })
     } finally {
@@ -132,9 +130,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
   // Add timezone slot
   const addTimezone = async () => {
     if (!isPremiumUser) {
-      toast({
-        type: "warning",
-        title: "Premium Required",
+      toast.warning("Premium Required", {
         description: "Timezone comparison requires a premium plan"
       })
       return
@@ -143,18 +139,14 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
     if (!selectedTimezone) return
 
     if (timezones.length >= 8) {
-      toast({
-        type: "warning",
-        title: "Maximum Reached",
+      toast.warning("Maximum Reached", {
         description: "Maximum 8 timezones can be compared at once"
       })
       return
     }
 
     if (timezones.some(tz => tz.timezone === selectedTimezone)) {
-      toast({
-        type: "warning",
-        title: "Already Added",
+      toast.warning("Already Added", {
         description: "This timezone is already in the comparison"
       })
       return
@@ -191,9 +183,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
           setCustomLabel('')
           setShowAddForm(false)
 
-          toast({
-            type: "success",
-            title: "Timezone Added",
+          toast.success("Timezone Added", {
             description: `${label} added to comparison and saved to your account`
           })
         } else {
@@ -201,9 +191,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
         }
       } catch (error) {
         console.error('Error saving timezone:', error)
-        toast({
-          type: "error",
-          title: "Save Failed",
+        toast.error("Save Failed", {
           description: "Could not save timezone to your account"
         })
       } finally {
@@ -222,9 +210,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
       setCustomLabel('')
       setShowAddForm(false)
 
-      toast({
-        type: "success",
-        title: "Timezone Added",
+      toast.success("Timezone Added", {
         description: `${label} added to comparison`
       })
     }
@@ -239,9 +225,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
 
     // Check if it's a default timezone
     if (timezone.isDefault) {
-      toast({
-        type: "warning",
-        title: "Cannot Remove",
+      toast.warning("Cannot Remove", {
         description: "Default timezones cannot be removed"
       })
       return
@@ -258,9 +242,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
 
         if (response.ok) {
           setTimezones(prev => prev.filter(tz => tz.id !== id))
-          toast({
-            type: "success",
-            title: "Timezone Removed",
+          toast.success("Timezone Removed", {
             description: `${timezone.label} removed from comparison`
           })
         } else {
@@ -268,9 +250,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
         }
       } catch (error) {
         console.error('Error removing timezone:', error)
-        toast({
-          type: "error",
-          title: "Remove Failed",
+        toast.error("Remove Failed", {
           description: "Could not remove timezone from your account"
         })
       }
@@ -294,15 +274,11 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
       
       await navigator.clipboard.writeText(textToCopy)
       
-      toast({
-        type: "success",
-        title: "Copied!",
+      toast.success("Copied!", {
         description: `${label} ${format === 'iso' ? 'ISO format' : 'time'} copied to clipboard`
       })
     } catch (error) {
-      toast({
-        type: "error",
-        title: "Copy Failed",
+      toast.error("Copy Failed", {
         description: "Unable to copy to clipboard"
       })
     }
@@ -321,15 +297,11 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
 
       await navigator.clipboard.writeText(results)
       
-      toast({
-        type: "success",
-        title: "Copied!",
+      toast.success("Copied!", {
         description: "All timezone results copied to clipboard"
       })
     } catch (error) {
-      toast({
-        type: "error",
-        title: "Copy Failed",
+      toast.error("Copy Failed", {
         description: "Unable to copy to clipboard"
       })
     }

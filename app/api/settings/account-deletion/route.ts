@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { deleteUserAccount } from '@/app/actions/delete-user'
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,6 +17,26 @@ export async function POST(request: NextRequest) {
     const { action, reason, password } = body
 
     switch (action) {
+      case 'delete_account_immediate':
+        // Use server action to delete user account
+        try {
+          const result = await deleteUserAccount(user.id, reason)
+          
+          if (!result.success) {
+            return NextResponse.json({ error: result.error }, { status: 500 })
+          }
+
+          return NextResponse.json({ 
+            message: result.message,
+            deleted_at: result.deleted_at,
+            deletionResults: result.deletionResults
+          })
+
+        } catch (error) {
+          console.error('Error deleting account:', error)
+          return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 })
+        }
+
       case 'initiate_deletion':
         if (!password) {
           return NextResponse.json({ error: 'Password is required' }, { status: 400 })

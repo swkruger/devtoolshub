@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { useImageCompressionWorker } from '../hooks/use-image-compression-worker';
 import HelpPanel from './help-panel';
-import { useToast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 import { imageCompressionDB } from '@/lib/services/image-compression-db';
 
 interface ImageCompressorClientProps {
@@ -65,7 +65,7 @@ interface CompressionSettings {
 }
 
 export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCompressorClientProps) {
-  const { toast } = useToast();
+
   const [images, setImages] = useState<ImageFile[]>([]);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isBatchProcessingOpen, setIsBatchProcessingOpen] = useState(false);
@@ -309,9 +309,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   const handleBatchUpload = () => {
     if (!isPremiumUser) {
       // Show upgrade prompt
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Batch upload is a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -322,9 +320,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   const handleBatchProcessing = async () => {
     if (!isPremiumUser) {
       // Show upgrade prompt
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Batch processing is a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -365,9 +361,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   const handleBulkDownload = () => {
     if (!isPremiumUser) {
       // Show upgrade prompt
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Bulk download is a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -450,9 +444,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   const handleAdvancedSettings = () => {
     if (!isPremiumUser) {
       // Show upgrade prompt
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Advanced settings are a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -463,9 +455,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   const handleFormatConversion = () => {
     if (!isPremiumUser) {
       // Show upgrade prompt
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Format conversion is a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -475,9 +465,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
 
   const handleSaveSettings = () => {
     if (!isPremiumUser) {
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Save settings is a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -489,9 +477,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
 
   const handleConfirmSaveSettings = async () => {
     if (!settingsName.trim()) {
-      toast({
-        type: 'error',
-        title: 'Settings Name Required',
+      toast.error('Settings Name Required', {
         description: 'Please enter a name for your settings.'
       });
       return;
@@ -505,9 +491,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       });
       
       if (result.success) {
-        toast({
-          type: 'success',
-          title: 'Settings Saved',
+        toast.success('Settings Saved', {
           description: `Settings "${settingsName}" saved successfully!`
         });
         
@@ -520,17 +504,13 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
         // Refresh the saved settings list
         await loadSavedSettings();
       } else {
-        toast({
-          type: 'error',
-          title: 'Save Failed',
+        toast.error('Save Failed', {
           description: result.error || 'Failed to save settings'
         });
       }
     } catch (error) {
       console.error('Error saving settings:', error);
-      toast({
-        type: 'error',
-        title: 'Save Failed',
+      toast.error('Save Failed', {
         description: 'An unexpected error occurred while saving settings'
       });
     }
@@ -541,9 +521,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       const result = await imageCompressionDB.getFavorites();
       
       if (result.error) {
-        toast({
-          type: 'error',
-          title: 'Load Failed',
+        toast.error('Load Failed', {
           description: result.error || 'Failed to load saved settings'
         });
         return;
@@ -552,9 +530,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       setSavedSettings(result.data || []);
     } catch (error) {
       console.error('Error loading saved settings:', error);
-      toast({
-        type: 'error',
-        title: 'Load Failed',
+      toast.error('Load Failed', {
         description: 'An unexpected error occurred while loading settings'
       });
     }
@@ -562,9 +538,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
 
   const handleLoadSettings = async () => {
     if (!isPremiumUser) {
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Load settings is a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -577,9 +551,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   const handleApplySavedSettings = (settings: any) => {
     setCompressionSettings(settings.settings);
     setIsLoadSettingsOpen(false);
-    toast({
-      type: 'success',
-      title: 'Settings Loaded',
+    toast.success('Settings Loaded', {
       description: `Loaded settings: ${settings.name}`
     });
   };
@@ -593,24 +565,18 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       });
       
       if (result.success) {
-        toast({
-          type: 'success',
-          title: 'Default Set',
+        toast.success('Default Set', {
           description: `"${settings.name}" set as default settings`
         });
         await loadSavedSettings(); // Refresh the list to show updated default status
       } else {
-        toast({
-          type: 'error',
-          title: 'Set Default Failed',
+        toast.error('Set Default Failed', {
           description: result.error || 'Failed to set as default'
         });
       }
     } catch (error) {
       console.error('Error setting default:', error);
-      toast({
-        type: 'error',
-        title: 'Set Default Failed',
+      toast.error('Set Default Failed', {
         description: 'An unexpected error occurred'
       });
     }
@@ -622,23 +588,17 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       
       if (result.success) {
         setSavedSettings(prev => prev.filter(setting => setting.id !== id));
-        toast({
-          type: 'success',
-          title: 'Settings Deleted',
+        toast.success('Settings Deleted', {
           description: 'Settings deleted successfully!'
         });
       } else {
-        toast({
-          type: 'error',
-          title: 'Delete Failed',
+        toast.error('Delete Failed', {
           description: result.error || 'Failed to delete settings'
         });
       }
     } catch (error) {
       console.error('Error deleting settings:', error);
-      toast({
-        type: 'error',
-        title: 'Delete Failed',
+      toast.error('Delete Failed', {
         description: 'An unexpected error occurred while deleting settings'
       });
     }
@@ -647,9 +607,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   const handleSaveHistory = async () => {
     if (!isPremiumUser) {
       // Show upgrade prompt
-      toast({
-        type: 'error',
-        title: 'Premium Feature Required',
+      toast.error('Premium Feature Required', {
         description: 'Saving compression history is a premium feature. Please upgrade to access this feature.'
       });
       return;
@@ -665,9 +623,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       setIsHistoryOpen(true);
     } catch (error) {
       console.error('Error loading compression history:', error);
-      toast({
-        type: 'error',
-        title: 'Error Loading History',
+      toast.error('Error Loading History', {
         description: 'Failed to load compression history. Please try again.'
       });
     } finally {
@@ -762,9 +718,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       const defaultSettings = await imageCompressionDB.getDefaultSettings();
       if (defaultSettings) {
         setCompressionSettings(defaultSettings.settings);
-        toast({
-          type: 'success',
-          title: 'Default Settings Loaded',
+        toast.success('Default Settings Loaded', {
           description: `Loaded default settings: ${defaultSettings.name}`
         });
       }
@@ -1903,9 +1857,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                           onClick={() => {
                             setCompressionSettings(entry.settings);
                             setIsHistoryOpen(false);
-                            toast({
-                              type: 'success',
-                              title: 'Settings Applied',
+                            toast.success('Settings Applied', {
                               description: `Applied settings from ${entry.original_filename}`
                             });
                           }}
@@ -1922,15 +1874,11 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                             try {
                               await imageCompressionDB.deleteHistory(entry.id);
                               setCompressionHistory(compressionHistory.filter(h => h.id !== entry.id));
-                              toast({
-                                type: 'success',
-                                title: 'Entry Deleted',
+                              toast.success('Entry Deleted', {
                                 description: 'History entry removed successfully'
                               });
                             } catch (error) {
-                              toast({
-                                type: 'error',
-                                title: 'Error',
+                              toast.error('Error', {
                                 description: 'Failed to delete history entry'
                               });
                             }

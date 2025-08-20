@@ -20,7 +20,6 @@ interface AccountDeletionProps {
 
 interface DeletionForm {
   confirmEmail: string
-  confirmPassword: string
   deletionReason: string
   confirmDeletion: boolean
   confirmDataLoss: boolean
@@ -28,28 +27,16 @@ interface DeletionForm {
 
 interface DeletionErrors {
   confirmEmail?: string
-  confirmPassword?: string
   deletionReason?: string
   confirmDeletion?: string
   confirmDataLoss?: string
 }
 
-interface DeletionStatus {
-  id: string
-  user_id: string
-  deletion_requested_at: string
-  deletion_scheduled_at: string
-  deletion_reason?: string
-  data_exported: boolean
-  recovery_token: string
-  is_cancelled: boolean
-  cancelled_at?: string
-}
+
 
 export default function AccountDeletion({ user, isPremiumUser }: AccountDeletionProps) {
   const [deletionForm, setDeletionForm] = useState<DeletionForm>({
     confirmEmail: '',
-    confirmPassword: '',
     deletionReason: '',
     confirmDeletion: false,
     confirmDataLoss: false
@@ -58,26 +45,8 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
   const [errors, setErrors] = useState<DeletionErrors>({})
   const [isLoading, setIsLoading] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
-  const [deletionStatus, setDeletionStatus] = useState<DeletionStatus | null>(null)
-  const [isCancelling, setIsCancelling] = useState(false)
 
-  // Check for existing deletion request on component mount
-  useEffect(() => {
-    checkDeletionStatus()
-  }, [])
 
-  const checkDeletionStatus = async () => {
-    try {
-      const response = await fetch('/api/settings/account-deletion')
-      const data = await response.json()
-      
-      if (response.ok && data.deletion) {
-        setDeletionStatus(data.deletion)
-      }
-    } catch (error) {
-      console.error('Error checking deletion status:', error)
-    }
-  }
 
   const validateForm = (): boolean => {
     const newErrors: DeletionErrors = {}
@@ -87,11 +56,6 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
       newErrors.confirmEmail = 'Email confirmation is required'
     } else if (deletionForm.confirmEmail !== user.email) {
       newErrors.confirmEmail = 'Email must match your account email'
-    }
-
-    // Password validation
-    if (!deletionForm.confirmPassword) {
-      newErrors.confirmPassword = 'Password confirmation is required'
     }
 
     // Reason validation (optional but recommended)
@@ -125,25 +89,14 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
     setIsExporting(true)
     
     try {
-      // Simulate data export
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Fetch all user data from the API
+      const response = await fetch('/api/settings/export-data')
       
-      // In a real app, this would generate and download a JSON file
-      const exportData = {
-        user: {
-          id: user.id,
-          email: user.email,
-          created_at: user.created_at
-        },
-        profile: {
-          // Add profile data here
-        },
-        preferences: {
-          // Add preferences data here
-        },
-        // Add other user data here
-        exported_at: new Date().toISOString()
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data')
       }
+      
+      const exportData = await response.json()
       
       // Create and download file
       const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
@@ -182,8 +135,7 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          action: 'initiate_deletion',
-          password: deletionForm.confirmPassword,
+          action: 'delete_account_immediate',
           reason: deletionForm.deletionReason || undefined
         })
       })
@@ -194,15 +146,31 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
         throw new Error(data.error || 'Failed to initiate account deletion')
       }
 
-      toast.success('Account deletion scheduled successfully! You have 30 days to cancel.')
+      toast.success('Account deleted successfully! You will be signed out and redirected to the home page.')
       
-      // Refresh deletion status
-      await checkDeletionStatus()
+      // Sign out and redirect to home page after a short delay
+      setTimeout(async () => {
+        try {
+          // Sign out from Supabase
+          const { createClient } = await import('@supabase/supabase-js')
+          const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          )
+          await supabase.auth.signOut()
+        } catch (error) {
+          console.error('Error signing out:', error)
+        }
+        
+        // Redirect to home page
+        window.location.href = '/'
+      }, 2000)
+      
+
       
       // Clear form
       setDeletionForm({
         confirmEmail: '',
-        confirmPassword: '',
         deletionReason: '',
         confirmDeletion: false,
         confirmDataLoss: false
@@ -216,99 +184,9 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
     }
   }
 
-  const handleCancelDeletion = async () => {
-    setIsCancelling(true)
 
-    try {
-      const response = await fetch('/api/settings/account-deletion', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'cancel_deletion'
-        })
-      })
 
-      const data = await response.json()
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to cancel account deletion')
-      }
-
-      toast.success('Account deletion cancelled successfully!')
-      setDeletionStatus(null)
-    } catch (error) {
-      console.error('Cancel deletion error:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to cancel account deletion')
-    } finally {
-      setIsCancelling(false)
-    }
-  }
-
-  // If there's an active deletion request, show status
-  if (deletionStatus && !deletionStatus.is_cancelled) {
-    const scheduledDate = new Date(deletionStatus.deletion_scheduled_at)
-    const daysLeft = Math.ceil((scheduledDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-    
-    return (
-      <div className="space-y-6">
-        <Alert className="border-orange-200 bg-orange-50">
-          <AlertTriangle className="h-4 w-4 text-orange-600" />
-          <AlertDescription className="text-orange-800">
-            <strong>Account Deletion Scheduled:</strong> Your account will be permanently deleted on{' '}
-            {scheduledDate.toLocaleDateString()} ({daysLeft} days remaining).
-          </AlertDescription>
-        </Alert>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-orange-600">
-              <Shield className="w-5 h-5" />
-              <span>Deletion Status</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-sm font-medium">Scheduled Date:</span>
-                <span className="text-sm">{scheduledDate.toLocaleDateString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm font-medium">Days Remaining:</span>
-                <span className="text-sm">{daysLeft}</span>
-              </div>
-              {deletionStatus.deletion_reason && (
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium">Reason:</span>
-                  <span className="text-sm text-muted-foreground">{deletionStatus.deletion_reason}</span>
-                </div>
-              )}
-            </div>
-            
-            <Separator />
-            
-            <div className="flex justify-end space-x-3">
-              <Button 
-                variant="outline"
-                onClick={handleCancelDeletion}
-                disabled={isCancelling}
-              >
-                {isCancelling ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
-                    Cancelling...
-                  </>
-                ) : (
-                  'Cancel Deletion'
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
 
   return (
     <div className="space-y-6">
@@ -321,15 +199,18 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="text-sm text-muted-foreground">
-            <p>Before deleting your account, you can export all your data including:</p>
-            <ul className="list-disc list-inside mt-2 space-y-1">
-              <li>Profile information and preferences</li>
-              <li>Saved tool data and history</li>
-              <li>Subscription and billing information</li>
-              <li>Account activity and security logs</li>
-            </ul>
-          </div>
+                     <div className="text-sm text-muted-foreground">
+             <p>Before deleting your account, you can export all your data including:</p>
+             <ul className="list-disc list-inside mt-2 space-y-1">
+               <li>Account information and authentication data</li>
+               <li>Profile information and preferences</li>
+               <li>Notification settings and security preferences</li>
+               <li>Active sessions and login history</li>
+               <li>Subscription and billing information</li>
+               <li>Account activity and audit logs</li>
+               <li>Account deletion requests (if any)</li>
+             </ul>
+           </div>
           <Button 
             variant="outline" 
             className="flex items-center space-x-2"
@@ -396,26 +277,7 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password *</Label>
-                <Input 
-                  id="confirmPassword" 
-                  type="password"
-                  placeholder="Enter your password to confirm"
-                  value={deletionForm.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  className={errors.confirmPassword ? 'border-red-500' : ''}
-                />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-red-500 flex items-center space-x-1">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>{errors.confirmPassword}</span>
-                  </p>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  Enter your current password to confirm account deletion
-                </p>
-              </div>
+
 
               <div className="space-y-2">
                 <Label htmlFor="deletionReason">Reason for Deletion (Optional)</Label>
@@ -447,7 +309,7 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
                    />
                   <Label htmlFor="confirmDeletion" className="text-sm text-red-800 leading-relaxed">
                     I understand that this action is permanent and cannot be undone. 
-                    All my data will be permanently deleted after a 30-day grace period.
+                    All my data will be permanently deleted immediately.
                   </Label>
                 </div>
                 {errors.confirmDeletion && (
@@ -481,8 +343,8 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
 
             <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">
-                <p>Account will be permanently deleted after 30 days</p>
-                <p>You can cancel deletion during the grace period</p>
+                <p>Account will be permanently deleted immediately</p>
+                <p>This action cannot be undone</p>
               </div>
               <Button 
                 type="submit"
@@ -507,22 +369,7 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
         </CardContent>
       </Card>
 
-      {/* Recovery Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Shield className="w-5 h-5" />
-            <span>Account Recovery</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="text-sm text-muted-foreground">
-            <p><strong>30-Day Grace Period:</strong> After requesting deletion, your account will be marked for deletion but remain accessible for 30 days.</p>
-            <p className="mt-2"><strong>Recovery:</strong> You can cancel the deletion request at any time during this period by logging in and clicking &quot;Cancel Deletion&quot;.</p>
-            <p className="mt-2"><strong>Permanent Deletion:</strong> After 30 days, your account and all associated data will be permanently removed and cannot be recovered.</p>
-          </div>
-        </CardContent>
-      </Card>
+
     </div>
   )
 }

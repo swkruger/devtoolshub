@@ -19,7 +19,7 @@ import {
   Zap,
   X
 } from 'lucide-react'
-import { useToast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 import { 
   COMPREHENSIVE_PATTERNS, 
   PATTERN_CATEGORIES,
@@ -39,7 +39,7 @@ interface PatternLibraryProps {
 }
 
 export function PatternLibrary({ isOpen, onClose, isPremiumUser, onLoadPattern }: PatternLibraryProps) {
-  const { toast } = useToast()
+
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
@@ -77,9 +77,7 @@ export function PatternLibrary({ isOpen, onClose, isPremiumUser, onLoadPattern }
 
   const handleLoadPattern = useCallback((pattern: PatternLibraryItem) => {
     if (!isPremiumUser) {
-      toast({
-        type: 'warning',
-        title: 'Premium Feature',
+      toast.warning('Premium Feature', {
         description: 'Pattern library requires a premium plan'
       })
       return
@@ -88,18 +86,14 @@ export function PatternLibrary({ isOpen, onClose, isPremiumUser, onLoadPattern }
     onLoadPattern(pattern)
     onClose()
     
-    toast({
-      type: 'success',
-      title: 'Pattern loaded',
+    toast.success('Pattern loaded', {
       description: `Loaded "${pattern.name}" pattern`
     })
   }, [isPremiumUser, onLoadPattern, onClose, toast])
 
   const copyPatternToClipboard = useCallback((pattern: PatternLibraryItem) => {
     navigator.clipboard.writeText(pattern.pattern).then(() => {
-      toast({
-        type: 'success',
-        title: 'Copied to clipboard',
+      toast.success('Copied to clipboard', {
         description: `Pattern "${pattern.name}" copied`
       })
     })

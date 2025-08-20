@@ -25,7 +25,7 @@ import {
   RefreshCw,
   Clock
 } from 'lucide-react'
-import { useToast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 import HtmlEditor from './html-editor'
 import SelectorEditor from './selector-editor'
 import HelpPanel from './help-panel'
@@ -68,7 +68,7 @@ function useDebounce(value: any, delay: number) {
 }
 
 export default function XPathTesterClient({ isPremiumUser, userId }: XPathTesterClientProps) {
-  const { toast } = useToast()
+
   const [htmlContent, setHtmlContent] = useState('')
   const [xpathSelector, setXpathSelector] = useState('')
   const [cssSelector, setCssSelector] = useState('')
@@ -336,9 +336,7 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
     } else {
       setCssSelector(sampleCSS)
     }
-    toast({
-      type: 'success',
-      title: 'Sample Loaded',
+    toast.success('Sample Loaded', {
       description: 'Sample HTML and selector loaded successfully'
     })
   }
@@ -349,9 +347,7 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
       setXpathSelector('')
       setCssSelector('')
       setResults(null)
-      toast({
-        type: 'success',
-        title: 'Cleared',
+      toast.success('Cleared', {
         description: 'All inputs cleared successfully'
       })
     }
@@ -360,15 +356,11 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
-      toast({
-        type: 'success',
-        title: 'Copied',
+      toast.success('Copied', {
         description: 'Content copied to clipboard'
       })
     } catch (error) {
-      toast({
-        type: 'error',
-        title: 'Copy Failed',
+      toast.error('Copy Failed', {
         description: 'Failed to copy to clipboard'
       })
     }
@@ -378,15 +370,11 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
     if (!htmlContent.trim() || (!xpathSelector.trim() && !cssSelector.trim())) {
       if (!isLive) {
         if (!htmlContent.trim()) {
-          toast({
-            type: 'error',
-            title: 'Missing Content',
+          toast.error('Missing Content', {
             description: 'Please enter HTML content'
           })
         } else {
-          toast({
-            type: 'error',
-            title: 'Missing Selector',
+          toast.error('Missing Selector', {
             description: 'Please enter a selector'
           })
         }
@@ -397,9 +385,7 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
     const selector = activeTab === 'xpath' ? xpathSelector : cssSelector
     if (!selector.trim()) {
       if (!isLive) {
-        toast({
-          type: 'error',
-          title: 'Missing Selector',
+        toast.error('Missing Selector', {
           description: 'Please enter a selector'
         })
       }
@@ -500,30 +486,22 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
 
       if (!isLive) {
         if (error) {
-          toast({
-            type: 'error',
-            title: 'XPath Error',
+          toast.error('XPath Error', {
             description: error
           })
         } else if (matches.length === 0) {
-          toast({
-            type: 'info',
-            title: 'No Matches',
+          toast.info('No Matches', {
             description: 'No matches found for the selector'
           })
         } else {
-          toast({
-            type: 'success',
-            title: 'Matches Found',
+          toast.success('Matches Found', {
             description: `Found ${matches.length} match${matches.length === 1 ? '' : 'es'}`
           })
         }
       }
     } catch (error) {
       if (!isLive) {
-        toast({
-          type: 'error',
-          title: 'Test Failed',
+        toast.error('Test Failed', {
           description: 'Failed to test selector'
         })
       }
@@ -592,18 +570,14 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
     if (!file) return
 
     if (!isPremiumUser) {
-      toast({
-        type: 'error',
-        title: 'Premium Feature',
+      toast.error('Premium Feature', {
         description: 'File upload is a premium feature. Please upgrade to use this feature.'
       })
       return
     }
 
     if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      toast({
-        type: 'error',
-        title: 'File Too Large',
+      toast.error('File Too Large', {
         description: 'File size must be less than 5MB'
       })
       return
@@ -613,9 +587,7 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
     reader.onload = (e) => {
       const content = e.target?.result as string
       setHtmlContent(content)
-      toast({
-        type: 'success',
-        title: 'File Loaded',
+      toast.success('File Loaded', {
         description: 'HTML file loaded successfully'
       })
     }
@@ -624,18 +596,14 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
 
   const fetchUrl = async () => {
     if (!urlInput.trim()) {
-      toast({
-        type: 'error',
-        title: 'Missing URL',
+      toast.error('Missing URL', {
         description: 'Please enter a URL'
       })
       return
     }
 
     if (!isPremiumUser) {
-      toast({
-        type: 'error',
-        title: 'Premium Feature',
+      toast.error('Premium Feature', {
         description: 'URL fetching is a premium feature. Please upgrade to use this feature.'
       })
       return
@@ -649,15 +617,11 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
       }
       const data = await response.json()
       setHtmlContent(data.html)
-      toast({
-        type: 'success',
-        title: 'URL Loaded',
+      toast.success('URL Loaded', {
         description: 'URL content loaded successfully'
       })
     } catch (error) {
-      toast({
-        type: 'error',
-        title: 'Fetch Failed',
+      toast.error('Fetch Failed', {
         description: 'Failed to fetch URL content'
       })
     } finally {
@@ -667,9 +631,7 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
 
   const exportResults = () => {
     if (!results || !isPremiumUser) {
-      toast({
-        type: 'error',
-        title: 'Premium Feature',
+      toast.error('Premium Feature', {
         description: 'Export is a premium feature. Please upgrade to use this feature.'
       })
       return
@@ -693,9 +655,7 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-    toast({
-      type: 'success',
-      title: 'Exported',
+    toast.success('Exported', {
       description: 'Results exported successfully'
     })
   }

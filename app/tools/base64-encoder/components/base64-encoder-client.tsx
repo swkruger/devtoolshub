@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/components/ui/toast"
+import { toast } from "sonner"
 
 import {
   encodeTextToBase64,
@@ -40,9 +40,8 @@ type ConversionMode = 'encode' | 'decode'
 type InputType = 'text' | 'file'
 
 export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClientProps) {
-  const { toast } = useToast()
-  const showSuccess = (title: string, description?: string) => toast({ type: 'success', title, description })
-  const showError = (title: string, description?: string) => toast({ type: 'error', title, description })
+  const showSuccess = (title: string, description?: string) => toast.success(title, { description })
+  const showError = (title: string, description?: string) => toast.error(title, { description })
   
   // Core state
   const [activeTab, setActiveTab] = useState("single")
@@ -337,9 +336,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
       const newHistory = [newEntry, ...history]
       saveHistory(newHistory)
       
-      toast({
-        type: "success",
-        title: "Added to History",
+      toast.success("Added to History", {
         description: "Conversion saved to history"
       })
     } catch (error) {
