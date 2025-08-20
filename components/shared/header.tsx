@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -24,19 +25,84 @@ interface HeaderProps {
 
 export function Header({ user }: HeaderProps) {
   const router = useRouter()
+  const [isSigningOut, setIsSigningOut] = useState(false)
 
   const handleSignOut = async () => {
+    if (isSigningOut) {
+      console.log('Sign out already in progress, ignoring click')
+      return
+    }
+    
+    setIsSigningOut(true)
     try {
-      console.log('User clicked sign out')
-      await authClient.signOut()
-      console.log('Sign out completed, redirecting to home page')
+      console.log('User clicked sign out - starting immediate sign out...')
       
-      // Force a full page reload to clear all client-side state
-      window.location.href = '/'
+      // Step 1: Clear all client-side storage immediately
+      console.log('Clearing all client-side storage...')
+      localStorage.clear()
+      sessionStorage.clear()
+      
+      // Step 2: Clear all Supabase and OAuth cookies aggressively
+      console.log('Clearing all authentication cookies...')
+      const allCookies = document.cookie.split(';')
+      allCookies.forEach(cookie => {
+        const eqPos = cookie.indexOf('=')
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
+        // Clear all possible authentication cookies
+        if (name.includes('supabase') || name.includes('sb-') || name.includes('auth') || 
+            name.includes('oauth') || name.includes('google') || name.includes('github') ||
+            name.includes('session') || name.includes('token')) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${window.location.hostname};`
+        }
+      })
+      
+      // Step 3: Set force reauth flag
+      localStorage.setItem('force_reauth', 'true')
+      
+      // Step 4: Try server-side sign out in background (don't wait for it)
+      console.log('Attempting server-side sign out in background...')
+      try {
+        fetch('/api/auth/signout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }).then(() => {
+          console.log('Server-side sign out completed')
+        }).catch((error) => {
+          console.log('Server-side sign out failed:', error)
+        })
+      } catch (error) {
+        console.log('Could not initiate server-side sign out:', error)
+      }
+      
+      // Step 5: Try client-side Supabase sign out in background (don't wait for it)
+      console.log('Attempting client-side Supabase sign out in background...')
+      try {
+        const { createSupabaseClient } = await import('@/lib/supabase')
+        const supabase = createSupabaseClient()
+        supabase.auth.signOut().then(() => {
+          console.log('Client-side Supabase sign out completed')
+        }).catch((error) => {
+          console.log('Client-side Supabase sign out failed:', error)
+        })
+      } catch (error) {
+        console.log('Could not initiate client-side Supabase sign out:', error)
+      }
+      
+      // Step 6: Redirect immediately to sign-in page
+      console.log('Redirecting to sign-in page immediately...')
+      window.location.href = '/sign-in?force_reauth=true'
+      
     } catch (error) {
       console.error('Failed to sign out:', error)
-      // Even if sign out fails, redirect to home page
-      window.location.href = '/'
+      // Even if everything fails, just clear storage and redirect
+      console.log('Fallback: clearing storage and redirecting...')
+      localStorage.clear()
+      sessionStorage.clear()
+      window.location.href = '/sign-in?force_reauth=true'
     }
   }
 
@@ -89,11 +155,11 @@ export function Header({ user }: HeaderProps) {
                   <Link href="/dashboard">Dashboard</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/billing">Billing</Link>
+                  <Link href="/settings">Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
-                  Sign out
+                <DropdownMenuItem onClick={handleSignOut} disabled={isSigningOut}>
+                  {isSigningOut ? 'Signing out...' : 'Sign out'}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

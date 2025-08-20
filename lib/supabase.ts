@@ -4,6 +4,15 @@ import { createBrowserClient } from '@supabase/ssr'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
 
+// Debug environment variables (only in development)
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  console.log('Supabase client config:', {
+    url: supabaseUrl,
+    hasAnonKey: !!supabaseAnonKey,
+    anonKeyLength: supabaseAnonKey?.length
+  })
+}
+
 // Only check in runtime, not during build
 if (typeof window !== 'undefined' && supabaseUrl.includes('placeholder')) {
   console.warn('Missing Supabase environment variables. Please configure your .env.local file.')
@@ -11,7 +20,14 @@ if (typeof window !== 'undefined' && supabaseUrl.includes('placeholder')) {
 
 // Client component Supabase client (for use in Client Components)
 export const createSupabaseClient = () => {
-  return createBrowserClient(supabaseUrl, supabaseAnonKey)
+  const client = createBrowserClient(supabaseUrl, supabaseAnonKey)
+  
+  // Debug client creation
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    console.log('Created Supabase browser client')
+  }
+  
+  return client
 }
 
 // Types for database tables

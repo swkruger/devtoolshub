@@ -25,7 +25,7 @@ It simplifies workflows by combining popular developer web tools into one extend
 
 ## 🚀 **DevToolsHub: Production-Ready Developer Tools Platform**
 
-**9 Production-Ready Tools Available Now** • **Real-time Processing** • **Premium Features** • **Mobile-First Design**
+**9 Production-Ready Tools Available Now** • **Complete User Management System** • **Real-time Processing** • **Premium Features** • **Mobile-First Design**
 
 ### ✨ What Makes DevToolsHub Special
 
@@ -34,6 +34,7 @@ It simplifies workflows by combining popular developer web tools into one extend
 - **🎨 Consistent UX**: Unified design language with advanced highlighting systems
 - **📱 Mobile-First**: Responsive design that works beautifully on all devices
 - **🔐 Secure & Private**: Supabase auth with row-level security
+- **👤 Complete User Management**: Full settings system with profile, subscription, security, and account management
 - **🚀 Production Ready**: Successfully builds and deploys with zero errors
 
 ## 🏗 Quick Start
@@ -275,6 +276,7 @@ The Timestamp Converter is a comprehensive tool for working with timestamps and 
 | 🔄 Base64 Encoder | ✅ Complete | Encode/decode Base64 data with file support & premium features |
 
 ### 🏆 Recent Achievements (January 2025)
+- ✅ **Complete User Management System**: Full settings page with profile, subscription, security, and account management
 - ✅ **9 Complete Tools**: All core developer tools fully implemented and tested
 - ✅ **NEW World Clock & Time Zone Converter**: Compare timezones with meeting planner, live weather data, date picker for any past/future dates, city persistence, business hours visualization, and advanced timezone navigation
 - ✅ **Enhanced Base64 Encoder/Decoder**: Text & file encoding with URL-safe options, drag & drop, premium features
@@ -881,6 +883,43 @@ DevToolsHub includes a static documentation generator for every tool.
   - Produces per-tool pages, `sitemap.xml`, `robots.txt`, and an Atom `feed.xml`
 - Light/dark mode is supported (prefers-color-scheme).
 - Public access: Unauthenticated `/tools/<slug>` requests are redirected to `/docs/<slug>` for a frictionless, crawlable experience.
+
+## 👤 User Management System
+
+Complete user settings and account management system with production-ready features.
+
+### Profile Management
+- **Avatar Upload**: Custom profile pictures with Supabase Storage integration
+- **Profile Editing**: Real-time profile updates with OAuth integration
+- **User Preferences**: Timezone, theme, and notification settings
+- **OAuth Integration**: Seamless Google and GitHub profile synchronization
+
+### Subscription Management
+- **Stripe Integration**: Complete payment processing with checkout sessions
+- **Billing Portal**: User-friendly subscription management interface
+- **Premium Features**: Upgrade/downgrade with real-time status updates
+- **Billing History**: Complete payment history and invoice access
+- **Cancellation Flow**: Professional cancellation with end-of-period access
+
+### Security Settings
+- **Real-time Sessions**: Live session tracking with device information
+- **Session Management**: Revoke individual or all sessions
+- **Security Notifications**: Email alerts for login and new device detection
+- **OAuth-Only**: Secure authentication without password management
+- **Device Detection**: Smart detection of new device logins
+
+### Account Deletion
+- **Immediate Deletion**: No grace period - instant permanent deletion
+- **Data Export**: Comprehensive GDPR-compliant data export
+- **Complete Cleanup**: Removes all user data from Supabase and auth
+- **Professional UI**: Clear warnings and confirmation modals
+
+### Technical Features
+- **Database Functions**: Robust PostgreSQL functions for data management
+- **API Routes**: Complete REST API for all settings operations
+- **Error Handling**: Comprehensive error handling and user feedback
+- **Build Compatibility**: Fixed all build-time and runtime authentication issues
+- **Production Ready**: Tested and working in production environment
 
 ## 📝 Blogging System
 

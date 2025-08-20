@@ -39,7 +39,7 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { pathname } = request.nextUrl
+  const { pathname, searchParams } = request.nextUrl
 
   // Define protected routes
   const protectedRoutes = ['/dashboard', '/tools']
@@ -54,6 +54,10 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute = authRoutes.some(route => 
     pathname.startsWith(route)
   )
+
+  // Check if this is a logout request
+  const isLogoutRequest = searchParams.get('logout') === 'true' || 
+                         searchParams.get('force_reauth') !== null
 
   // If user is not authenticated and trying to access protected route
   if (!user && isProtectedRoute) {
@@ -70,9 +74,18 @@ export async function middleware(request: NextRequest) {
     redirectUrl.searchParams.set('redirectTo', pathname)
     return NextResponse.redirect(redirectUrl)
   }
+  
+  // If user is authenticated but we're on the home page and they just signed out,
+  // redirect them to sign-in to force re-authentication
+  if (user && pathname === '/' && searchParams.get('force_reauth') === 'true') {
+    const redirectUrl = new URL('/sign-in', request.url)
+    redirectUrl.searchParams.set('force_reauth', 'true')
+    return NextResponse.redirect(redirectUrl)
+  }
 
   // If user is authenticated and trying to access auth routes, redirect to dashboard
-  if (user && isAuthRoute && pathname !== '/auth/callback') {
+  // BUT NOT if this is a logout request
+  if (user && isAuthRoute && pathname !== '/auth/callback' && !isLogoutRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

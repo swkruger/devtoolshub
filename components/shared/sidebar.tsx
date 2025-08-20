@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import * as React from 'react'
 import { loadLocalFavorites, loadServerFavorites, saveLocalFavorites, toggleServerFavorite } from "@/lib/services/user-favorites"
+import { useUser } from '@/lib/useUser'
 
 // Client-only wrapper to prevent hydration issues
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -50,6 +51,50 @@ interface SidebarProps {
 
 export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
   const pathname = usePathname()
+  const { user, loading } = useUser()
+  const [apiPremiumStatus, setApiPremiumStatus] = React.useState<boolean | null>(null)
+  const [apiLoading, setApiLoading] = React.useState(true)
+  
+  // Determine premium status - prioritize API result since useUser is not working
+  const isPremiumUser = apiPremiumStatus === true || user?.plan === 'premium'
+  const shouldShowGoPremium = !apiLoading && !isPremiumUser
+  
+  // Debug logging
+  console.log('Sidebar - User data:', { 
+    user, 
+    loading, 
+    isPremiumUser, 
+    plan: user?.plan, 
+    apiPremiumStatus,
+    apiLoading,
+    shouldShowGoPremium,
+    userId: user?.id 
+  })
+  
+  // Fetch premium status from API on component mount
+  React.useEffect(() => {
+    const fetchPremiumStatus = async () => {
+      try {
+        console.log('Sidebar - Fetching premium status from API')
+        setApiLoading(true)
+        const response = await fetch('/api/user/premium-status')
+        if (response.ok) {
+          const data = await response.json()
+          console.log('Sidebar - API premium status:', data)
+          setApiPremiumStatus(data.isPremium)
+        } else {
+          console.error('Sidebar - API error:', response.status, response.statusText)
+        }
+      } catch (error) {
+        console.error('Sidebar - Error fetching premium status:', error)
+      } finally {
+        setApiLoading(false)
+      }
+    }
+    
+    fetchPremiumStatus()
+  }, [])
+  
   const tools = React.useMemo(() => getAllTools().map(tool => ({
     id: tool.id,
     name: tool.name,
@@ -274,19 +319,21 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
         {/* Bottom Actions */}
         <div className="px-3 py-2">
           <div className="space-y-1">
-            <Button
-              variant="ghost"
-              className={cn(
-                "w-full justify-start",
-                isCollapsed && "justify-center px-2"
-              )}
-              asChild
-            >
-              <Link href="/billing">
-                <Crown className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                {!isCollapsed && "Go Premium"}
-              </Link>
-            </Button>
+            {shouldShowGoPremium && (
+              <Button
+                variant="ghost"
+                className={cn(
+                  "w-full justify-start",
+                  isCollapsed && "justify-center px-2"
+                )}
+                asChild
+              >
+                <Link href="/go-premium">
+                  <Crown className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
+                  {!isCollapsed && "Go Premium"}
+                </Link>
+              </Button>
+            )}
             <Button
               variant="ghost"
               className={cn(

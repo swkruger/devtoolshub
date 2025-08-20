@@ -36,11 +36,8 @@ export function UpgradeModal({ isOpen, onClose, feature, context = 'general' }: 
   
   const handleUpgrade = async () => {
     setIsLoading(true)
-    // TODO: Implement actual upgrade flow
-    setTimeout(() => {
-      setIsLoading(false)
-      onClose()
-    }, 2000)
+    // Redirect to the Go Premium page
+    window.location.href = '/go-premium'
   }
 
   return (

@@ -19,6 +19,7 @@ import {
   Briefcase
 } from 'lucide-react'
 import { format } from 'date-fns'
+import Link from 'next/link'
 import { CityTimezone, MeetingTimeSlot, formatDisplayTime, generateICalEvent } from '../lib/timezone-utils'
 
 interface MeetingPlannerProps {
@@ -116,9 +117,11 @@ export default function MeetingPlanner({
               </div>
             </div>
             
-            <Button size="lg">
-              <Crown className="w-4 h-4 mr-2" />
-              Upgrade to Premium
+            <Button size="lg" asChild>
+              <Link href="/go-premium">
+                <Crown className="w-4 h-4 mr-2" />
+                Upgrade to Premium
+              </Link>
             </Button>
           </div>
         </CardContent>

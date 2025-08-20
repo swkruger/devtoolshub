@@ -8,6 +8,21 @@ export type ChangelogEntry = {
 // Update this list after each major tool development or release
 export const getChangelog = (): ChangelogEntry[] => [
   {
+    date: '2025-08-20',
+    title: 'User Settings & Account Management – Complete',
+    tags: ['settings', 'profile', 'subscription', 'security', 'stripe'],
+    items: [
+      'Complete user settings page with profile, subscription, security, and account management',
+      'Profile management with avatar upload, OAuth integration, and real-time updates',
+      'Subscription management with full Stripe integration, billing portal, and webhook handling',
+      'Security settings with real-time session tracking and device-based notifications',
+      'Account deletion with immediate permanent deletion and comprehensive data export',
+      'Database functions and API routes for robust data management and error handling',
+      'Authentication fixes for build-time and runtime compatibility',
+      'Production-ready system with comprehensive testing and user feedback',
+    ],
+  },
+  {
     date: '2025-08-14',
     title: 'Blog System – Complete Implementation',
     tags: ['blog', 'cms', 'admin', 'seo'],

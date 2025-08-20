@@ -6,16 +6,33 @@ import { sendNewUserNotification, sendWelcomeEmail } from '@/lib/email'
 // Client-side auth functions
 export const authClient = {
   // Sign in with OAuth provider
-  async signInWithOAuth(provider: 'google' | 'github') {
+  async signInWithOAuth(provider: 'google' | 'github', options?: any) {
     const supabase = createSupabaseClient()
     
     const redirectTo = `${window.location.origin}/auth/callback`
-    console.log('Starting OAuth sign-in with:', { provider, redirectTo })
+    console.log('Starting OAuth sign-in with:', { provider, redirectTo, options })
+    
+    // Force re-authentication by using appropriate OAuth parameters
+    const queryParams = {
+      // For Google: force consent screen and don't use cached credentials
+      ...(provider === 'google' && {
+        prompt: 'select_account consent',
+        access_type: 'offline',
+      }),
+      // For GitHub: force re-authentication
+      ...(provider === 'github' && {
+        prompt: 'consent',
+        scope: 'read:user user:email',
+      }),
+      // Include any additional query params
+      ...(options?.queryParams || {}),
+    }
     
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo,
+        queryParams,
       },
     })
 

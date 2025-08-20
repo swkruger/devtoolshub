@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
+import Link from "next/link"
 import { EnhancedTooltip } from "./enhanced-tooltip"
 
 interface BatchConverterProps {
@@ -258,8 +259,10 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
               <p>• Export results as CSV or JSON</p>
               <p>• Progress tracking for large batches</p>
             </div>
-            <Button className="mt-4">
-              Upgrade to Premium
+            <Button className="mt-4" asChild>
+              <Link href="/go-premium">
+                Upgrade to Premium
+              </Link>
             </Button>
           </div>
         </CardContent>

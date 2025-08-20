@@ -151,9 +151,11 @@ export default function ToolsBrowser({ initialTools }: Props) {
                 <Button 
                   className="w-full" 
                   variant="default"
-                  disabled
+                  asChild
                 >
-                  Upgrade to Access
+                  <Link href="/go-premium">
+                    Upgrade to Access
+                  </Link>
                 </Button>
               ) : (
                 <Button 

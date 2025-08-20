@@ -9,6 +9,8 @@ import { marked } from 'marked'
 import DOMPurify from 'isomorphic-dompurify'
 import ToolsBrowser from "./ToolsBrowser"
 import { getChangelog } from "@/lib/changelog"
+import { authServer } from '@/lib/auth'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 
 export const metadata: Metadata = {
   title: 'Dashboard – DevToolsHub',
@@ -21,6 +23,17 @@ import Link from "next/link"
 const tools = getAllTools()
 
 export default async function DashboardPage() {
+  // Get the current user and their profile
+  const user = await authServer.getUser()
+  const supabase = createSupabaseServerClient()
+  const { data: profile } = await supabase
+    .from('users')
+    .select('id, email, name, avatar_url, plan, stripe_customer_id')
+    .eq('id', user?.id)
+    .single()
+  
+  const isPremiumUser = profile?.plan === 'premium'
+  
   const [featuredBlogs, popularBlogs] = await Promise.all([
     listFeaturedBlogs(6),
     listPopularBlogs(6),
@@ -131,21 +144,25 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      <div className="mt-12 text-center">
-        <Card className="max-w-md mx-auto">
-          <CardHeader>
-            <CardTitle>🚀 Go Premium</CardTitle>
-            <CardDescription>
-              Unlock advanced features and remove limitations
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full">
-              Upgrade Now
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      {!isPremiumUser && (
+        <div className="mt-12 text-center">
+          <Card className="max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle>🚀 Go Premium</CardTitle>
+              <CardDescription>
+                Unlock advanced features and remove limitations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button className="w-full" asChild>
+                <Link href="/go-premium">
+                  Upgrade Now
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 } 

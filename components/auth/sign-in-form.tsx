@@ -13,12 +13,30 @@ export function SignInForm() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
   const redirectTo = searchParams.get('redirectTo') || '/dashboard'
+  const forceReauthParam = searchParams.get('force_reauth')
 
   // Check if user is already authenticated
   useEffect(() => {
+    // If force reauth is requested, clear any cached OAuth state and skip auth check
+    if (forceReauthParam === 'true') {
+      console.log('Force reauth detected, clearing OAuth state and skipping auth check...')
+      localStorage.removeItem('force_reauth')
+      // Clear any OAuth-related storage
+      sessionStorage.removeItem('oauth_state')
+      sessionStorage.removeItem('oauth_code_verifier')
+      sessionStorage.removeItem('oauth_nonce')
+      sessionStorage.removeItem('github_oauth_state')
+      sessionStorage.removeItem('google_oauth_state')
+      
+      // Skip authentication check and show sign-in form immediately
+      setIsCheckingAuth(false)
+      return
+    }
+    
     const checkAuthStatus = async (retryCount = 0) => {
       try {
         console.log('Checking auth status... (attempt', retryCount + 1, ')')
+        
         const session = await authClient.getSession()
         console.log('Session from getSession():', session)
         if (session?.user) {
@@ -52,7 +70,44 @@ export function SignInForm() {
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     try {
       setIsLoading(provider)
-      await authClient.signInWithOAuth(provider)
+      
+      // Check if we need to force re-authentication
+      const forceReauth = localStorage.getItem('force_reauth') === 'true' || forceReauthParam === 'true'
+      
+      if (forceReauth) {
+        console.log('Force re-authentication detected, using aggressive OAuth params')
+        // Clear the flag
+        localStorage.removeItem('force_reauth')
+        
+                          // Use more aggressive parameters to force account selection
+         const queryParams = {
+           ...(provider === 'google' && {
+             prompt: 'select_account consent',
+             access_type: 'offline',
+             include_granted_scopes: 'false', // Don't include previously granted scopes
+           }),
+           ...(provider === 'github' && {
+             prompt: 'consent',
+             scope: 'read:user user:email',
+             force_login: 'true', // Force login screen
+           }),
+         }
+        
+        await authClient.signInWithOAuth(provider, { queryParams })
+      } else {
+        // Even for normal flow, use some parameters to ensure fresh auth
+        const queryParams = {
+          ...(provider === 'google' && {
+            prompt: 'select_account',
+          }),
+          ...(provider === 'github' && {
+            scope: 'read:user user:email',
+          }),
+        }
+        
+        await authClient.signInWithOAuth(provider, { queryParams })
+      }
+      
       // OAuth redirect will happen automatically
     } catch (error) {
       console.error(`Failed to sign in with ${provider}:`, error)

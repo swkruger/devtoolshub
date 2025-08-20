@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
+import Link from "next/link"
 import { EnhancedTooltip } from "./enhanced-tooltip"
 import { TimezoneSlot } from "@/lib/types/user-timezones"
 
@@ -355,8 +356,10 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
               <p>• Custom timezone labels and organization</p>
               <p>• Copy individual or all timezone results</p>
             </div>
-            <Button className="mt-4">
-              Upgrade to Premium
+            <Button className="mt-4" asChild>
+              <Link href="/go-premium">
+                Upgrade to Premium
+              </Link>
             </Button>
           </div>
         </CardContent>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Search, MapPin, Globe, Clock, Crown, X, Loader2 } from 'lucide-react'
+import Link from 'next/link'
 import { City } from '../lib/cities-data'
 
 interface TimezoneSelectorProps {
@@ -200,9 +201,12 @@ export default function TimezoneSelector({
           <Button
             size="sm"
             className="mt-2 w-full bg-orange-600 hover:bg-orange-700 text-white"
+            asChild
           >
-            <Crown className="w-3 h-3 mr-1" />
-            Upgrade to Premium
+            <Link href="/go-premium">
+              <Crown className="w-3 h-3 mr-1" />
+              Upgrade to Premium
+            </Link>
           </Button>
         </div>
       )}

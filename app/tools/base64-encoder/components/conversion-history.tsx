@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
@@ -158,9 +159,11 @@ export function ConversionHistory({
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             Save and manage your conversion history with premium
           </p>
-          <Button variant="outline">
-            <Crown className="h-4 w-4 mr-2" />
-            Upgrade to Premium
+          <Button variant="outline" asChild>
+            <Link href="/go-premium">
+              <Crown className="h-4 w-4 mr-2" />
+              Upgrade to Premium
+            </Link>
           </Button>
         </CardContent>
       </Card>

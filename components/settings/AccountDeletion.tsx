@@ -151,19 +151,31 @@ export default function AccountDeletion({ user, isPremiumUser }: AccountDeletion
       // Sign out and redirect to home page after a short delay
       setTimeout(async () => {
         try {
-          // Sign out from Supabase
-          const { createClient } = await import('@supabase/supabase-js')
-          const supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-          )
-          await supabase.auth.signOut()
+          // Use the server-side sign out API
+          const response = await fetch('/api/auth/signout', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          
+          const data = await response.json()
+          
+          if (response.ok && data.success) {
+            console.log('Sign out completed successfully via API after account deletion')
+          } else {
+            console.error('Sign out API failed after account deletion:', data.error)
+          }
         } catch (error) {
-          console.error('Error signing out:', error)
+          console.error('Error signing out after account deletion:', error)
         }
         
-        // Redirect to home page
-        window.location.href = '/'
+        // Clear client-side state and redirect to home page
+        if (typeof window !== 'undefined') {
+          localStorage.clear()
+          sessionStorage.clear()
+          window.location.replace('/')
+        }
       }, 2000)
       
 

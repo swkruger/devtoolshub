@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { toast } from "sonner"
@@ -264,10 +265,12 @@ export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: 
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             Process multiple files or text entries at once with premium
           </p>
-          <Button variant="outline">
-            <Crown className="h-4 w-4 mr-2" />
-            Upgrade to Premium
-          </Button>
+                      <Button variant="outline" asChild>
+              <Link href="/go-premium">
+                <Crown className="h-4 w-4 mr-2" />
+                Upgrade to Premium
+              </Link>
+            </Button>
         </CardContent>
       </Card>
     )
