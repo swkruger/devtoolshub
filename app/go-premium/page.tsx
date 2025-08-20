@@ -29,9 +29,9 @@ export default async function GoPremiumPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">🚀 Go Premium</h1>
-        <p className="text-muted-foreground">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">Premium Subscription</h1>
+        <p className="text-gray-600 dark:text-gray-300">
           Unlock advanced features and remove limitations
         </p>
       </div>

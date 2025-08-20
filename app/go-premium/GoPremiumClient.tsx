@@ -19,7 +19,8 @@ import {
   Sparkles,
   Zap,
   Shield,
-  Clock
+  Clock,
+  Star
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatPrice, getPlanFeatures, SUBSCRIPTION_PLANS, PlanType } from '@/lib/stripe'
@@ -301,30 +302,30 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
       )}
 
       {/* Hero Section */}
-      <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800">
+      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
         <CardHeader className="text-center">
-          <div className="mx-auto w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mb-4">
-            <Crown className="w-10 h-10 text-white" />
+          <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
+            <Crown className="w-8 h-8 text-white" />
           </div>
-          <CardTitle className="text-3xl font-bold text-amber-800 dark:text-amber-200">
+          <CardTitle className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Upgrade to Premium
           </CardTitle>
-          <p className="text-lg text-amber-700 dark:text-amber-300">
+          <p className="text-lg text-gray-600 dark:text-gray-300">
             Unlock all premium features and enhance your development workflow
           </p>
         </CardHeader>
         <CardContent className="text-center">
           <div className="flex items-baseline justify-center gap-2 mb-6">
-            <span className="text-4xl font-bold text-amber-800 dark:text-amber-200">
+            <span className="text-4xl font-bold text-gray-900 dark:text-gray-100">
               ${SUBSCRIPTION_PLANS.premium.price / 100}
             </span>
-            <span className="text-lg text-amber-700 dark:text-amber-300">/month</span>
+            <span className="text-lg text-gray-600 dark:text-gray-300">/month</span>
           </div>
           <Button 
             onClick={handleUpgrade} 
             disabled={isUpgrading}
             size="lg"
-            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold px-8 py-3"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3"
           >
             {isUpgrading ? (
               <div className="flex items-center gap-2">
@@ -338,7 +339,7 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
               </div>
             )}
           </Button>
-          <p className="text-sm text-amber-600 dark:text-amber-400 mt-3">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
             Cancel anytime • 30-day money-back guarantee
           </p>
         </CardContent>
@@ -347,18 +348,18 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
       {/* Premium Benefits */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Premium Benefits</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">Premium Benefits</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6">
             {PREMIUM_BENEFITS.map((benefit, index) => (
               <div key={index} className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-amber-100 dark:bg-amber-900/20 rounded-lg flex items-center justify-center">
-                  <benefit.icon className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                  <benefit.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-lg mb-2">{benefit.title}</h4>
-                  <p className="text-muted-foreground">{benefit.description}</p>
+                  <h4 className="font-semibold text-lg mb-2 text-gray-900 dark:text-gray-100">{benefit.title}</h4>
+                  <p className="text-gray-600 dark:text-gray-300">{benefit.description}</p>
                 </div>
               </div>
             ))}
@@ -369,7 +370,7 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
       {/* Current Plan Status */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
             <CreditCard className="h-5 w-5" />
             Current Plan
           </CardTitle>
@@ -377,17 +378,17 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold flex items-center gap-2">
+              <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 {currentPlan === 'premium' ? (
                   <>
-                    <Crown className="h-5 w-5 text-yellow-500" />
+                    <Crown className="h-5 w-5 text-blue-600" />
                     Premium Plan
                   </>
                 ) : (
                   'Free Plan'
                 )}
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 {currentPlan === 'premium' ? (
                   <>
                     ${SUBSCRIPTION_PLANS.premium.price / 100}/month
@@ -427,7 +428,7 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
 
           <div className="flex gap-2">
             {currentPlan === 'free' ? (
-              <Button onClick={handleUpgrade} disabled={isUpgrading} className="flex items-center gap-2">
+              <Button onClick={handleUpgrade} disabled={isUpgrading} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
                 {isUpgrading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -469,7 +470,7 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
       {/* Plan Comparison */}
       <Card>
         <CardHeader>
-          <CardTitle>Plan Comparison</CardTitle>
+          <CardTitle className="text-gray-900 dark:text-gray-100">Plan Comparison</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-4">
@@ -478,26 +479,26 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
                 key={planKey}
                 className={`p-4 rounded-lg border ${
                   planKey === currentPlan
-                    ? 'border-primary bg-primary/5'
-                    : 'border-border'
+                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/20'
+                    : 'border-gray-200 dark:border-gray-700'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-semibold flex items-center gap-2">
-                    {planKey === 'premium' && <Crown className="h-4 w-4 text-yellow-500" />}
+                  <h4 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                    {planKey === 'premium' && <Crown className="h-4 w-4 text-blue-600" />}
                     {plan.name}
                   </h4>
                   <div className="text-right">
-                    <div className="font-bold">
+                    <div className="font-bold text-gray-900 dark:text-gray-100">
                       {plan.price === 0 ? 'Free' : formatPrice(plan.price)}
                     </div>
-                    {plan.price > 0 && <div className="text-xs text-muted-foreground">per month</div>}
+                    {plan.price > 0 && <div className="text-xs text-gray-500 dark:text-gray-400">per month</div>}
                   </div>
                 </div>
 
                 <ul className="space-y-2 mb-4">
                   {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-2 text-sm">
+                    <li key={index} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                       <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                       {feature}
                     </li>
@@ -505,7 +506,7 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
                 </ul>
 
                 {plan.limitations.length > 0 && (
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
                     <div className="font-medium mb-1">Limitations:</div>
                     <ul className="space-y-1">
                       {plan.limitations.map((limitation, index) => (
@@ -527,7 +528,7 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
       {currentPlan === 'premium' && billingHistory.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
               <Calendar className="h-5 w-5" />
               Billing History
             </CardTitle>
@@ -537,27 +538,27 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
               {billingHistory.slice(0, 5).map((invoice) => (
                 <div key={invoice.id} className="flex items-center justify-between py-2">
                   <div>
-                    <div className="font-medium">
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
                       {new Date(invoice.created * 1000).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric'
                       })}
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
                       {invoice.description || 'Premium Subscription'}
                     </div>
                     {invoice.period_start && invoice.period_end && (
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         {new Date(invoice.period_start * 1000).toLocaleDateString()} - {new Date(invoice.period_end * 1000).toLocaleDateString()}
                       </div>
                     )}
                   </div>
                   <div className="text-right">
-                    <div className="font-medium">
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
                       {invoice.amount_paid ? formatPrice(invoice.amount_paid) : 'N/A'}
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
                       {invoice.status === 'paid' ? 'Paid' : invoice.status}
                     </div>
                   </div>

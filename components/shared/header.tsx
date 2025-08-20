@@ -92,9 +92,9 @@ export function Header({ user }: HeaderProps) {
         console.log('Could not initiate client-side Supabase sign out:', error)
       }
       
-      // Step 6: Redirect immediately to sign-in page
-      console.log('Redirecting to sign-in page immediately...')
-      window.location.href = '/sign-in?force_reauth=true'
+      // Step 6: Redirect immediately to home page
+      console.log('Redirecting to home page immediately...')
+      window.location.href = '/'
       
     } catch (error) {
       console.error('Failed to sign out:', error)
@@ -102,7 +102,7 @@ export function Header({ user }: HeaderProps) {
       console.log('Fallback: clearing storage and redirecting...')
       localStorage.clear()
       sessionStorage.clear()
-      window.location.href = '/sign-in?force_reauth=true'
+      window.location.href = '/'
     }
   }
 
