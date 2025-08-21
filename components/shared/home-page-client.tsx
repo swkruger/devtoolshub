@@ -8,6 +8,7 @@ import { BookOpen, ArrowRight } from 'lucide-react'
 import { marked } from 'marked'
 import DOMPurify from 'isomorphic-dompurify'
 import { authClient } from '@/lib/auth'
+import { PricingSection } from './pricing-section'
 
 // Configure marked for consistent output
 marked.setOptions({
@@ -57,20 +58,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Development Banner */}
-      <div className="bg-blue-600 text-white py-3 px-4 text-center">
-        <p className="text-sm font-medium">
-          🚧 DevToolsHub is currently in development. 
-          Contact us at{' '}
-          <a 
-            href="mailto:contactme@devtoolskithub.com" 
-            className="underline hover:text-blue-200 transition-colors"
-          >
-            contactme@devtoolskithub.com
-          </a>
-          {' '}for feedback and support.
-        </p>
-      </div>
+      
 
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
@@ -92,6 +80,12 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Blog
+              </Link>
+              <Link 
+                href="#pricing" 
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Pricing
               </Link>
               <Link 
                 href="https://github.com/swkruger/devtoolshub" 
@@ -123,20 +117,14 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
             Streamline your development workflow with our comprehensive suite of essential tools. 
             {availableCount} powerful tools available now, with more coming soon. Everything you need to code faster and better.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href="/sign-in" 
-              className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
-            >
-              Start Building Now
-            </Link>
-            <Link 
-              href="#tools" 
-              className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:border-gray-400 transition-colors"
-            >
-              Explore Tools
-            </Link>
-          </div>
+                     <div className="flex justify-center">
+             <Link 
+               href="/sign-in" 
+               className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
+             >
+               Start Building Now
+             </Link>
+           </div>
         </div>
       </section>
 
@@ -187,8 +175,13 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
               </div>
             ))}
           </div>
+          
+          
         </div>
       </section>
+
+      {/* Pricing Section */}
+      <PricingSection id="pricing" />
 
       {/* Featured Blog Section */}
       {featuredBlogs.length > 0 && (
@@ -408,14 +401,8 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
               href="/sign-in" 
               className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors"
             >
-              Get Started Free
-            </Link>
-            <Link 
-              href="mailto:contactme@devtoolskithub.com" 
-              className="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
-            >
-              Contact Us
-            </Link>
+              Get Started
+            </Link>            
           </div>
         </div>
       </section>
