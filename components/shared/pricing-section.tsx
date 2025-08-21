@@ -164,7 +164,7 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
             <div>
               <h4 className="font-semibold text-gray-900 mb-2">Can I cancel anytime?</h4>
-              <p className="text-gray-600">Yes, you can cancel your subscription at any time. You'll keep access until the end of your billing period.</p>
+              <p className="text-gray-600">Yes, you can cancel your subscription at any time. You&apos;ll keep access until the end of your billing period.</p>
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 mb-2">What payment methods do you accept?</h4>
@@ -176,7 +176,7 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 mb-2">Do you offer refunds?</h4>
-              <p className="text-gray-600">We offer a 30-day money-back guarantee if you're not satisfied with Premium features.</p>
+              <p className="text-gray-600">We offer a 30-day money-back guarantee if you&apos;re not satisfied with Premium features.</p>
             </div>
           </div>
         </div>

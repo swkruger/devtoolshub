@@ -51,7 +51,7 @@ export default function SupportPage() {
         <div className="space-y-6 max-w-3xl">
           <section className="docs-card">
             <h1 className="text-3xl font-bold mb-2 docs-title">Support</h1>
-            <p className="docs-muted">We're here to help. Submit a support request and we'll get back to you as soon as possible.</p>
+            <p className="docs-muted">We&apos;re here to help. Submit a support request and we&apos;ll get back to you as soon as possible.</p>
           </section>
 
           <section className="docs-card">
