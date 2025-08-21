@@ -1,8 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 
 // Environment variables (these need to be set in .env.local)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
 // Server component Supabase client (for use in Server Components)
 export const createSupabaseServerClient = () => {

@@ -1,8 +1,8 @@
 import { createBrowserClient } from '@supabase/ssr'
 
 // Environment variables (these need to be set in .env.local)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
 // Debug environment variables (only in development)
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
@@ -14,7 +14,7 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
 }
 
 // Only check in runtime, not during build
-if (typeof window !== 'undefined' && supabaseUrl.includes('placeholder')) {
+if (typeof window !== 'undefined' && (!supabaseUrl || supabaseUrl.includes('placeholder'))) {
   console.warn('Missing Supabase environment variables. Please configure your .env.local file.')
 }
 
