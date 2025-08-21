@@ -10,11 +10,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
     }
 
+    const { searchParams } = new URL(request.url)
+    const status = searchParams.get('status') || 'all'
+
     const supabase = await createSupabaseServerClient()
-    const { data, error } = await supabase
+    let query = supabase
       .from('blogs')
-      .select('id, title, slug, status, created_at')
-      .order('created_at', { ascending: false })
+      .select('id, title, slug, status, is_featured, is_popular, updated_at, published_at')
+      .order('updated_at', { ascending: false })
+
+    // Apply status filter if not 'all'
+    if (status !== 'all') {
+      query = query.eq('status', status)
+    }
+
+    const { data, error } = await query
 
     if (error) {
       console.error('Error fetching blogs:', error)

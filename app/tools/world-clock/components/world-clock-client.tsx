@@ -31,6 +31,7 @@ import TimezoneSelector from './timezone-selector'
 import HelpPanel from './help-panel'
 import MeetingPlanner from './meeting-planner'
 import { DatePicker } from './date-picker'
+import CollapsibleSection from './collapsible-section'
 
 interface WorldClockClientProps {
   isPremiumUser: boolean
@@ -263,117 +264,130 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
         </CardHeader>
         
         <CardContent className="space-y-4">
-          {/* City Selector */}
-          <div>
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-              Add City
-            </label>
-            <TimezoneSelector
-              searchQuery={state.searchQuery}
-              searchResults={state.searchResults}
-              isSearching={state.isSearching}
-              onSearchChange={actions.setSearchQuery}
-              onCitySelect={handleCityAdd}
-              onClearSearch={actions.clearSearch}
-              selectedCitiesCount={state.selectedCities.length}
-              maxCities={state.maxCities}
-              isPremiumUser={isPremiumUser}
-            />
-          </div>
+          {/* Settings Section */}
+          <CollapsibleSection 
+            title="Settings" 
+            icon={<Settings className="w-4 h-4" />}
+            defaultExpanded={false}
+          >
+            <div className="pt-2 space-y-6">
+              {/* City Selector */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                  Add City
+                </label>
+                <TimezoneSelector
+                  searchQuery={state.searchQuery}
+                  searchResults={state.searchResults}
+                  isSearching={state.isSearching}
+                  onSearchChange={actions.setSearchQuery}
+                  onCitySelect={handleCityAdd}
+                  onClearSearch={actions.clearSearch}
+                  selectedCitiesCount={state.selectedCities.length}
+                  maxCities={state.maxCities}
+                  isPremiumUser={isPremiumUser}
+                />
+              </div>
 
-          {/* Date Picker */}
-          <DatePicker
-            selectedDate={state.selectedDate}
-            onDateChange={actions.setSelectedDate}
-            disabled={state.isLoading}
-            className="mb-4"
-          />
+              {/* Date Picker */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                  Compare Timezones for Date
+                </label>
+                <DatePicker
+                  selectedDate={state.selectedDate}
+                  onDateChange={actions.setSelectedDate}
+                  disabled={state.isLoading}
+                />
+              </div>
 
-          {/* Time Controls */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Real-time Controls */}
-            <div>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                Time Controls
-              </label>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={actions.toggleRealTime}
-                  className="flex-1"
-                >
-                  {state.isRealTimeEnabled ? (
-                    <>
-                      <Pause className="w-3 h-3 mr-1" />
-                      Pause
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-3 h-3 mr-1" />
-                      Live
-                    </>
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={actions.resetToCurrentTime}
-                  disabled={state.timeOffset === 0}
-                >
-                  <RotateCcw className="w-3 h-3" />
-                </Button>
+              {/* Time Controls */}
+              <div className="space-y-4">
+                {/* Real-time Controls */}
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                    Real-time Controls
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={actions.toggleRealTime}
+                      className="flex-1"
+                    >
+                      {state.isRealTimeEnabled ? (
+                        <>
+                          <Pause className="w-3 h-3 mr-1" />
+                          Pause
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-3 h-3 mr-1" />
+                          Live
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={actions.resetToCurrentTime}
+                      disabled={state.timeOffset === 0}
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Fine-Tune Time */}
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                    Fine-Tune Time
+                    {state.timeOffset !== 0 && (
+                      <Badge variant="outline" className="ml-2 text-xs">
+                        {formatOffsetDisplay(state.timeOffset)}
+                      </Badge>
+                    )}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => actions.navigateTime('backward', 1)}
+                      title="Go back 1 hour"
+                    >
+                      <ChevronLeft className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => actions.navigateTime('backward', 24)}
+                      className="flex-1 text-xs"
+                      title="Go back 1 day"
+                    >
+                      -1 Day
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => actions.navigateTime('forward', 24)}
+                      className="flex-1 text-xs"
+                      title="Go forward 1 day"
+                    >
+                      +1 Day
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => actions.navigateTime('forward', 1)}
+                      title="Go forward 1 hour"
+                    >
+                      <ChevronRight className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* Fine-Tune Time */}
-            <div>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                Fine-Tune Time
-                {state.timeOffset !== 0 && (
-                  <Badge variant="outline" className="ml-2 text-xs">
-                    {formatOffsetDisplay(state.timeOffset)}
-                  </Badge>
-                )}
-              </label>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => actions.navigateTime('backward', 1)}
-                  title="Go back 1 hour"
-                >
-                  <ChevronLeft className="w-3 h-3" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => actions.navigateTime('backward', 24)}
-                  className="flex-1 text-xs"
-                  title="Go back 1 day"
-                >
-                  -1 Day
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => actions.navigateTime('forward', 24)}
-                  className="flex-1 text-xs"
-                  title="Go forward 1 day"
-                >
-                  +1 Day
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => actions.navigateTime('forward', 1)}
-                  title="Go forward 1 hour"
-                >
-                  <ChevronRight className="w-3 h-3" />
-                </Button>
-              </div>
-            </div>
-          </div>
+          </CollapsibleSection>
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-2">
