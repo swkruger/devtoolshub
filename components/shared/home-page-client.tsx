@@ -106,27 +106,29 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Essential Developer Tools
-            <span className="block text-blue-600">All in One Place</span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Streamline your development workflow with our comprehensive suite of essential tools. 
-            {availableCount} powerful tools available now, with more coming soon. Everything you need to code faster and better.
-          </p>
-                     <div className="flex justify-center">
-             <Link 
-               href="/sign-in" 
-               className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
-             >
-               Start Building Now
-             </Link>
+             {/* Hero Section */}
+       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-blue-50">
+         <div className="max-w-7xl mx-auto">
+           <div className="text-center mb-16">
+             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+               Essential Developer Tools
+               <span className="block text-blue-600">All in One Place</span>
+             </h1>
+             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+               Streamline your development workflow with our comprehensive suite of essential tools. 
+               {availableCount} powerful tools available now, with more coming soon. Everything you need to code faster and better.
+             </p>
+             <div className="flex justify-center">
+               <Link 
+                 href="/sign-in" 
+                 className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
+               >
+                 Start Building Now
+               </Link>
+             </div>
            </div>
-        </div>
-      </section>
+         </div>
+       </section>
 
       {/* Tools Showcase */}
       <section id="tools" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
@@ -196,82 +198,82 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
               </p>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              {/* Featured Blog Card */}
-              <div className="order-2 lg:order-1">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
-                  <div className="mb-4">
-                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
-                      ⭐ Featured Article
-                    </span>
-                  </div>
-                  
-                  <Link href={`/blog/${featuredBlogs[0].slug}`} className="block group">
-                    <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-3">
-                      {featuredBlogs[0].title}
-                    </h3>
-                  </Link>
-                  
-                  <div className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3">
-                    {(() => {
-                      try {
-                        const md: any = featuredBlogs[0].content_markdown
-                        const html = md ? (marked.parse(md) as string) : (featuredBlogs[0].content_html || '')
-                        const safe = DOMPurify.sanitize(html, { 
-                          USE_PROFILES: { html: true },
-                          ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-                          ALLOWED_ATTR: []
-                        })
-                        return (
-                          <div
-                            className="prose dark:prose-invert max-w-none"
-                            dangerouslySetInnerHTML={{ __html: safe }}
-                          />
-                        )
-                      } catch (error) {
-                        // Fallback to plain text if markdown parsing fails
-                        const content = featuredBlogs[0].content_html || featuredBlogs[0].content_markdown || ''
-                        return content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'
-                      }
-                    })()}
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <time className="text-sm text-gray-500 dark:text-gray-400">
-                      {featuredBlogs[0].published_at ? new Date(featuredBlogs[0].published_at).toLocaleDateString('en-US', { 
-                        month: 'long', 
-                        day: 'numeric',
-                        year: 'numeric'
-                      }) : 'Draft'}
-                    </time>
-                    <Link 
-                      href={`/blog/${featuredBlogs[0].slug}`}
-                      className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                    >
-                      Read Article
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Featured Blog Image */}
-              <div className="order-1 lg:order-2">
-                <div className="aspect-video rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
-                  {featuredBlogs[0].image_url ? (
-                    <img
-                      src={featuredBlogs[0].image_url}
-                      alt={featuredBlogs[0].title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
-                      <span className="text-blue-400 dark:text-blue-300 text-6xl">⭐</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+                         <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
+               {/* Featured Blog Image */}
+               <div className="order-1 lg:order-1">
+                                   <div className="aspect-video rounded-l-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+                   {featuredBlogs[0].image_url ? (
+                     <img
+                       src={featuredBlogs[0].image_url}
+                       alt={featuredBlogs[0].title}
+                       className="w-full h-full object-cover"
+                     />
+                   ) : (
+                     <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
+                       <span className="text-blue-400 dark:text-blue-300 text-6xl">⭐</span>
+                     </div>
+                   )}
+                 </div>
+               </div>
+               
+               {/* Featured Blog Content */}
+               <div className="order-2 lg:order-2">
+                                   <div className="bg-white dark:bg-gray-800 rounded-r-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+                   <div className="mb-4">
+                     <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+                       ⭐ Featured Article
+                     </span>
+                   </div>
+                   
+                   <Link href={`/blog/${featuredBlogs[0].slug}`} className="block group">
+                     <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-3">
+                       {featuredBlogs[0].title}
+                     </h3>
+                   </Link>
+                   
+                   <div className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3">
+                     {(() => {
+                       try {
+                         const md: any = featuredBlogs[0].content_markdown
+                         const html = md ? (marked.parse(md) as string) : (featuredBlogs[0].content_html || '')
+                         const safe = DOMPurify.sanitize(html, { 
+                           USE_PROFILES: { html: true },
+                           ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+                           ALLOWED_ATTR: []
+                         })
+                         return (
+                           <div
+                             className="prose dark:prose-invert max-w-none"
+                             dangerouslySetInnerHTML={{ __html: safe }}
+                           />
+                         )
+                       } catch (error) {
+                         // Fallback to plain text if markdown parsing fails
+                         const content = featuredBlogs[0].content_html || featuredBlogs[0].content_markdown || ''
+                         return content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'
+                       }
+                     })()}
+                   </div>
+                   
+                   <div className="flex items-center justify-between">
+                     <time className="text-sm text-gray-500 dark:text-gray-400">
+                       {featuredBlogs[0].published_at ? new Date(featuredBlogs[0].published_at).toLocaleDateString('en-US', { 
+                         month: 'long', 
+                         day: 'numeric',
+                         year: 'numeric'
+                       }) : 'Draft'}
+                     </time>
+                     <Link 
+                       href={`/blog/${featuredBlogs[0].slug}`}
+                       className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                     >
+                       Read Article
+                       <ArrowRight className="h-4 w-4" />
+                     </Link>
+                   </div>
+                 </div>
+               </div>
+             </div>
             
             <div className="text-center mt-8">
               <Link 
@@ -449,11 +451,6 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
             <div>
               <h3 className="text-lg font-semibold mb-4">Contact</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="mailto:contactme@devtoolskithub.com" className="hover:text-white transition-colors">
-                    contactme@devtoolskithub.com
-                  </a>
-                </li>
                 <li><Link href="/support" className="hover:text-white transition-colors">Support</Link></li>
                 <li><Link href="/feedback" className="hover:text-white transition-colors">Feedback</Link></li>
                 <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>

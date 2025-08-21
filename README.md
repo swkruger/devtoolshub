@@ -70,8 +70,15 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 # Get your free API key at: https://openweathermap.org/api
 OPENWEATHER_API_KEY=your_openweathermap_api_key
 
-# Email Configuration
+# Email Configuration (Resend)
 RESEND_API_KEY=your_resend_api_key
+FROM_EMAIL=your-verified-email@yourdomain.com
+ADMIN_EMAIL=your-admin-email@yourdomain.com
+
+# Turnstile CAPTCHA Configuration (Cloudflare)
+# Get your keys at: https://dash.cloudflare.com/?to=/:account/turnstile
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_turnstile_site_key
+TURNSTILE_SECRET_KEY=your_turnstile_secret_key
 ```
 
 ### 3. Database Setup

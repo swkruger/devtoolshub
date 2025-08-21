@@ -117,7 +117,6 @@ export default function RootLayout({
     author: {
       '@type': 'Organization',
       name: 'DevToolsHub',
-      email: 'contactme@devtoolskithub.com',
     },
     datePublished: '2024-01-01',
     dateModified: new Date().toISOString(),

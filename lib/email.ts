@@ -8,8 +8,8 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null
 
 // Email configuration - Use the correct domain
-const FROM_EMAIL = process.env.FROM_EMAIL || 'contactme@devtoolskithub.com'
-const ADMIN_EMAIL = 'contactme@devtoolskithub.com'
+const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@yourdomain.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || process.env.FROM_EMAIL || 'admin@yourdomain.com'
 
 // Helper function to check if email service is available
 const isEmailServiceAvailable = (): boolean => {

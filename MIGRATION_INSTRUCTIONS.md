@@ -16,7 +16,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 # Email Configuration (Resend)
 RESEND_API_KEY=your_resend_api_key
-FROM_EMAIL=contactme@devtoolskithub.com
+FROM_EMAIL=your-verified-email@yourdomain.com
 
 # App Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -50,7 +50,7 @@ psql -h your_supabase_host -U postgres -d your_database -f db/migrations/002_cre
 Add your Resend API key to `.env.local`:
 ```env
 RESEND_API_KEY=re_your_api_key_here
-FROM_EMAIL=contactme@devtoolskithub.com
+FROM_EMAIL=your-verified-email@yourdomain.com
 ```
 
 ### 4. Install Dependencies
@@ -98,7 +98,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_production_supabase_service_role_key
 
 # Email (Production)
 RESEND_API_KEY=your_production_resend_api_key
-FROM_EMAIL=contactme@devtoolskithub.com
+FROM_EMAIL=your-verified-email@yourdomain.com
 
 # App (Production)
 NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
@@ -159,7 +159,7 @@ CREATE TABLE json_snippets (
 ## 📞 Support
 
 For technical support or questions:
-- Email: contactme@devtoolskithub.com
+- Email: your-verified-email@yourdomain.com
 - GitHub Issues: [Create an issue](https://github.com/yourusername/devtools-hub/issues)
 
 ## 🔄 Rollback Instructions

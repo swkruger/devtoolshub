@@ -88,10 +88,7 @@ export default function NewUserNotificationEmail({
               <Hr style={hr} />
 
               <Text style={welcomeFooterText}>
-                If you have any questions or feedback, feel free to reach out to us at{' '}
-                <Link href="mailto:devtoolshub8@gmail.com" style={welcomeLink}>
-                  devtoolshub8@gmail.com
-                </Link>
+                If you have any questions or feedback, feel free to reach out to us through our support channels.
               </Text>
 
               <Text style={welcomeFooterText}>
@@ -191,7 +188,7 @@ export default function NewUserNotificationEmail({
               </Link>
             </Text>
             <Text style={footerText}>
-              To manage notifications, please contact devtoolshub8@gmail.com
+              To manage notifications, please contact us through our support page.
             </Text>
           </Section>
         </Container>

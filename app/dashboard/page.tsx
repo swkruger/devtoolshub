@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { getAllTools } from "@/lib/tools"
 import { listFeaturedBlogs, listPopularBlogs } from "@/lib/services/blogs"
 import { BlogCard } from "@/components/blog/blog-card"
+import { PopularBlogCard } from "@/components/blog/popular-blog-card"
 import type { Metadata } from 'next'
 import { ArrowRight } from 'lucide-react'
 import { marked } from 'marked'
@@ -124,7 +125,7 @@ export default async function DashboardPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {popularBlogs.map((blog) => (
-                  <BlogCard key={blog.id} blog={blog as any} />
+                  <PopularBlogCard key={blog.id} blog={blog as any} />
                 ))}
               </div>
             </section>

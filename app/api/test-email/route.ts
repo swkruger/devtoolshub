@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const testType = searchParams.get('type') || 'test'
-    const userEmail = searchParams.get('email') || 'contactme@devtoolskithub.com' // Default to admin email
+    const userEmail = searchParams.get('email') || process.env.FROM_EMAIL || 'test@example.com' // Use environment variable or fallback
 
     console.log(`🧪 Testing email service - type: ${testType}, email: ${userEmail}`)
 

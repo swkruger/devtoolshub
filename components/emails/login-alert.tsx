@@ -155,10 +155,7 @@ export default function LoginAlertEmail({
             </Text>
             
             <Text style={footerText}>
-              If you have any concerns about your account security, please contact us immediately at{' '}
-              <Link href="mailto:devtoolshub8@gmail.com" style={footerLink}>
-                devtoolshub8@gmail.com
-              </Link>
+              If you have any concerns about your account security, please contact us immediately through our support page.
             </Text>
 
             <Text style={footerText}>

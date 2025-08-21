@@ -1,11 +1,6 @@
-import type { Metadata } from 'next'
+'use client'
 
-export const metadata: Metadata = {
-  title: 'Support – DevToolsHub',
-  description: 'Help resources and contact information for DevToolsHub.',
-  robots: { index: true, follow: true },
-  alternates: { canonical: '/support' },
-}
+import { ContactForm } from '@/components/shared/contact-form'
 
 export default function SupportPage() {
   const css = `
@@ -18,13 +13,32 @@ export default function SupportPage() {
     .docs-muted { color: var(--muted); }
     .docs-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
   `
+
+  const handleSupportSubmit = async (data: any) => {
+    try {
+      const response = await fetch('/api/support', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      const result = await response.json()
+      return result
+    } catch (error) {
+      console.error('Support submission error:', error)
+      return { success: false, error: 'Failed to submit support request' }
+    }
+  }
+
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)', color: 'var(--fg)' }}>
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <header className="docs-header">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center gap-3">
           <img src="/icons/icon-48x48.png" alt="DevToolsHub icon" width={24} height={24} className="rounded" />
-          <div className="font-semibold docs-title">DevToolsHub Docs</div>
+          <div className="font-semibold docs-title">DevToolsHub Support</div>
           <nav className="ml-auto flex items-center gap-4 text-sm docs-nav">
             <a href="/">Home</a>
             <a href="/#tools">All Tools</a>
@@ -37,22 +51,21 @@ export default function SupportPage() {
         <div className="space-y-6 max-w-3xl">
           <section className="docs-card">
             <h1 className="text-3xl font-bold mb-2 docs-title">Support</h1>
-            <p className="docs-muted">We’re here to help. Use the resources below to solve issues quickly.</p>
+            <p className="docs-muted">We're here to help. Submit a support request and we'll get back to you as soon as possible.</p>
           </section>
 
           <section className="docs-card">
-            <h2 className="text-xl font-semibold mb-2">Quick assistance</h2>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Documentation: <a href="/docs">/docs</a></li>
-              <li>World Clock, JSON, Regex, JWT, Base64, UUID, XPath/CSS, Image, PWA tools – all docs linked from the index</li>
-              <li>Status/known issues: see the latest notes in the <a href="/changelog">Changelog</a></li>
+            <h2 className="text-xl font-semibold mb-4">Quick Resources</h2>
+            <ul className="list-disc pl-5 space-y-1 docs-muted">
+              <li><a href="/docs" className="docs-nav">Documentation</a> - Comprehensive guides for all tools</li>
+              <li><a href="/changelog" className="docs-nav">Changelog</a> - Latest updates and known issues</li>
+              <li><a href="/feedback" className="docs-nav">Feedback Form</a> - Report bugs or request features</li>
             </ul>
           </section>
 
           <section className="docs-card">
-            <h2 className="text-xl font-semibold mb-2">Contact</h2>
-            <p className="docs-muted">Email us and we’ll respond as soon as possible:</p>
-            <p><a href="mailto:contactme@devtoolskithub.com">contactme@devtoolskithub.com</a></p>
+            <h2 className="text-xl font-semibold mb-4">Submit Support Request</h2>
+            <ContactForm type="support" onSubmit={handleSupportSubmit} />
           </section>
         </div>
       </main>

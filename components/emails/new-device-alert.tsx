@@ -198,10 +198,7 @@ export default function NewDeviceAlertEmail({
             </Text>
             
             <Text style={footerText}>
-              For immediate assistance with security concerns, contact us at{' '}
-              <Link href="mailto:devtoolshub8@gmail.com" style={footerLink}>
-                devtoolshub8@gmail.com
-              </Link>
+              For immediate assistance with security concerns, contact us through our support page.
             </Text>
 
             <Text style={footerText}>
