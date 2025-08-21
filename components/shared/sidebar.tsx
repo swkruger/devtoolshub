@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { getAllTools, getCategories, getCategoryDisplayName } from "@/lib/tools"
 import { 
   Home, 
@@ -46,10 +45,9 @@ const navigation = [
 
 interface SidebarProps {
   className?: string
-  isCollapsed?: boolean
 }
 
-export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
+export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
   const { user, loading } = useUser()
   const [apiPremiumStatus, setApiPremiumStatus] = React.useState<boolean | null>(null)
@@ -168,10 +166,7 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
       <div className="space-y-4 py-4">
         {/* Navigation */}
         <div className="px-3 py-2">
-          <h2 className={cn(
-            "mb-2 px-4 text-lg font-semibold tracking-tight",
-            isCollapsed && "hidden"
-          )}>
+          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             DevToolsHub
           </h2>
           <div className="space-y-1">
@@ -179,15 +174,12 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
               <Button
                 key={item.href}
                 variant={pathname === item.href ? "secondary" : "ghost"}
-                className={cn(
-                  "w-full justify-start",
-                  isCollapsed && "justify-center px-2"
-                )}
+                className="w-full justify-start"
                 asChild
               >
                 <Link href={item.href}>
-                  <item.icon className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                  {!isCollapsed && item.name}
+                  <item.icon className="h-4 w-4 mr-2" />
+                  {item.name}
                 </Link>
               </Button>
             ))}
@@ -197,139 +189,105 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
         {/* Tools */}
         <ClientOnly>
           <div className="px-3 py-2">
-            <h2 className={cn(
-              "mb-2 px-4 text-lg font-semibold tracking-tight",
-              isCollapsed && "hidden"
-            )}>
+            <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
               Tools
             </h2>
-            {!isCollapsed && (
-              <div className="px-4 pb-2">
-                <Input
-                  placeholder="Search tools..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  aria-label="Search tools"
-                />
-              </div>
-            )}
-            <ScrollArea className="h-[70vh] px-1">
-              <div className="space-y-3">
-                {/* Favorites Section */}
-                {favoriteItems.length > 0 && (
-                  <div className="space-y-1">
-                    {!isCollapsed && (
-                      <div className="px-4 text-xs uppercase text-muted-foreground flex items-center gap-1">
-                        <Star className="h-3 w-3 text-yellow-500" /> Favorites
-                      </div>
-                    )}
-                    {favoriteItems.map((tool) => (
+            <div className="px-4 pb-2">
+              <Input
+                placeholder="Search tools..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                aria-label="Search tools"
+              />
+            </div>
+            <div className="space-y-3 px-1">
+              {/* Favorites Section */}
+              {favoriteItems.length > 0 && (
+                <div className="space-y-1">
+                  <div className="px-4 text-xs uppercase text-muted-foreground flex items-center gap-1">
+                    <Star className="h-3 w-3 text-yellow-500" /> Favorites
+                  </div>
+                  {favoriteItems.map((tool) => (
+                    <Button
+                      key={`fav-${tool.href}`}
+                      variant={pathname === tool.href ? "secondary" : "ghost"}
+                      className="w-full justify-start relative border border-yellow-200/60 dark:border-yellow-500/20 bg-yellow-50/50 dark:bg-yellow-500/5"
+                      asChild
+                    >
+                      <Link href={tool.href}>
+                        <tool.icon className="h-4 w-4 mr-2" />
+                        <span className="flex-1 text-left">{tool.name}</span>
+                        <Star
+                          className="h-3.5 w-3.5 text-yellow-500"
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(tool.id) }}
+                        />
+                      </Link>
+                    </Button>
+                  ))}
+                </div>
+              )}
+              {categories.map((cat) => {
+                const items = filteredByQuery.filter(t => t.category === cat && !favorites.has(t.id))
+                if (items.length === 0) return null
+                return (
+                  <div key={cat} className="space-y-1">
+                    <div className="px-4 text-xs uppercase text-muted-foreground">
+                      {getCategoryDisplayName(cat)}
+                    </div>
+                    {items.map((tool) => (
                       <Button
-                        key={`fav-${tool.href}`}
+                        key={tool.href}
                         variant={pathname === tool.href ? "secondary" : "ghost"}
-                        className={cn(
-                          "w-full justify-start relative border border-yellow-200/60 dark:border-yellow-500/20 bg-yellow-50/50 dark:bg-yellow-500/5",
-                          isCollapsed && "justify-center px-2"
-                        )}
+                        className="w-full justify-start relative"
                         asChild
                       >
                         <Link href={tool.href}>
-                          <tool.icon className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                          {!isCollapsed && (
-                            <>
-                              <span className="flex-1 text-left">{tool.name}</span>
-                              <Star
-                                className="h-3.5 w-3.5 text-yellow-500"
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(tool.id) }}
-                              />
-                            </>
-                          )}
+                          <tool.icon className="h-4 w-4 mr-2" />
+                          <span className="flex-1 text-left">{tool.name}</span>
+                          <div className="flex items-center gap-2">
+                            {tool.isPremium && (
+                              <Crown className="h-3 w-3 text-primary" />
+                            )}
+                            <Star
+                              className={cn("h-3.5 w-3.5", favorites.has(tool.id) ? "text-yellow-500" : "text-muted-foreground")}
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(tool.id) }}
+                            />
+                          </div>
                         </Link>
                       </Button>
                     ))}
                   </div>
-                )}
-                {categories.map((cat) => {
-                  const items = filteredByQuery.filter(t => t.category === cat && !favorites.has(t.id))
-                  if (items.length === 0) return null
-                  return (
-                    <div key={cat} className="space-y-1">
-                      {!isCollapsed && (
-                        <div className="px-4 text-xs uppercase text-muted-foreground">
-                          {getCategoryDisplayName(cat)}
-                        </div>
-                      )}
-                      {items.map((tool) => (
-                        <Button
-                          key={tool.href}
-                          variant={pathname === tool.href ? "secondary" : "ghost"}
-                          className={cn(
-                            "w-full justify-start relative",
-                            isCollapsed && "justify-center px-2"
-                          )}
-                          asChild
-                        >
-                          <Link href={tool.href}>
-                            <tool.icon className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                            {!isCollapsed && (
-                              <>
-                                <span className="flex-1 text-left">{tool.name}</span>
-                                <div className="flex items-center gap-2">
-                                  {tool.isPremium && (
-                                    <Crown className="h-3 w-3 text-primary" />
-                                  )}
-                                  <Star
-                                    className={cn("h-3.5 w-3.5", favorites.has(tool.id) ? "text-yellow-500" : "text-muted-foreground")}
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(tool.id) }}
-                                  />
-                                </div>
-                              </>
-                            )}
-                          </Link>
-                        </Button>
-                      ))}
-                    </div>
-                  )
-                })}
-              </div>
-            </ScrollArea>
+                )
+              })}
+            </div>
           </div>
         </ClientOnly>
 
         {/* Blog Management - Admin Only */}
         {isAdminUser && (
           <div className="px-3 py-2">
-            <h2 className={cn(
-              "mb-2 px-4 text-lg font-semibold tracking-tight",
-              isCollapsed && "hidden"
-            )}>
+            <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
               Blog Management
             </h2>
             <div className="space-y-1">
               <Button
                 variant={pathname === "/dashboard/blogs" ? "secondary" : "ghost"}
-                className={cn(
-                  "w-full justify-start",
-                  isCollapsed && "justify-center px-2"
-                )}
+                className="w-full justify-start"
                 asChild
               >
                 <Link href="/dashboard/blogs">
-                  <FileText className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                  {!isCollapsed && "Manage Blogs"}
+                  <FileText className="h-4 w-4 mr-2" />
+                  Manage Blogs
                 </Link>
               </Button>
               <Button
                 variant={pathname === "/dashboard/blogs/new" ? "secondary" : "ghost"}
-                className={cn(
-                  "w-full justify-start",
-                  isCollapsed && "justify-center px-2"
-                )}
+                className="w-full justify-start"
                 asChild
               >
                 <Link href="/dashboard/blogs/new">
-                  <FileText className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                  {!isCollapsed && "New Blog Post"}
+                  <FileText className="h-4 w-4 mr-2" />
+                  New Blog Post
                 </Link>
               </Button>
             </div>
@@ -342,29 +300,23 @@ export function Sidebar({ className, isCollapsed = false }: SidebarProps) {
             {shouldShowGoPremium && (
               <Button
                 variant="ghost"
-                className={cn(
-                  "w-full justify-start",
-                  isCollapsed && "justify-center px-2"
-                )}
+                className="w-full justify-start"
                 asChild
               >
                 <Link href="/go-premium">
-                  <Crown className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                  {!isCollapsed && "Go Premium"}
+                  <Crown className="h-4 w-4 mr-2" />
+                  Go Premium
                 </Link>
               </Button>
             )}
             <Button
               variant="ghost"
-              className={cn(
-                "w-full justify-start",
-                isCollapsed && "justify-center px-2"
-              )}
+              className="w-full justify-start"
               asChild
             >
               <Link href="/settings">
-                <Settings className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-                {!isCollapsed && "Settings"}
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
               </Link>
             </Button>
           </div>
