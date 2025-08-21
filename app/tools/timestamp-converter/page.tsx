@@ -47,6 +47,12 @@ export default async function TimestampConverterPage() {
     <div className="container mx-auto px-4 py-4 max-w-7xl">
       <ToolPageHeader icon={tool.icon} title={tool.name} description={tool.description} />
 
+      {/* Main tool component */}
+      <TimestampConverterClient 
+        isPremiumUser={isPremiumUser}
+        userId={userId}
+      />
+
       {!isPremiumUser && (
         <PremiumOverview 
           features={tool.features.premium ?? []}
@@ -54,12 +60,6 @@ export default async function TimestampConverterPage() {
           subtitle="Get access to advanced timestamp conversion capabilities"
         />
       )}
-
-      {/* Main tool component */}
-      <TimestampConverterClient 
-        isPremiumUser={isPremiumUser}
-        userId={userId}
-      />
     </div>
   )
 }

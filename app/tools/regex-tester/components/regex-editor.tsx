@@ -1456,75 +1456,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
         isPremiumUser={isPremiumUser}
       />
 
-      {/* Premium Features Panel */}
-      {!isPremiumUser && (
-        <Card className="border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Crown className="h-5 w-5 text-primary" />
-              Premium Features
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <h4 className="font-medium">Live Pattern Testing</h4>
-                <p className="text-sm text-muted-foreground">
-                  Automatic real-time testing as you type with match highlighting
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Multi-Language Support</h4>
-                <p className="text-sm text-muted-foreground">
-                  Test regex patterns across JavaScript, Python, Java, Go, PHP, and C#
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Pattern Explanations</h4>
-                <p className="text-sm text-muted-foreground">
-                  Get detailed breakdowns of complex regex patterns
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Regex Visualization</h4>
-                <p className="text-sm text-muted-foreground">
-                  See your regex as interactive flow diagrams
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Comprehensive Pattern Library</h4>
-                <p className="text-sm text-muted-foreground">
-                  Browse 100+ curated patterns organized by category with examples
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Advanced Replace Functionality</h4>
-                <p className="text-sm text-muted-foreground">
-                  Find and replace with capture group references and live preview
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Bulk Testing & File Processing</h4>
-                <p className="text-sm text-muted-foreground">
-                  Test patterns against multiple files with batch processing and CSV export
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Advanced Analytics & Insights</h4>
-                <p className="text-sm text-muted-foreground">
-                  Deep performance analysis, optimization suggestions, and match statistics
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Interactive Regex Visualization</h4>
-                <p className="text-sm text-muted-foreground">
-                  Visual flow diagrams with interactive nodes and SVG export functionality
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      
     </div>
   )
 } 

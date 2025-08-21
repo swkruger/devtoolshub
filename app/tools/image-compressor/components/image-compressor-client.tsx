@@ -829,30 +829,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
         Image Compressor tool for compressing and optimizing images. Upload images, adjust compression settings, and download optimized versions.
       </div>
 
-      {/* Premium Feature Banner for Free Users */}
-      {!isPremiumUser && (
-        <Alert className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20">
-          <Crown className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-          <AlertDescription className="text-amber-800 dark:text-amber-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="font-medium">Premium Features Available:</span>
-                <span className="ml-2 text-sm">Batch processing, advanced settings, format conversion, and compression history</span>
-              </div>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-300 dark:hover:bg-amber-900/30"
-                onClick={() => {/* TODO: Add upgrade modal */}}
-                aria-label="Upgrade to premium plan"
-              >
-                <Crown className="w-3 h-3 mr-1" />
-                Upgrade
-              </Button>
-            </div>
-          </AlertDescription>
-        </Alert>
-      )}
+
 
       {/* Performance Status */}
       {(hasActiveTasks || memoryUsage > 0) && (

@@ -41,6 +41,9 @@ export default async function XPathTesterPage() {
     <div className="container mx-auto px-4 py-4 max-w-7xl">
       <ToolPageHeader icon={xpathTesterConfig.icon} title={xpathTesterConfig.name} description={xpathTesterConfig.description} />
 
+      {/* Main Tool Interface */}
+      <XPathTesterClient isPremiumUser={isPremiumUser} userId={userId} />
+
       {!isPremiumUser && (
         <PremiumOverview 
           features={xpathTesterConfig.features.premium ?? []}
@@ -48,9 +51,6 @@ export default async function XPathTesterPage() {
           subtitle="Unlock advanced XPath/CSS testing capabilities"
         />
       )}
-
-      {/* Main Tool Interface */}
-      <XPathTesterClient isPremiumUser={isPremiumUser} userId={userId} />
     </div>
   )
 } 
