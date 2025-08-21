@@ -41,3 +41,4 @@ next-env.d.ts
 **/*.spec.*
 TEST_REPORT.md
 run-tests.js
+Tasks.md
