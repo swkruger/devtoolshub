@@ -32,7 +32,7 @@ export default async function GoPremiumPage() {
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">Premium Subscription</h1>
         <p className="text-gray-600 dark:text-gray-300">
-          Unlock advanced features and remove limitations
+          Unlock unlimited saved items, advanced features & algorithms, and early access to new tools
         </p>
       </div>
 

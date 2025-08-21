@@ -42,15 +42,13 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Free',
     price: 0,
     features: [
-      'Access to all basic tools',
-      '5 saved items per tool',
-      'Basic support',
-      'Community access'
+      'Access to all developer tools',
+      'Basic tool functionality'
     ],
     limitations: [
-      'No premium features',
-      'No priority support',
-      'No advanced analytics'
+      'Limited saved items',
+      'No advanced features',
+      'No priority support'
     ]
   },
   premium: {
@@ -58,14 +56,12 @@ export const SUBSCRIPTION_PLANS = {
     price: getPremiumPrice(), // Dynamic price from environment variable
     priceId: process.env.STRIPE_PREMIUM_PRICE_ID!,
     features: [
-      'Everything in Free',
-      'Unlimited saved items',
-      'Advanced features',
-      'Priority support',
+      'Unlimited saved items across all tools',
+      'Advanced features and algorithms',
       'Early access to new tools',
-      'Advanced analytics',
-      'Custom themes',
-      'API access'
+      'Advanced analytics and insights',
+      'Batch processing capabilities',
+      'Export/import functionality'
     ],
     limitations: []
   }

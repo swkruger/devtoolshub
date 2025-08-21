@@ -151,7 +151,7 @@ export default async function DashboardPage() {
             <CardHeader>
               <CardTitle>🚀 Go Premium</CardTitle>
               <CardDescription>
-                Unlock advanced features and remove limitations
+                Unlock unlimited saved items, advanced features & algorithms, and early access to new tools
               </CardDescription>
             </CardHeader>
             <CardContent>

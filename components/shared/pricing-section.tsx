@@ -33,27 +33,17 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
   }, [])
 
   const freeFeatures = [
-    'Access to all 9 core developer tools',
+    'Access to all developer tools',
     'Basic tool functionality',
-    '5 saved items per tool',
-    'Community support',
-    'Standard processing speed',
-    'Basic error handling'
   ]
 
   const premiumFeatures = [
-    'Everything in Free plan',
     'Unlimited saved items across all tools',
     'Advanced features and algorithms',
-    'Priority support with 24h response',
     'Early access to new tools',
     'Advanced analytics and insights',
-    'Custom themes and preferences',
-    'API access for integrations',
     'Batch processing capabilities',
-    'Enhanced security features',
     'Export/import functionality',
-    'Premium keyboard shortcuts'
   ]
 
   return (

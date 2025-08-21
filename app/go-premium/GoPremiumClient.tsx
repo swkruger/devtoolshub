@@ -50,10 +50,10 @@ interface SubscriptionData {
 }
 
 const PREMIUM_BENEFITS = [
-  { icon: Zap, title: "Advanced Features", description: "Access all premium tools and functionality" },
-  { icon: Sparkles, title: "Enhanced Performance", description: "Faster processing and larger file support" },
-  { icon: Shield, title: "Priority Support", description: "Get help when you need it most" },
-  { icon: Clock, title: "Data Sync", description: "Save your work across all devices" }
+  { icon: Zap, title: "Advanced Features & Algorithms", description: "Access all premium tools and functionality" },
+  { icon: Sparkles, title: "Unlimited Saved Items", description: "Save unlimited items across all tools" },
+  { icon: Shield, title: "Advanced Analytics & Insights", description: "Get detailed analytics and insights" },
+  { icon: Clock, title: "Early Access to New Tools", description: "Be the first to try new features" }
 ]
 
 export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPremiumClientProps) {
@@ -330,7 +330,7 @@ export default function GoPremiumClient({ user, profile, isPremiumUser }: GoPrem
             Upgrade to Premium
           </CardTitle>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Unlock all premium features and enhance your development workflow
+            Unlock unlimited saved items, advanced features & algorithms, and early access to new tools
           </p>
         </CardHeader>
         <CardContent className="text-center">

@@ -20,10 +20,10 @@ const PREMIUM_BENEFITS = {
     { icon: Clock, title: "Snippet Management", description: "Save and organize unlimited JSON snippets online" }
   ],
   'general': [
-    { icon: Zap, title: "Advanced Features", description: "Access all premium tools and functionality" },
-    { icon: Sparkles, title: "Enhanced Performance", description: "Faster processing and larger file support" },
-    { icon: Shield, title: "Priority Support", description: "Get help when you need it most" },
-    { icon: Clock, title: "Data Sync", description: "Save your work across all devices" }
+    { icon: Zap, title: "Advanced Features & Algorithms", description: "Access all premium tools and functionality" },
+    { icon: Sparkles, title: "Unlimited Saved Items", description: "Save unlimited items across all tools" },
+    { icon: Shield, title: "Advanced Analytics & Insights", description: "Get detailed analytics and insights" },
+    { icon: Clock, title: "Early Access to New Tools", description: "Be the first to try new features" }
   ]
 }
 
