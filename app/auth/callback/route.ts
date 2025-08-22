@@ -18,37 +18,21 @@ export async function GET(request: NextRequest) {
     allEnvVars: Object.keys(process.env).filter(key => key.includes('VERCEL') || key.includes('SUPABASE'))
   })
 
-  // Determine the correct redirect URL based on environment
+  // Simple redirect URL logic - use the actual request origin
   const getRedirectUrl = (origin: string) => {
     console.log('getRedirectUrl called with origin:', origin)
 
-    // For local development
+    // For production domains, use the origin directly
+    if (origin && origin.startsWith('https://')) {
+      const redirectUrl = `${origin}/dashboard`
+      console.log('Using origin for redirect:', redirectUrl)
+      return redirectUrl
+    }
+
+    // For localhost development
     if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
       const redirectUrl = `${origin}/dashboard`
       console.log('Using localhost for redirect:', redirectUrl)
-      return redirectUrl
-    }
-
-    // For production - use the actual origin from the request
-    // This handles custom domains, Vercel domains, etc.
-    if (origin && origin.startsWith('https://')) {
-      // Handle the specific case where we have a custom domain
-      if (origin.includes('devtoolskithub.com')) {
-        const redirectUrl = 'https://www.devtoolskithub.com/dashboard'
-        console.log('Using custom domain for redirect:', redirectUrl)
-        return redirectUrl
-      }
-
-      // For any other domain (including Vercel domains), use it directly
-      const redirectUrl = `${origin}/dashboard`
-      console.log('Using request origin for redirect:', redirectUrl)
-      return redirectUrl
-    }
-
-    // Fallback to VERCEL_URL if origin is not available
-    if (process.env.VERCEL_URL) {
-      const redirectUrl = `https://${process.env.VERCEL_URL}/dashboard`
-      console.log('Using VERCEL_URL fallback for redirect:', redirectUrl)
       return redirectUrl
     }
 

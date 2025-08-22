@@ -9,31 +9,12 @@ export const authClient = {
   async signInWithOAuth(provider: 'google' | 'github', options?: any) {
     const supabase = createSupabaseClient()
     
-    // Determine the correct callback URL based on environment
+    // Use the current window location for callback URL
+    // Supabase will redirect to this URL after OAuth completes
     const getCallbackUrl = () => {
-      // For local development
       if (typeof window !== 'undefined') {
-        if (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')) {
-          return `${window.location.origin}/auth/callback`
-        }
-      }
-
-      // For production - use the current window location origin
-      // This works for custom domains, Vercel domains, etc.
-      if (typeof window !== 'undefined') {
-        // Handle custom domain specifically
-        if (window.location.origin.includes('devtoolskithub.com')) {
-          return 'https://www.devtoolskithub.com/auth/callback'
-        }
         return `${window.location.origin}/auth/callback`
       }
-
-      // Fallback to VERCEL_URL if window is not available
-      if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-        return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/auth/callback`
-      }
-
-      // Final fallback
       return 'https://www.devtoolskithub.com/auth/callback'
     }
 
