@@ -10,6 +10,7 @@ export function SignInForm() {
   const [isLoading, setIsLoading] = useState<string | null>(null)
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const [authCheckError, setAuthCheckError] = useState<string | null>(null)
+  const [showSkipButton, setShowSkipButton] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
@@ -34,13 +35,18 @@ export function SignInForm() {
       return
     }
     
+    // Show skip button after 3 seconds
+    const skipTimer = setTimeout(() => {
+      setShowSkipButton(true)
+    }, 3000)
+    
     const checkAuthStatus = async (retryCount = 0) => {
       try {
         console.log('Checking auth status... (attempt', retryCount + 1, ')')
         
-        // Add timeout to prevent hanging
+        // Add timeout to prevent hanging - reduced to 3 seconds
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Authentication check timeout')), 5000)
+          setTimeout(() => reject(new Error('Authentication check timeout')), 3000)
         })
         
         const sessionPromise = authClient.getSession()
@@ -56,9 +62,9 @@ export function SignInForm() {
         }
         
         // If no session and we haven't tried many times, retry after a short delay
-        if (retryCount < 2) {
-          console.log('No session found, retrying in 1000ms...')
-          setTimeout(() => checkAuthStatus(retryCount + 1), 1000)
+        if (retryCount < 1) {
+          console.log('No session found, retrying in 2000ms...')
+          setTimeout(() => checkAuthStatus(retryCount + 1), 2000)
           return
         }
         
@@ -70,24 +76,36 @@ export function SignInForm() {
         // If it's a timeout or network error, show a helpful message
         if (error.message?.includes('timeout') || error.message?.includes('network')) {
           setAuthCheckError('Authentication service temporarily unavailable. Please try signing in manually.')
-        } else if (retryCount < 2) {
+        } else if (retryCount < 1) {
           // Retry on other errors
-          console.log('Auth check failed, retrying in 1000ms...')
-          setTimeout(() => checkAuthStatus(retryCount + 1), 1000)
+          console.log('Auth check failed, retrying in 2000ms...')
+          setTimeout(() => checkAuthStatus(retryCount + 1), 2000)
           return
         } else {
           setAuthCheckError('Unable to check authentication status. Please try signing in manually.')
         }
       } finally {
         // Only set loading to false after final attempt
-        if (retryCount >= 2) {
+        if (retryCount >= 1) {
           setIsCheckingAuth(false)
+          clearTimeout(skipTimer)
         }
       }
     }
 
     checkAuthStatus()
+    
+    // Cleanup function
+    return () => {
+      clearTimeout(skipTimer)
+    }
   }, [router, redirectTo])
+
+  const handleSkipAuthCheck = () => {
+    console.log('User manually skipped auth check')
+    setIsCheckingAuth(false)
+    setAuthCheckError('Authentication check skipped. You can proceed with sign-in.')
+  }
 
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     try {
@@ -142,9 +160,26 @@ export function SignInForm() {
   if (isCheckingAuth) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-8">
-          <div className="w-8 h-8 animate-spin rounded-full border-2 border-current border-t-transparent" />
-          <span className="ml-2">Checking authentication...</span>
+        <CardContent className="flex flex-col items-center justify-center py-8 space-y-4">
+          <div className="flex items-center">
+            <div className="w-8 h-8 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            <span className="ml-2">Checking authentication...</span>
+          </div>
+          
+          {showSkipButton && (
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-2">
+                Taking longer than expected?
+              </p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleSkipAuthCheck}
+              >
+                Skip Check & Sign In
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     )
