@@ -9,6 +9,7 @@ import { authClient } from "@/lib/auth"
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState<string | null>(null)
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
+  const [authCheckError, setAuthCheckError] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
@@ -37,8 +38,16 @@ export function SignInForm() {
       try {
         console.log('Checking auth status... (attempt', retryCount + 1, ')')
         
-        const session = await authClient.getSession()
+        // Add timeout to prevent hanging
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Authentication check timeout')), 5000)
+        })
+        
+        const sessionPromise = authClient.getSession()
+        
+        const session = await Promise.race([sessionPromise, timeoutPromise]) as any
         console.log('Session from getSession():', session)
+        
         if (session?.user) {
           console.log('User is authenticated, redirecting to:', redirectTo)
           // Use hard redirect to avoid any React router issues
@@ -47,18 +56,31 @@ export function SignInForm() {
         }
         
         // If no session and we haven't tried many times, retry after a short delay
-        if (retryCount < 3) {
-          console.log('No session found, retrying in 500ms...')
-          setTimeout(() => checkAuthStatus(retryCount + 1), 500)
+        if (retryCount < 2) {
+          console.log('No session found, retrying in 1000ms...')
+          setTimeout(() => checkAuthStatus(retryCount + 1), 1000)
           return
         }
         
         console.log('No session found after retries, showing sign-in form')
-      } catch (error) {
+        setAuthCheckError(null)
+      } catch (error: any) {
         console.error('Error checking auth status:', error)
+        
+        // If it's a timeout or network error, show a helpful message
+        if (error.message?.includes('timeout') || error.message?.includes('network')) {
+          setAuthCheckError('Authentication service temporarily unavailable. Please try signing in manually.')
+        } else if (retryCount < 2) {
+          // Retry on other errors
+          console.log('Auth check failed, retrying in 1000ms...')
+          setTimeout(() => checkAuthStatus(retryCount + 1), 1000)
+          return
+        } else {
+          setAuthCheckError('Unable to check authentication status. Please try signing in manually.')
+        }
       } finally {
         // Only set loading to false after final attempt
-        if (retryCount >= 3) {
+        if (retryCount >= 2) {
           setIsCheckingAuth(false)
         }
       }
@@ -79,19 +101,19 @@ export function SignInForm() {
         // Clear the flag
         localStorage.removeItem('force_reauth')
         
-                          // Use more aggressive parameters to force account selection
-         const queryParams = {
-           ...(provider === 'google' && {
-             prompt: 'select_account consent',
-             access_type: 'offline',
-             include_granted_scopes: 'false', // Don't include previously granted scopes
-           }),
-           ...(provider === 'github' && {
-             prompt: 'consent',
-             scope: 'read:user user:email',
-             force_login: 'true', // Force login screen
-           }),
-         }
+        // Use more aggressive parameters to force account selection
+        const queryParams = {
+          ...(provider === 'google' && {
+            prompt: 'select_account consent',
+            access_type: 'offline',
+            include_granted_scopes: 'false', // Don't include previously granted scopes
+          }),
+          ...(provider === 'github' && {
+            prompt: 'consent',
+            scope: 'read:user user:email',
+            force_login: 'true', // Force login screen
+          }),
+        }
         
         await authClient.signInWithOAuth(provider, { queryParams })
       } else {
@@ -141,6 +163,14 @@ export function SignInForm() {
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
             <p className="text-sm text-destructive">
               Authentication failed. Please try again.
+            </p>
+          </div>
+        )}
+
+        {authCheckError && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <p className="text-sm text-yellow-700">
+              {authCheckError}
             </p>
           </div>
         )}
