@@ -60,17 +60,17 @@ export default async function SettingsPage() {
     
     console.log('Settings page: Starting authentication check')
     
-    // Check authentication
+    // Check authentication - middleware already handles redirects for unauthenticated users
     const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
     
     if (authError) {
       console.error('Settings page auth error:', authError.message || authError)
-      redirect('/sign-in')
+      throw new Error(`Authentication error: ${authError.message}`)
     }
     
     if (!authUser) {
-      console.log('Settings page: No user found, redirecting to sign-in')
-      redirect('/sign-in')
+      console.error('Settings page: No user found - this should not happen as middleware handles this')
+      throw new Error('User not authenticated - middleware should have redirected')
     }
 
     user = authUser
