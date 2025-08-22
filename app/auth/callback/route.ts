@@ -55,7 +55,11 @@ export async function GET(request: NextRequest) {
 
       if (data.session) {
         console.log('OAuth callback: Session established successfully')
-        console.log('OAuth callback: Session expires at:', new Date(data.session.expires_at * 1000).toISOString())
+        if (data.session.expires_at) {
+          console.log('OAuth callback: Session expires at:', new Date(data.session.expires_at * 1000).toISOString())
+        } else {
+          console.log('OAuth callback: Session expires_at is undefined')
+        }
       } else {
         console.error('OAuth callback: No session returned from code exchange')
       }
