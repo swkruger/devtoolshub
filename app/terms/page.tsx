@@ -51,7 +51,7 @@ export default function TermsPage() {
             <h1 className="text-3xl font-bold mb-4 docs-title">Terms of Service</h1>
             <p className="docs-muted mb-4">Last updated: January 2025</p>
             <p className="content-text">
-              These Terms of Service ("Terms") govern your use of DevToolsHub ("we," "our," or "us") and our developer tools platform and services. By accessing or using our services, you agree to be bound by these Terms.
+              These Terms of Service (&quot;Terms&quot;) govern your use of DevToolsHub (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) and our developer tools platform and services. By accessing or using our services, you agree to be bound by these Terms.
             </p>
           </section>
 
@@ -176,7 +176,7 @@ export default function TermsPage() {
           <section className="docs-card">
             <h2 id="disclaimers" className="section-title">8. Disclaimers</h2>
             <p className="content-text">
-              Our services are provided "as is" and "as available" without any warranties of any kind, either express or implied. We do not warrant that:
+              Our services are provided &quot;as is&quot; and &quot;as available&quot; without any warranties of any kind, either express or implied. We do not warrant that:
             </p>
             <ul className="content-list">
               <li>Our services will be uninterrupted or error-free</li>

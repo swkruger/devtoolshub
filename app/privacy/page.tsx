@@ -51,7 +51,7 @@ export default function PrivacyPage() {
             <h1 className="text-3xl font-bold mb-4 docs-title">Privacy Policy</h1>
             <p className="docs-muted mb-4">Last updated: January 2025</p>
             <p className="content-text">
-              DevToolsHub ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our developer tools platform and services.
+              DevToolsHub (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our developer tools platform and services.
             </p>
           </section>
 
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
               <li><a href="#cookies">7. Cookies and Tracking Technologies</a></li>
               <li><a href="#third-party-services">8. Third-Party Services</a></li>
               <li><a href="#international-transfers">9. International Data Transfers</a></li>
-              <li><a href="#children-privacy">10. Children's Privacy</a></li>
+              <li><a href="#children-privacy">10. Children&apos;s Privacy</a></li>
               <li><a href="#changes">11. Changes to This Privacy Policy</a></li>
               <li><a href="#contact">12. Contact Us</a></li>
             </ul>
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
               <li><strong>Account Management:</strong> To create and manage your account, process payments, and provide customer support.</li>
               <li><strong>Personalization:</strong> To customize your experience and provide relevant tool recommendations.</li>
               <li><strong>Communication:</strong> To send you important updates, security notices, and support messages.</li>
-              <li><strong>Analytics:</strong> To analyze usage patterns and improve our platform's performance and user experience.</li>
+              <li><strong>Analytics:</strong> To analyze usage patterns and improve our platform&apos;s performance and user experience.</li>
               <li><strong>Security:</strong> To detect and prevent fraud, abuse, and security threats.</li>
               <li><strong>Legal Compliance:</strong> To comply with applicable laws, regulations, and legal processes.</li>
             </ul>
@@ -221,7 +221,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="docs-card">
-            <h2 id="children-privacy" className="section-title">10. Children's Privacy</h2>
+            <h2 id="children-privacy" className="section-title">10. Children&apos;s Privacy</h2>
             
             <p className="content-text">Our services are not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately.</p>
           </section>
