@@ -33,6 +33,28 @@ function SettingsFallback({ errorDetails }: { errorDetails?: string }) {
             We&apos;re experiencing some technical difficulties with the settings page. Please try again later or contact support if the issue persists.
             {errorDetails && <span className="block mt-2 text-sm text-yellow-600">Error: {errorDetails}</span>}
           </p>
+          {errorDetails?.includes('Auth session missing') && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+              <p className="text-sm text-blue-700">
+                <strong>Authentication Issue Detected:</strong> This appears to be a session management problem. 
+                Please try refreshing the page or signing out and back in.
+              </p>
+              <div className="mt-3 space-x-2">
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                >
+                  Refresh Page
+                </button>
+                <a 
+                  href="/sign-in" 
+                  className="px-3 py-1 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 inline-block"
+                >
+                  Sign In Again
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -60,11 +82,41 @@ export default async function SettingsPage() {
     
     console.log('Settings page: Starting authentication check')
     
-    // Check authentication - middleware already handles redirects for unauthenticated users
-    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
+    // Try to get user with retry logic for session issues
+    let authUser = null
+    let authError = null
+    
+    // First attempt
+    const { data: { user: user1 }, error: error1 } = await supabase.auth.getUser()
+    
+    if (error1 && error1.message?.includes('Auth session missing')) {
+      console.log('Settings page: First auth attempt failed with session missing, trying again...')
+      
+      // Wait a moment and try again
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      const { data: { user: user2 }, error: error2 } = await supabase.auth.getUser()
+      
+      if (error2) {
+        authError = error2
+      } else {
+        authUser = user2
+      }
+    } else if (error1) {
+      authError = error1
+    } else {
+      authUser = user1
+    }
     
     if (authError) {
       console.error('Settings page auth error:', authError.message || authError)
+      
+      // Handle specific auth session missing error
+      if (authError.message?.includes('Auth session missing')) {
+        console.log('Settings page: Auth session missing after retry - this may be a temporary issue')
+        throw new Error('Authentication session is missing. Please refresh the page or sign in again.')
+      }
+      
       throw new Error(`Authentication error: ${authError.message}`)
     }
     

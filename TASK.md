@@ -22,6 +22,7 @@
 - [x] **Task 8:** Fix build error - escape apostrophe in settings page fallback component
 - [x] **Task 9:** Enhanced SettingsFallback component to display specific error details
 - [x] **Task 10:** Added environment variable validation and detailed console logging for debugging
+- [ ] **Task 11:** Configure Google OAuth redirect URIs for custom domain (devtoolskithub.com)
 
 ## Previous Issue: Placeholder.com Images Breaking in Production
 
