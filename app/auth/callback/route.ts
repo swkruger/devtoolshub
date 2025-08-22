@@ -22,13 +22,6 @@ export async function GET(request: NextRequest) {
   const getRedirectUrl = (origin: string) => {
     console.log('getRedirectUrl called with origin:', origin)
 
-    // For Vercel production, use the correct domain
-    if (process.env.VERCEL_URL) {
-      const redirectUrl = `https://${process.env.VERCEL_URL}/dashboard`
-      console.log('Using VERCEL_URL for redirect:', redirectUrl)
-      return redirectUrl
-    }
-
     // For local development
     if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
       const redirectUrl = `${origin}/dashboard`
@@ -36,16 +29,24 @@ export async function GET(request: NextRequest) {
       return redirectUrl
     }
 
-    // For production, try to use the correct domain
-    if (origin.includes('devtoolskithub.com')) {
-      const redirectUrl = 'https://devtoolskithub.com/dashboard'
-      console.log('Using devtoolskithub.com for redirect:', redirectUrl)
+    // For production - use the actual origin from the request
+    // This handles custom domains, Vercel domains, etc.
+    if (origin && origin.startsWith('https://')) {
+      const redirectUrl = `${origin}/dashboard`
+      console.log('Using request origin for redirect:', redirectUrl)
       return redirectUrl
     }
 
-    // Fallback
-    const fallbackUrl = `${origin}/dashboard`
-    console.log('Using fallback for redirect:', fallbackUrl)
+    // Fallback to VERCEL_URL if origin is not available
+    if (process.env.VERCEL_URL) {
+      const redirectUrl = `https://${process.env.VERCEL_URL}/dashboard`
+      console.log('Using VERCEL_URL fallback for redirect:', redirectUrl)
+      return redirectUrl
+    }
+
+    // Final fallback
+    const fallbackUrl = 'https://www.devtoolskithub.com/dashboard'
+    console.log('Using final fallback for redirect:', fallbackUrl)
     return fallbackUrl
   }
 

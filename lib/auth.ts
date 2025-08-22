@@ -11,22 +11,26 @@ export const authClient = {
     
     // Determine the correct callback URL based on environment
     const getCallbackUrl = () => {
-      // For production (Vercel), use the deployed domain
-      if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-        return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/auth/callback`
-      }
       // For local development
       if (typeof window !== 'undefined') {
         if (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')) {
           return `${window.location.origin}/auth/callback`
         }
-        // For production domains
-        if (window.location.origin.includes('devtoolskithub.com')) {
-          return 'https://devtoolskithub.com/auth/callback'
-        }
       }
-      // Fallback
-      return `${window.location.origin}/auth/callback`
+
+      // For production - use the current window location origin
+      // This works for custom domains, Vercel domains, etc.
+      if (typeof window !== 'undefined') {
+        return `${window.location.origin}/auth/callback`
+      }
+
+      // Fallback to VERCEL_URL if window is not available
+      if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+        return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/auth/callback`
+      }
+
+      // Final fallback
+      return 'https://www.devtoolskithub.com/auth/callback'
     }
 
     const redirectTo = getCallbackUrl()
