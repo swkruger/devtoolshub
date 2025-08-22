@@ -19,6 +19,7 @@
 
 - [x] **Task 6:** Add missing NEXT_PUBLIC_APP_URL to env.example file
 - [x] **Task 7:** Create test script for debugging settings page configuration
+- [x] **Task 8:** Fix build error - escape apostrophe in settings page fallback component
 
 ## Previous Issue: Placeholder.com Images Breaking in Production
 
