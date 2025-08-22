@@ -140,7 +140,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       return new Promise((resolve, reject) => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        const img = new Image();
+        const img = new window.Image();
         
         img.onload = () => {
           // Calculate new dimensions based on resize options
