@@ -72,6 +72,7 @@ export default async function SettingsPage() {
     console.log('Settings page: Starting execution.')
     console.log(`Settings page: NEXT_PUBLIC_SUPABASE_URL is ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'set' : 'NOT SET'}`)
     console.log(`Settings page: NEXT_PUBLIC_SUPABASE_ANON_KEY is ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'set' : 'NOT SET'}`)
+    console.log(`Settings page: NEXT_PUBLIC_APP_URL is ${process.env.NEXT_PUBLIC_APP_URL ? 'set' : 'NOT SET'}`)
 
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       throw new Error('Supabase environment variables are not configured.')
@@ -82,12 +83,31 @@ export default async function SettingsPage() {
     
     console.log('Settings page: Starting authentication check')
     
+    // Try to get session first to debug session issues
+    console.log('Settings page: Checking for existing session...')
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError) {
+      console.error('Settings page session error:', sessionError.message || sessionError)
+    } else if (session) {
+      console.log('Settings page: Found existing session for user:', session.user?.email)
+    } else {
+      console.log('Settings page: No existing session found')
+    }
+    
     // Try to get user with retry logic for session issues
     let authUser = null
     let authError = null
     
     // First attempt
+    console.log('Settings page: Attempting to get user...')
     const { data: { user: user1 }, error: error1 } = await supabase.auth.getUser()
+    
+    console.log('Settings page: First auth attempt result:', {
+      hasUser: !!user1,
+      userEmail: user1?.email,
+      error: error1?.message || 'No error'
+    })
     
     if (error1 && error1.message?.includes('Auth session missing')) {
       console.log('Settings page: First auth attempt failed with session missing, trying again...')
@@ -95,7 +115,14 @@ export default async function SettingsPage() {
       // Wait a moment and try again
       await new Promise(resolve => setTimeout(resolve, 100))
       
+      console.log('Settings page: Second auth attempt...')
       const { data: { user: user2 }, error: error2 } = await supabase.auth.getUser()
+      
+      console.log('Settings page: Second auth attempt result:', {
+        hasUser: !!user2,
+        userEmail: user2?.email,
+        error: error2?.message || 'No error'
+      })
       
       if (error2) {
         authError = error2
