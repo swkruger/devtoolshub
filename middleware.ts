@@ -41,6 +41,19 @@ export async function middleware(request: NextRequest) {
 
   const { pathname, searchParams } = request.nextUrl
 
+  // Log all requests to auth-related routes
+  if (pathname.startsWith('/auth') || pathname.startsWith('/sign-in')) {
+    console.error('🔐🔐🔐 AUTH MIDDLEWARE HIT 🔐🔐🔐', {
+      timestamp: new Date().toISOString(),
+      pathname,
+      hasUser: !!user,
+      method: request.method,
+      userAgent: request.headers.get('user-agent'),
+      referer: request.headers.get('referer'),
+      host: request.headers.get('host')
+    })
+  }
+
   // Define protected routes
   const protectedRoutes = ['/dashboard', '/tools', '/settings', '/go-premium']
   const authRoutes = ['/sign-in', '/auth']

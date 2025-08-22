@@ -2,12 +2,22 @@ import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
+  // IMMEDIATELY LOG THAT THIS ROUTE WAS HIT
+  console.error('🚨🚨🚨 OAUTH CALLBACK ROUTE HIT 🚨🚨🚨', {
+    timestamp: new Date().toISOString(),
+    url: request.url,
+    method: request.method,
+    userAgent: request.headers.get('user-agent'),
+    referer: request.headers.get('referer'),
+    host: request.headers.get('host')
+  })
+
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const error = requestUrl.searchParams.get('error')
   const errorDescription = requestUrl.searchParams.get('error_description')
 
-  console.log('🔥🔥🔥 OAUTH CALLBACK TRIGGERED - THIS SHOULD BE VISIBLE:', {
+  console.error('🚨🚨🚨 CRITICAL OAUTH CALLBACK TRIGGERED 🚨🚨🚨:', {
     timestamp: new Date().toISOString(),
     hasCode: !!code,
     codePreview: code ? code.substring(0, 20) + '...' : 'none',
