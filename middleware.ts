@@ -42,7 +42,7 @@ export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
 
   // Define protected routes
-  const protectedRoutes = ['/dashboard', '/tools']
+  const protectedRoutes = ['/dashboard', '/tools', '/settings']
   const authRoutes = ['/sign-in', '/auth']
   
   // Check if the current path is a protected route
