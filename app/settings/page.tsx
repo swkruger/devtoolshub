@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 // Fallback component for when there are issues
-function SettingsFallback() {
+function SettingsFallback({ errorDetails }: { errorDetails?: string }) {
   return (
     <div className="container mx-auto px-4 py-4 max-w-7xl">
       <div className="space-y-6">
@@ -31,6 +31,7 @@ function SettingsFallback() {
           <h2 className="text-lg font-semibold text-yellow-800">Settings Temporarily Unavailable</h2>
           <p className="text-yellow-700 mt-2">
             We&apos;re experiencing some technical difficulties with the settings page. Please try again later or contact support if the issue persists.
+            {errorDetails && <span className="block mt-2 text-sm text-yellow-600">Error: {errorDetails}</span>}
           </p>
         </div>
       </div>
@@ -39,42 +40,61 @@ function SettingsFallback() {
 }
 
 export default async function SettingsPage() {
-  const supabase = createSupabaseServerClient()
-  
+  let user = null
+  let profile = null
+  let preferences = null
+  let isPremiumUser = false
+  let errorDetails = ''
+
   try {
+    console.log('Settings page: Starting execution.')
+    console.log(`Settings page: NEXT_PUBLIC_SUPABASE_URL is ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'set' : 'NOT SET'}`)
+    console.log(`Settings page: NEXT_PUBLIC_SUPABASE_ANON_KEY is ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'set' : 'NOT SET'}`)
+
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      throw new Error('Supabase environment variables are not configured.')
+    }
+
+    console.log('Settings page: Initializing Supabase client.')
+    const supabase = createSupabaseServerClient()
+    
     console.log('Settings page: Starting authentication check')
     
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
     
     if (authError) {
-      console.error('Settings page auth error:', authError)
+      console.error('Settings page auth error:', authError.message || authError)
       redirect('/sign-in')
     }
     
-    if (!user) {
+    if (!authUser) {
       console.log('Settings page: No user found, redirecting to sign-in')
       redirect('/sign-in')
     }
 
+    user = authUser
     console.log('Settings page: User authenticated, fetching profile data')
 
     // Get user profile and subscription data
-    const { data: profile, error: profileError } = await supabase
+    const { data: profileData, error: profileError } = await supabase
       .from('users')
       .select('*')
       .eq('id', user.id)
       .single()
 
     if (profileError) {
-      console.error('Settings page profile error:', profileError)
+      console.error('Settings page profile error:', profileError.message || profileError)
       // Continue with null profile rather than failing completely
+    } else {
+      profile = profileData
+      console.log('Settings page: Profile data fetched successfully')
     }
 
-    console.log('Settings page: Profile data fetched, fetching preferences')
+    console.log('Settings page: Fetching user preferences')
 
     // Get user preferences
-    const { data: preferences, error: preferencesError } = await supabase
+    const { data: preferencesData, error: preferencesError } = await supabase
       .from('user_preferences')
       .select('*')
       .eq('user_id', user.id)
@@ -82,14 +102,19 @@ export default async function SettingsPage() {
 
     if (preferencesError && preferencesError.code !== 'PGRST116') {
       // PGRST116 is "not found" error, which is expected for new users
-      console.error('Settings page preferences error:', preferencesError)
+      console.error('Settings page preferences error:', preferencesError.message || preferencesError)
       // Continue with null preferences rather than failing completely
+    } else {
+      preferences = preferencesData
+      console.log('Settings page: Preferences data fetched successfully')
     }
 
-    console.log('Settings page: All data fetched successfully, rendering layout')
+    console.log('Settings page: All data fetched successfully, determining premium status')
 
     // Determine if user is premium
-    const isPremiumUser = profile?.plan === 'premium'
+    isPremiumUser = profile?.plan === 'premium'
+
+    console.log('Settings page: Rendering SettingsLayout component')
 
     return (
       <div className="container mx-auto px-4 py-4 max-w-7xl">
@@ -101,9 +126,9 @@ export default async function SettingsPage() {
         />
       </div>
     )
-  } catch (error) {
-    console.error('Settings page error:', error)
-    // If there's an error, show fallback instead of redirecting
-    return <SettingsFallback />
+  } catch (error: any) {
+    console.error('Settings page caught an unexpected error:', error.message || error)
+    errorDetails = error.message || 'Unknown error occurred'
+    return <SettingsFallback errorDetails={errorDetails} />
   }
 }
