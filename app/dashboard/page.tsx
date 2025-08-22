@@ -179,8 +179,9 @@ function MainFeaturedBlogCard({ blog }: { blog: any }) {
               <Image
                 src={blog.image_url}
                 alt={blog.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                width={800}
+                height={400}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">

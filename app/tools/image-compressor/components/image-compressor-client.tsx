@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -140,7 +139,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       return new Promise((resolve, reject) => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        const img = new window.Image();
+        const img = new Image();
         
         img.onload = () => {
           // Calculate new dimensions based on resize options
@@ -1327,22 +1326,20 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                   {image.showComparison && image.compressedPreview ? (
                     <div className="grid grid-cols-2">
                       <div className="relative">
-                        <Image 
+                        <img 
                           src={image.preview} 
                           alt={`Original ${image.file.name}`}
-                          fill
-                          className="object-cover"
+                          className="w-full h-48 object-cover"
                         />
                         <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                           Original
                         </div>
                       </div>
                       <div className="relative">
-                        <Image 
+                        <img 
                           src={image.compressedPreview} 
                           alt={`Compressed ${image.file.name}`}
-                          fill
-                          className="object-cover"
+                          className="w-full h-48 object-cover"
                         />
                         <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                           Compressed
@@ -1350,11 +1347,10 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                       </div>
                     </div>
                   ) : (
-                    <Image 
+                    <img 
                       src={image.preview} 
                       alt={`Original ${image.file.name}`}
-                      fill
-                      className="object-cover"
+                      className="w-full h-48 object-cover"
                     />
                   )}
                   <div className="absolute top-2 right-2 flex space-x-1">

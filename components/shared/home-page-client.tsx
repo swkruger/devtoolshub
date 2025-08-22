@@ -207,8 +207,9 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                      <Image
                        src={featuredBlogs[0].image_url}
                        alt={featuredBlogs[0].title}
-                       fill
-                       className="object-cover"
+                       width={800}
+                       height={400}
+                       className="w-full h-full object-cover"
                      />
                    ) : (
                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
@@ -312,8 +313,9 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                       <Image
                         src={blog.image_url}
                         alt={blog.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        width={800}
+                        height={400}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-800 dark:to-orange-800 flex items-center justify-center">

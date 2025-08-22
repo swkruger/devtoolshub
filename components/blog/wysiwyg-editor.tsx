@@ -21,7 +21,7 @@ export function WysiwygEditor({ value, onChange, placeholder }: WysiwygEditorPro
 
   const insertImage = () => {
     if (imageUrl.trim()) {
-      execCommand('insertHTML', `<img src="${imageUrl}" alt="Inserted image" style="max-width: 100%; height: auto;" />`)
+      execCommand('insertHTML', `<img src="${imageUrl}" alt="" style="max-width: 100%; height: auto;" />`)
       setImageUrl('')
       setIsImageDialogOpen(false)
     }

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy – DevToolsHub',
@@ -36,7 +35,7 @@ export default function PrivacyPage() {
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <header className="docs-header">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center gap-3">
-          <Image src="/icons/icon-48x48.png" alt="DevToolsHub icon" width={24} height={24} className="rounded" />
+          <img src="/icons/icon-48x48.png" alt="DevToolsHub icon" width={24} height={24} className="rounded" />
           <div className="font-semibold docs-title">DevToolsHub Privacy Policy</div>
           <nav className="ml-auto flex items-center gap-4 text-sm docs-nav">
             <a href="/">Home</a>
@@ -52,7 +51,7 @@ export default function PrivacyPage() {
             <h1 className="text-3xl font-bold mb-4 docs-title">Privacy Policy</h1>
             <p className="docs-muted mb-4">Last updated: January 2025</p>
             <p className="content-text">
-              DevToolsHub (&ldquo;we,&rdquo; &ldquo;our,&rdquo; or &ldquo;us&rdquo;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our developer tools platform and services.
+              DevToolsHub (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our developer tools platform and services.
             </p>
           </section>
 

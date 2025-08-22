@@ -213,8 +213,10 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
               <Image
                 src={blog.image_url}
                 alt={blog.title}
-                fill
-                className="object-cover"
+                width={1200}
+                height={600}
+                className="w-full h-full object-cover"
+                priority={true}
               />
             </div>
           )}
@@ -263,8 +265,9 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
                           <Image
                             src={post.image_url}
                             alt={post.title}
-                            fill
-                            className="object-cover"
+                            width={64}
+                            height={48}
+                            className="w-full h-full object-cover"
                           />
                         </div>
                       )}

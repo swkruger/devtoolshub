@@ -17,8 +17,9 @@ export function PopularBlogCard({ blog }: PopularBlogCardProps) {
           <Image
             src={blog.image_url}
             alt={blog.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            width={800}
+            height={400}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-800 dark:to-orange-800 flex items-center justify-center">

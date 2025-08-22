@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import { getChangelog } from '@/lib/changelog'
 
 export const metadata: Metadata = {
@@ -27,7 +26,7 @@ export default function ChangelogPage() {
       {/* Lightweight header to mirror docs look */}
       <header className="docs-header">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center gap-3">
-          <Image src="/icons/icon-48x48.png" alt="DevToolsHub icon" width={24} height={24} className="rounded" />
+          <img src="/icons/icon-48x48.png" alt="DevToolsHub icon" width={24} height={24} className="rounded" />
           <div className="font-semibold docs-title">DevToolsHub Docs</div>
           <nav className="ml-auto flex items-center gap-4 text-sm docs-nav">
             <a href="/">Home</a>

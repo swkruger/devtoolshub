@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Image from 'next/image'
 import DOMPurify from 'isomorphic-dompurify'
 import { marked } from 'marked'
 
@@ -305,11 +304,10 @@ export default function BlogPreviewPage() {
           {/* Featured Image */}
           {blog.image_url && (
             <div className="aspect-video overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
-              <Image
+              <img
                 src={blog.image_url}
                 alt={blog.title}
-                fill
-                className="object-cover"
+                className="w-full h-full object-cover"
               />
             </div>
           )}

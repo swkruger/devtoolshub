@@ -29,6 +29,8 @@ export default async function BlogIndexPage({ searchParams }: { searchParams?: {
     listPublishedBlogs({ search: q, limit: PAGE_SIZE, offset }),
   ])
 
+
+
   const totalPages = Math.max(1, Math.ceil(all.total / PAGE_SIZE))
   const mainFeatured = featured[0] // Get the first featured blog for the hero section
 
@@ -195,8 +197,10 @@ function MainFeaturedBlogCard({ blog }: { blog: any }) {
               <Image
                 src={blog.image_url}
                 alt={blog.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                width={800}
+                height={400}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                priority={true}
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
@@ -272,8 +276,9 @@ function BlogCard({ blog }: { blog: any }) {
           <Image
             src={blog.image_url}
             alt={blog.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            width={800}
+            height={400}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
@@ -356,8 +361,9 @@ function FeaturedBlogCard({ blog }: { blog: any }) {
               <Image
                 src={blog.image_url}
                 alt={blog.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                width={400}
+                height={300}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
@@ -431,8 +437,9 @@ function PopularBlogCard({ blog }: { blog: any }) {
           <Image
             src={blog.image_url}
             alt={blog.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            width={800}
+            height={400}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-800 dark:to-orange-800 flex items-center justify-center">

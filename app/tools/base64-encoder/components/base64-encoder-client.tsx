@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import Image from "next/image"
 import { RotateCcw, Copy, Upload, Download, HelpCircle, ArrowLeftRight, FileText, Crown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -634,11 +633,9 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
                             <div className="flex flex-col items-center space-y-2">
                               <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Preview:</p>
                               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-2 bg-gray-50 dark:bg-gray-800">
-                                <Image 
+                                <img 
                                   src={fileDataUrl} 
                                   alt={uploadedFile.name}
-                                  width={192}
-                                  height={128}
                                   className="max-w-48 max-h-32 object-contain rounded"
                                 />
                               </div>

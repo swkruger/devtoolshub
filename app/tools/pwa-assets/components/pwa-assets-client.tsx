@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import Image from 'next/image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -135,7 +134,7 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
                 <Input type="file" accept="image/png,image/svg+xml,image/webp" onChange={(e) => handleFile(e.target.files?.[0])} />
                 {logoUrl && (
                   <div className="mt-2 flex items-center gap-3">
-                    <Image src={logoUrl} alt="Uploaded logo preview" width={64} height={64} className="h-16 w-16 rounded bg-muted object-contain" />
+                    <img src={logoUrl} alt="Uploaded logo preview" className="h-16 w-16 rounded bg-muted object-contain" />
                     <div className="text-xs text-gray-500">
                       {sourceFile?.name} • {sourceFile ? Math.max(1, Math.round(sourceFile.size / 1024)) : 0} KB
                     </div>
@@ -246,7 +245,7 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {files.map((f) => (
                   <div key={f.path} className="border rounded p-2 flex flex-col items-center gap-2">
-                    <Image src={f.url} alt={f.path} width={64} height={64} className="rounded bg-muted" />
+                    <img src={f.url} alt={f.path} width={64} height={64} className="rounded bg-muted" />
                     <div className="text-xs text-center">
                       <div className="font-mono">{f.path}</div>
                       <div className="text-gray-500">{f.width}×{f.height}</div>

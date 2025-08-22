@@ -20,8 +20,9 @@ export function BlogCard({ blog }: BlogCardProps) {
               <Image
                 src={blog.image_url}
                 alt={blog.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                width={400}
+                height={300}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">

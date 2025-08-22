@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -266,11 +265,9 @@ export default function TimezoneCard({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                    <Image 
+                    <img 
                       src={`https://openweathermap.org/img/wn/${cityTimezone.weather.icon}@2x.png`}
                       alt={cityTimezone.weather.description}
-                      width={24}
-                      height={24}
                       className="w-6 h-6"
                     />
                   </div>
