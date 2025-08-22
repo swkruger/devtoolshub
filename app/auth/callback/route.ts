@@ -7,15 +7,25 @@ export async function GET(request: NextRequest) {
   const error = requestUrl.searchParams.get('error')
   const errorDescription = requestUrl.searchParams.get('error_description')
 
-  console.log('OAuth callback received:', {
+  console.log('🔥 OAUTH CALLBACK TRIGGERED:', {
+    timestamp: new Date().toISOString(),
     hasCode: !!code,
+    codePreview: code ? code.substring(0, 20) + '...' : 'none',
     error,
     errorDescription,
     url: requestUrl.toString(),
     origin: requestUrl.origin,
-    vercelUrl: process.env.VERCEL_URL,
-    nodeEnv: process.env.NODE_ENV,
-    allEnvVars: Object.keys(process.env).filter(key => key.includes('VERCEL') || key.includes('SUPABASE'))
+    headers: {
+      host: request.headers.get('host'),
+      'user-agent': request.headers.get('user-agent')?.substring(0, 100),
+      referer: request.headers.get('referer')
+    },
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 40) + '...',
+    environment: {
+      NODE_ENV: process.env.NODE_ENV,
+      VERCEL_ENV: process.env.VERCEL_ENV,
+      VERCEL_URL: process.env.VERCEL_URL
+    }
   })
 
   // Simple redirect URL logic - use the actual request origin
@@ -99,7 +109,13 @@ export async function GET(request: NextRequest) {
       actualCallbackUrl: requestUrl.toString()
     })
 
-    console.log('About to exchange code for session...')
+    console.log('About to exchange code for session...', {
+      codeLength: code.length,
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 40) + '...',
+      origin: requestUrl.origin,
+      expectedOrigin: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'unknown'
+    })
+
     const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
 
     console.log('Code exchange result:', {

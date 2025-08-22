@@ -19,12 +19,20 @@ export const authClient = {
     }
 
     const redirectTo = getCallbackUrl()
-    console.log('Starting OAuth sign-in with:', {
+    console.log('🚀 OAUTH SIGN-IN INITIATED:', {
+      timestamp: new Date().toISOString(),
       provider,
       redirectTo,
-      options,
       origin: window.location.origin,
-      vercelUrl: process.env.NEXT_PUBLIC_VERCEL_URL
+      currentUrl: window.location.href,
+      options: {
+        ...options,
+        queryParams: options?.queryParams ? '[HIDDEN]' : undefined
+      },
+      environment: {
+        vercelUrl: process.env.NEXT_PUBLIC_VERCEL_URL,
+        nodeEnv: process.env.NODE_ENV
+      }
     })
     
     // Force re-authentication by using appropriate OAuth parameters
