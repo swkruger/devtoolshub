@@ -21,6 +21,10 @@ export const authClient = {
       // For production - use the current window location origin
       // This works for custom domains, Vercel domains, etc.
       if (typeof window !== 'undefined') {
+        // Handle custom domain specifically
+        if (window.location.origin.includes('devtoolskithub.com')) {
+          return 'https://www.devtoolskithub.com/auth/callback'
+        }
         return `${window.location.origin}/auth/callback`
       }
 

@@ -32,6 +32,14 @@ export async function GET(request: NextRequest) {
     // For production - use the actual origin from the request
     // This handles custom domains, Vercel domains, etc.
     if (origin && origin.startsWith('https://')) {
+      // Handle the specific case where we have a custom domain
+      if (origin.includes('devtoolskithub.com')) {
+        const redirectUrl = 'https://www.devtoolskithub.com/dashboard'
+        console.log('Using custom domain for redirect:', redirectUrl)
+        return redirectUrl
+      }
+
+      // For any other domain (including Vercel domains), use it directly
       const redirectUrl = `${origin}/dashboard`
       console.log('Using request origin for redirect:', redirectUrl)
       return redirectUrl
