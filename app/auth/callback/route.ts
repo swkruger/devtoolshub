@@ -72,18 +72,28 @@ export async function GET(request: NextRequest) {
   let response = NextResponse.redirect(redirectUrl)
 
   try {
+    console.log('Creating Supabase client with:', {
+      url: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...',
+      hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      anonKeyLength: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.length
+    })
+
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
           get(name: string) {
-            return request.cookies.get(name)?.value
+            const value = request.cookies.get(name)?.value
+            console.log(`Cookie get: ${name} = ${value ? 'present' : 'not found'}`)
+            return value
           },
           set(name: string, value: string, options: any) {
+            console.log(`Cookie set: ${name} = ${value?.substring(0, 20)}...`)
             response.cookies.set({ name, value, ...options })
           },
           remove(name: string, options: any) {
+            console.log(`Cookie remove: ${name}`)
             response.cookies.set({ name, value: '', ...options })
           },
         },
@@ -97,13 +107,29 @@ export async function GET(request: NextRequest) {
       actualCallbackUrl: requestUrl.toString()
     })
 
+    console.log('About to exchange code for session...')
     const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+
+    console.log('Code exchange result:', {
+      hasData: !!data,
+      hasSession: !!data?.session,
+      hasUser: !!data?.user,
+      error: exchangeError ? {
+        message: exchangeError.message,
+        status: exchangeError.status,
+        name: exchangeError.name,
+        details: exchangeError
+      } : null
+    })
 
     if (exchangeError) {
       console.error('Code exchange error:', {
         message: exchangeError.message,
         status: exchangeError.status,
-        details: exchangeError
+        name: exchangeError.name,
+        details: exchangeError,
+        code: code?.substring(0, 20) + '...',
+        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...'
       })
       throw exchangeError
     }
