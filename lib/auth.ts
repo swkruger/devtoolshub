@@ -61,17 +61,37 @@ export const authClient = {
     console.log('Sign out completed successfully')
   },
 
-  // Get current session
+  // Get current session with refresh handling
   async getSession() {
     const supabase = createSupabaseClient()
-    
-    const { data: { session }, error } = await supabase.auth.getSession()
-    
-    if (error) {
-      throw new Error(`Failed to get session: ${error.message}`)
-    }
 
-    return session
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession()
+
+      if (error) {
+        console.error('Error getting session:', error)
+        throw new Error(`Failed to get session: ${error.message}`)
+      }
+
+      // If session exists but is expired, try to refresh it
+      if (session && new Date(session.expires_at! * 1000) < new Date()) {
+        console.log('Session expired, attempting refresh...')
+        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
+
+        if (refreshError) {
+          console.error('Session refresh failed:', refreshError)
+          return null
+        }
+
+        console.log('Session refreshed successfully')
+        return refreshData.session
+      }
+
+      return session
+    } catch (error) {
+      console.error('Error in getSession:', error)
+      return null
+    }
   },
 
   // Get current user

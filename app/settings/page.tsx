@@ -14,11 +14,28 @@ export const metadata: Metadata = {
 
 export default async function SettingsPage() {
   const supabase = createSupabaseServerClient()
-  
-  // Check authentication
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  
+
+  // Check authentication with better error handling
+  let user, authError
+
+  try {
+    const authResult = await supabase.auth.getUser()
+    user = authResult.data.user
+    authError = authResult.error
+
+    console.log('Settings page auth check:', {
+      hasUser: !!user,
+      userId: user?.id,
+      error: authError?.message,
+      errorCode: authError?.status
+    })
+  } catch (error) {
+    console.error('Error during auth check in settings:', error)
+    authError = error as any
+  }
+
   if (authError || !user) {
+    console.log('Settings page: No authenticated user, redirecting to sign-in')
     redirect('/sign-in')
   }
 
