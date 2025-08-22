@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const error = requestUrl.searchParams.get('error')
   const errorDescription = requestUrl.searchParams.get('error_description')
 
-  console.log('🔥 OAUTH CALLBACK TRIGGERED:', {
+  console.log('🔥🔥🔥 OAUTH CALLBACK TRIGGERED - THIS SHOULD BE VISIBLE:', {
     timestamp: new Date().toISOString(),
     hasCode: !!code,
     codePreview: code ? code.substring(0, 20) + '...' : 'none',
