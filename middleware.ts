@@ -2,6 +2,14 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  const { pathname, searchParams } = request.nextUrl
+  
+  // Add debugging for settings route
+  if (pathname === '/settings') {
+    console.log('=== MIDDLEWARE: SETTINGS ROUTE ACCESSED ===')
+    console.log('Middleware: Processing settings route at:', new Date().toISOString())
+  }
+  
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -39,7 +47,14 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { pathname, searchParams } = request.nextUrl
+  // Add debugging for settings route
+  if (pathname === '/settings') {
+    console.log('Middleware: User authentication check result:', {
+      hasUser: !!user,
+      userEmail: user?.email,
+      pathname: pathname
+    })
+  }
 
   // Define protected routes
   const protectedRoutes = ['/dashboard', '/tools', '/settings']
@@ -61,6 +76,9 @@ export async function middleware(request: NextRequest) {
 
   // If user is not authenticated and trying to access protected route
   if (!user && isProtectedRoute) {
+    if (pathname === '/settings') {
+      console.log('Middleware: User not authenticated, redirecting settings to sign-in')
+    }
     // If accessing a tool, route to public docs instead of sign-in
     if (pathname.startsWith('/tools/')) {
       const parts = pathname.split('/')
@@ -87,6 +105,10 @@ export async function middleware(request: NextRequest) {
   // BUT NOT if this is a logout request
   if (user && isAuthRoute && pathname !== '/auth/callback' && !isLogoutRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+
+  if (pathname === '/settings') {
+    console.log('Middleware: Settings route allowed to proceed')
   }
 
   return response

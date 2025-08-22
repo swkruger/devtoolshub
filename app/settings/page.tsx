@@ -62,6 +62,10 @@ function SettingsFallback({ errorDetails }: { errorDetails?: string }) {
 }
 
 export default async function SettingsPage() {
+  // Add immediate logging to verify function is called
+  console.log('=== SETTINGS PAGE FUNCTION CALLED ===')
+  console.log('Settings page: Function execution started at:', new Date().toISOString())
+  
   let user = null
   let profile = null
   let preferences = null
@@ -197,7 +201,7 @@ export default async function SettingsPage() {
 
     return (
       <div className="container mx-auto px-4 py-4 max-w-7xl">
-        <SettingsLayout 
+        <SettingsLayout
           user={user}
           profile={profile}
           preferences={preferences}
@@ -205,8 +209,10 @@ export default async function SettingsPage() {
         />
       </div>
     )
+
   } catch (error: any) {
     console.error('Settings page caught an unexpected error:', error.message || error)
+    console.log('Settings page: Error stack trace:', error.stack)
     errorDetails = error.message || 'Unknown error occurred'
     return <SettingsFallback errorDetails={errorDetails} />
   }

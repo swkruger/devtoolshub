@@ -60,6 +60,7 @@
 - [x] **Task 12:** Fix build errors - escape quotes in privacy and terms pages
 - [x] **Task 13:** Add comprehensive debugging to settings page and auth callback for session issues
 - [x] **Task 14:** Fix TypeScript error in auth callback - handle undefined expires_at
+- [x] **Task 15:** Add comprehensive debugging to settings page and middleware for session issues
 
 ## Previous Issue: Placeholder.com Images Breaking in Production
 
