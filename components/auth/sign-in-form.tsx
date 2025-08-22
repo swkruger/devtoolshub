@@ -246,7 +246,10 @@ export function SignInForm() {
         </Button>
 
         <div className="text-center text-sm text-muted-foreground">
-          By signing in, you agree to our Terms of Service and Privacy Policy
+          By signing in, you agree to our{' '}
+          <a href="/terms" className="text-primary hover:underline">Terms of Service</a>
+          {' '}and{' '}
+          <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>
         </div>
       </CardContent>
     </Card>

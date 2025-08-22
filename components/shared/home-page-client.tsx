@@ -454,6 +454,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                 <li><Link href="/support" className="hover:text-white transition-colors">Support</Link></li>
                 <li><Link href="/feedback" className="hover:text-white transition-colors">Feedback</Link></li>
                 <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Terms</Link></li>
               </ul>
             </div>
           </div>
