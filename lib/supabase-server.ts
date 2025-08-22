@@ -36,36 +36,28 @@ export const createSupabaseServerClient = () => {
       cookies: {
         get(name: string) {
           try {
-            const cookieStore = cookies()
-            const cookie = cookieStore.get(name)
-            return cookie?.value
-          } catch (error) {
-            console.warn(`Failed to get cookie ${name}:`, error)
+            return cookies().get(name)?.value
+          } catch {
             return undefined
           }
         },
         set(name: string, value: string, options: any) {
           try {
-            const cookieStore = cookies()
-            cookieStore.set(name, value, options)
-          } catch (error) {
-            console.warn(`Failed to set cookie ${name}:`, error)
+            cookies().set(name, value, options)
+          } catch {
             // Silently fail if cookies can't be set
           }
         },
         remove(name: string, options: any) {
           try {
-            const cookieStore = cookies()
-            cookieStore.set(name, '', { ...options, maxAge: 0 })
-          } catch (error) {
-            console.warn(`Failed to remove cookie ${name}:`, error)
+            cookies().set(name, '', { ...options, maxAge: 0 })
+          } catch {
             // Silently fail if cookies can't be removed
           }
         },
       },
     })
-  } catch (error) {
-    console.warn('Failed to import next/headers, using fallback client:', error)
+  } catch {
     // Fallback client without cookies if next/headers is not available
     return createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {

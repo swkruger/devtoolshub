@@ -9,8 +9,6 @@ import { authClient } from "@/lib/auth"
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState<string | null>(null)
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
-  const [authCheckError, setAuthCheckError] = useState<string | null>(null)
-  const [showSkipButton, setShowSkipButton] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
@@ -35,25 +33,12 @@ export function SignInForm() {
       return
     }
     
-    // Show skip button after 3 seconds
-    const skipTimer = setTimeout(() => {
-      setShowSkipButton(true)
-    }, 3000)
-    
     const checkAuthStatus = async (retryCount = 0) => {
       try {
         console.log('Checking auth status... (attempt', retryCount + 1, ')')
         
-        // Add timeout to prevent hanging - reduced to 3 seconds
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Authentication check timeout')), 3000)
-        })
-        
-        const sessionPromise = authClient.getSession()
-        
-        const session = await Promise.race([sessionPromise, timeoutPromise]) as any
+        const session = await authClient.getSession()
         console.log('Session from getSession():', session)
-        
         if (session?.user) {
           console.log('User is authenticated, redirecting to:', redirectTo)
           // Use hard redirect to avoid any React router issues
@@ -62,50 +47,25 @@ export function SignInForm() {
         }
         
         // If no session and we haven't tried many times, retry after a short delay
-        if (retryCount < 1) {
-          console.log('No session found, retrying in 2000ms...')
-          setTimeout(() => checkAuthStatus(retryCount + 1), 2000)
+        if (retryCount < 3) {
+          console.log('No session found, retrying in 500ms...')
+          setTimeout(() => checkAuthStatus(retryCount + 1), 500)
           return
         }
         
         console.log('No session found after retries, showing sign-in form')
-        setAuthCheckError(null)
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error checking auth status:', error)
-        
-        // If it's a timeout or network error, show a helpful message
-        if (error.message?.includes('timeout') || error.message?.includes('network')) {
-          setAuthCheckError('Authentication service temporarily unavailable. Please try signing in manually.')
-        } else if (retryCount < 1) {
-          // Retry on other errors
-          console.log('Auth check failed, retrying in 2000ms...')
-          setTimeout(() => checkAuthStatus(retryCount + 1), 2000)
-          return
-        } else {
-          setAuthCheckError('Unable to check authentication status. Please try signing in manually.')
-        }
       } finally {
         // Only set loading to false after final attempt
-        if (retryCount >= 1) {
+        if (retryCount >= 3) {
           setIsCheckingAuth(false)
-          clearTimeout(skipTimer)
         }
       }
     }
 
     checkAuthStatus()
-    
-    // Cleanup function
-    return () => {
-      clearTimeout(skipTimer)
-    }
   }, [router, redirectTo])
-
-  const handleSkipAuthCheck = () => {
-    console.log('User manually skipped auth check')
-    setIsCheckingAuth(false)
-    setAuthCheckError('Authentication check skipped. You can proceed with sign-in.')
-  }
 
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     try {
@@ -119,19 +79,19 @@ export function SignInForm() {
         // Clear the flag
         localStorage.removeItem('force_reauth')
         
-        // Use more aggressive parameters to force account selection
-        const queryParams = {
-          ...(provider === 'google' && {
-            prompt: 'select_account consent',
-            access_type: 'offline',
-            include_granted_scopes: 'false', // Don't include previously granted scopes
-          }),
-          ...(provider === 'github' && {
-            prompt: 'consent',
-            scope: 'read:user user:email',
-            force_login: 'true', // Force login screen
-          }),
-        }
+                          // Use more aggressive parameters to force account selection
+         const queryParams = {
+           ...(provider === 'google' && {
+             prompt: 'select_account consent',
+             access_type: 'offline',
+             include_granted_scopes: 'false', // Don't include previously granted scopes
+           }),
+           ...(provider === 'github' && {
+             prompt: 'consent',
+             scope: 'read:user user:email',
+             force_login: 'true', // Force login screen
+           }),
+         }
         
         await authClient.signInWithOAuth(provider, { queryParams })
       } else {
@@ -160,26 +120,9 @@ export function SignInForm() {
   if (isCheckingAuth) {
     return (
       <Card>
-        <CardContent className="flex flex-col items-center justify-center py-8 space-y-4">
-          <div className="flex items-center">
-            <div className="w-8 h-8 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            <span className="ml-2">Checking authentication...</span>
-          </div>
-          
-          {showSkipButton && (
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-2">
-                Taking longer than expected?
-              </p>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleSkipAuthCheck}
-              >
-                Skip Check & Sign In
-              </Button>
-            </div>
-          )}
+        <CardContent className="flex items-center justify-center py-8">
+          <div className="w-8 h-8 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          <span className="ml-2">Checking authentication...</span>
         </CardContent>
       </Card>
     )
@@ -198,14 +141,6 @@ export function SignInForm() {
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
             <p className="text-sm text-destructive">
               Authentication failed. Please try again.
-            </p>
-          </div>
-        )}
-
-        {authCheckError && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-            <p className="text-sm text-yellow-700">
-              {authCheckError}
             </p>
           </div>
         )}
@@ -246,10 +181,7 @@ export function SignInForm() {
         </Button>
 
         <div className="text-center text-sm text-muted-foreground">
-          By signing in, you agree to our{' '}
-          <a href="/terms" className="text-primary hover:underline">Terms of Service</a>
-          {' '}and{' '}
-          <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>
+          By signing in, you agree to our Terms of Service and Privacy Policy
         </div>
       </CardContent>
     </Card>
