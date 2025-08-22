@@ -34,19 +34,49 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Get the current user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { pathname } = request.nextUrl
 
-  const { pathname, searchParams } = request.nextUrl
+  // Handle OAuth codes that land on root domain
+  if (pathname === '/' && request.nextUrl.searchParams.has('code')) {
+    const code = request.nextUrl.searchParams.get('code')
+    const error = request.nextUrl.searchParams.get('error')
+    const errorDescription = request.nextUrl.searchParams.get('error_description')
+    
+    console.error('🔐🔐🔐 OAUTH CODE DETECTED ON ROOT DOMAIN 🔐🔐🔐', {
+      timestamp: new Date().toISOString(),
+      code,
+      error,
+      errorDescription,
+      pathname,
+      method: request.method,
+      userAgent: request.headers.get('user-agent'),
+      referer: request.headers.get('referer'),
+      host: request.headers.get('host')
+    })
 
-  // Log all requests to auth-related routes
+    if (code) {
+      // Redirect to the proper callback route
+      const callbackUrl = new URL('/auth/callback', request.url)
+      callbackUrl.searchParams.set('code', code)
+      return NextResponse.redirect(callbackUrl)
+    }
+    
+    if (error) {
+      // Redirect to sign-in with error
+      const signInUrl = new URL('/sign-in', request.url)
+      signInUrl.searchParams.set('error', error)
+      if (errorDescription) {
+        signInUrl.searchParams.set('error_description', errorDescription)
+      }
+      return NextResponse.redirect(signInUrl)
+    }
+  }
+
+  // Log auth-related requests for debugging
   if (pathname.startsWith('/auth') || pathname.startsWith('/sign-in')) {
     console.error('🔐🔐🔐 AUTH MIDDLEWARE HIT 🔐🔐🔐', {
       timestamp: new Date().toISOString(),
       pathname,
-      hasUser: !!user,
       method: request.method,
       userAgent: request.headers.get('user-agent'),
       referer: request.headers.get('referer'),
@@ -54,51 +84,33 @@ export async function middleware(request: NextRequest) {
     })
   }
 
+  // Refresh session if expired - required for Server Components
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
   // Define protected routes
   const protectedRoutes = ['/dashboard', '/tools', '/settings', '/go-premium']
-  const authRoutes = ['/sign-in', '/auth']
-  
-  // Check if the current path is a protected route
-  const isProtectedRoute = protectedRoutes.some(route => 
-    pathname.startsWith(route)
-  )
-  
-  // Check if the current path is an auth route
-  const isAuthRoute = authRoutes.some(route => 
-    pathname.startsWith(route)
-  )
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
 
-  // Check if this is a logout request
-  const isLogoutRequest = searchParams.get('logout') === 'true' || 
-                         searchParams.get('force_reauth') !== null
+  // Check if user is authenticated
+  const { data: { user } } = await supabase.auth.getUser()
 
-  // If user is not authenticated and trying to access protected route
-  if (!user && isProtectedRoute) {
-    // If accessing a tool, route to public docs instead of sign-in
-    if (pathname.startsWith('/tools/')) {
-      const parts = pathname.split('/')
-      const slug = parts[2]
-      if (slug) {
-        return NextResponse.redirect(new URL(`/docs/${slug}`, request.url))
-      }
-      return NextResponse.redirect(new URL('/docs', request.url))
-    }
+  // Redirect logic
+  if (isProtectedRoute && !user) {
+    // User is not authenticated and trying to access protected route
     const redirectUrl = new URL('/sign-in', request.url)
     redirectUrl.searchParams.set('redirectTo', pathname)
     return NextResponse.redirect(redirectUrl)
   }
-  
-  // If user is authenticated but we're on the home page and they just signed out,
-  // redirect them to sign-in to force re-authentication
-  if (user && pathname === '/' && searchParams.get('force_reauth') === 'true') {
-    const redirectUrl = new URL('/sign-in', request.url)
-    redirectUrl.searchParams.set('force_reauth', 'true')
-    return NextResponse.redirect(redirectUrl)
+
+  if (pathname === '/sign-in' && user) {
+    // User is authenticated and trying to access sign-in page
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
-  // If user is authenticated and trying to access auth routes, redirect to dashboard
-  // BUT NOT if this is a logout request
-  if (user && isAuthRoute && pathname !== '/auth/callback' && !isLogoutRequest) {
+  if (pathname === '/' && user) {
+    // User is authenticated and accessing root - redirect to dashboard
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
