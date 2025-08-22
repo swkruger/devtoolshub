@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getAllTools } from '@/lib/tools'
 import { BookOpen, ArrowRight } from 'lucide-react'
 import { marked } from 'marked'
@@ -65,7 +66,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <img
+              <Image
                 src="/icons/icon-192x192.png"
                 alt="DevToolsHub icon"
                 className="w-10 h-10 rounded-lg object-contain bg-white"
@@ -203,10 +204,11 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                <div className="order-1 lg:order-1">
                                    <div className="aspect-video rounded-l-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
                    {featuredBlogs[0].image_url ? (
-                     <img
+                     <Image
                        src={featuredBlogs[0].image_url}
                        alt={featuredBlogs[0].title}
-                       className="w-full h-full object-cover"
+                       fill
+                       className="object-cover"
                      />
                    ) : (
                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
@@ -307,10 +309,11 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                   {/* Blog Image */}
                   <div className="aspect-video overflow-hidden">
                     {blog.image_url ? (
-                      <img
+                      <Image
                         src={blog.image_url}
                         alt={blog.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-800 dark:to-orange-800 flex items-center justify-center">
@@ -415,7 +418,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <img
+                <Image
                   src="/icons/icon-192x192.png"
                   alt="DevToolsHub icon"
                   className="w-8 h-8 rounded-lg object-contain bg-white"

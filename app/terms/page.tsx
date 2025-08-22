@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Terms of Service – DevToolsHub',
@@ -35,7 +36,7 @@ export default function TermsPage() {
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <header className="docs-header">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center gap-3">
-          <img src="/icons/icon-48x48.png" alt="DevToolsHub icon" width={24} height={24} className="rounded" />
+          <Image src="/icons/icon-48x48.png" alt="DevToolsHub icon" width={24} height={24} className="rounded" />
           <div className="font-semibold docs-title">DevToolsHub Terms of Service</div>
           <nav className="ml-auto flex items-center gap-4 text-sm docs-nav">
             <a href="/">Home</a>
@@ -51,7 +52,7 @@ export default function TermsPage() {
             <h1 className="text-3xl font-bold mb-4 docs-title">Terms of Service</h1>
             <p className="docs-muted mb-4">Last updated: January 2025</p>
             <p className="content-text">
-              These Terms of Service ("Terms") govern your use of DevToolsHub ("we," "our," or "us") and our developer tools platform and services. By accessing or using our services, you agree to be bound by these Terms.
+              These Terms of Service (&ldquo;Terms&rdquo;) govern your use of DevToolsHub (&ldquo;we,&rdquo; &ldquo;our,&rdquo; or &ldquo;us&rdquo;) and our developer tools platform and services. By accessing or using our services, you agree to be bound by these Terms.
             </p>
           </section>
 
@@ -176,7 +177,7 @@ export default function TermsPage() {
           <section className="docs-card">
             <h2 id="disclaimers" className="section-title">8. Disclaimers</h2>
             <p className="content-text">
-              Our services are provided "as is" and "as available" without any warranties of any kind, either express or implied. We do not warrant that:
+              Our services are provided &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without any warranties of any kind, either express or implied. We do not warrant that:
             </p>
             <ul className="content-list">
               <li>Our services will be uninterrupted or error-free</li>

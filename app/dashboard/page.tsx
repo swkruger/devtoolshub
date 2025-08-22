@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/dashboard' },
 }
 import Link from "next/link"
+import Image from "next/image"
 
 const tools = getAllTools()
 
@@ -175,10 +176,11 @@ function MainFeaturedBlogCard({ blog }: { blog: any }) {
         <div className="lg:w-1/2">
           <div className="relative h-64 lg:h-96 overflow-hidden">
             {blog.image_url ? (
-              <img
+              <Image
                 src={blog.image_url}
                 alt={blog.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">

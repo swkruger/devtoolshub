@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { marked } from 'marked'
 import DOMPurify from 'isomorphic-dompurify'
 import type { Blog } from '@/lib/types/blog'
@@ -13,10 +14,11 @@ export function PopularBlogCard({ blog }: PopularBlogCardProps) {
       {/* Blog Image */}
       <div className="aspect-video overflow-hidden">
         {blog.image_url ? (
-          <img
+          <Image
             src={blog.image_url}
             alt={blog.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-800 dark:to-orange-800 flex items-center justify-center">

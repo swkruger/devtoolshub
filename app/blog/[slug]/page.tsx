@@ -17,6 +17,7 @@ import {
   ArrowLeft
 } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 
 export const revalidate = 0
@@ -209,10 +210,11 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
           {/* Featured Image */}
           {blog.image_url && (
             <div className="aspect-video rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
-              <img
+              <Image
                 src={blog.image_url}
                 alt={blog.title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             </div>
           )}
@@ -258,10 +260,11 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
                     <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-white dark:hover:bg-gray-700 transition-colors">
                       {post.image_url && (
                         <div className="flex-shrink-0 w-16 h-12 rounded overflow-hidden bg-gray-200 dark:bg-gray-600">
-                          <img
+                          <Image
                             src={post.image_url}
                             alt={post.title}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
                           />
                         </div>
                       )}

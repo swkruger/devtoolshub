@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { ContactForm } from '@/components/shared/contact-form'
 
 export default function SupportPage() {
@@ -37,7 +38,7 @@ export default function SupportPage() {
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <header className="docs-header">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center gap-3">
-          <img src="/icons/icon-48x48.png" alt="DevToolsHub icon" width={24} height={24} className="rounded" />
+          <Image src="/icons/icon-48x48.png" alt="DevToolsHub icon" width={24} height={24} className="rounded" />
           <div className="font-semibold docs-title">DevToolsHub Support</div>
           <nav className="ml-auto flex items-center gap-4 text-sm docs-nav">
             <a href="/">Home</a>

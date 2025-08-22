@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { BlogList } from '@/components/blog/blog-list'
@@ -191,10 +192,11 @@ function MainFeaturedBlogCard({ blog }: { blog: any }) {
         <div className="lg:w-1/2">
           <div className="relative h-64 lg:h-96 overflow-hidden">
             {blog.image_url ? (
-              <img
+              <Image
                 src={blog.image_url}
                 alt={blog.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
@@ -267,10 +269,11 @@ function BlogCard({ blog }: { blog: any }) {
       {/* Blog Image */}
       <div className="aspect-video overflow-hidden">
         {blog.image_url ? (
-          <img
+          <Image
             src={blog.image_url}
             alt={blog.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
@@ -350,10 +353,11 @@ function FeaturedBlogCard({ blog }: { blog: any }) {
         <div className="md:w-1/3">
           <div className="relative h-48 md:h-full overflow-hidden">
             {blog.image_url ? (
-              <img
+              <Image
                 src={blog.image_url}
                 alt={blog.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
@@ -424,10 +428,11 @@ function PopularBlogCard({ blog }: { blog: any }) {
       {/* Blog Image */}
       <div className="aspect-video overflow-hidden">
         {blog.image_url ? (
-          <img
+          <Image
             src={blog.image_url}
             alt={blog.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-800 dark:to-orange-800 flex items-center justify-center">

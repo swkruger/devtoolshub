@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -1326,20 +1327,22 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                   {image.showComparison && image.compressedPreview ? (
                     <div className="grid grid-cols-2">
                       <div className="relative">
-                        <img 
+                        <Image 
                           src={image.preview} 
                           alt={`Original ${image.file.name}`}
-                          className="w-full h-48 object-cover"
+                          fill
+                          className="object-cover"
                         />
                         <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                           Original
                         </div>
                       </div>
                       <div className="relative">
-                        <img 
+                        <Image 
                           src={image.compressedPreview} 
                           alt={`Compressed ${image.file.name}`}
-                          className="w-full h-48 object-cover"
+                          fill
+                          className="object-cover"
                         />
                         <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                           Compressed
@@ -1347,10 +1350,11 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                       </div>
                     </div>
                   ) : (
-                    <img 
+                    <Image 
                       src={image.preview} 
                       alt={`Original ${image.file.name}`}
-                      className="w-full h-48 object-cover"
+                      fill
+                      className="object-cover"
                     />
                   )}
                   <div className="absolute top-2 right-2 flex space-x-1">

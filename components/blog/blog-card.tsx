@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import type { Blog } from '@/lib/types/blog'
 import { marked } from 'marked'
@@ -16,10 +17,11 @@ export function BlogCard({ blog }: BlogCardProps) {
         <div className="md:w-1/3">
           <div className="relative h-48 md:h-full overflow-hidden">
             {blog.image_url ? (
-              <img
+              <Image
                 src={blog.image_url}
                 alt={blog.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
