@@ -11,25 +11,42 @@ export async function GET(request: NextRequest) {
     hasCode: !!code,
     error,
     errorDescription,
-    url: requestUrl.toString()
+    url: requestUrl.toString(),
+    origin: requestUrl.origin,
+    vercelUrl: process.env.VERCEL_URL,
+    nodeEnv: process.env.NODE_ENV,
+    allEnvVars: Object.keys(process.env).filter(key => key.includes('VERCEL') || key.includes('SUPABASE'))
   })
 
   // Determine the correct redirect URL based on environment
   const getRedirectUrl = (origin: string) => {
+    console.log('getRedirectUrl called with origin:', origin)
+
     // For Vercel production, use the correct domain
     if (process.env.VERCEL_URL) {
-      return `https://${process.env.VERCEL_URL}/dashboard`
+      const redirectUrl = `https://${process.env.VERCEL_URL}/dashboard`
+      console.log('Using VERCEL_URL for redirect:', redirectUrl)
+      return redirectUrl
     }
+
     // For local development
     if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-      return `${origin}/dashboard`
+      const redirectUrl = `${origin}/dashboard`
+      console.log('Using localhost for redirect:', redirectUrl)
+      return redirectUrl
     }
+
     // For production, try to use the correct domain
     if (origin.includes('devtoolskithub.com')) {
-      return 'https://devtoolskithub.com/dashboard'
+      const redirectUrl = 'https://devtoolskithub.com/dashboard'
+      console.log('Using devtoolskithub.com for redirect:', redirectUrl)
+      return redirectUrl
     }
+
     // Fallback
-    return `${origin}/dashboard`
+    const fallbackUrl = `${origin}/dashboard`
+    console.log('Using fallback for redirect:', fallbackUrl)
+    return fallbackUrl
   }
 
   // Handle OAuth errors
@@ -50,6 +67,7 @@ export async function GET(request: NextRequest) {
   }
 
   const redirectUrl = getRedirectUrl(requestUrl.origin)
+  console.log('Final redirect URL:', redirectUrl)
   let response = NextResponse.redirect(redirectUrl)
 
   try {
@@ -73,7 +91,9 @@ export async function GET(request: NextRequest) {
 
     console.log('Exchanging code for session...', {
       code: code.substring(0, 20) + '...', // Log partial code for debugging
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...'
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...',
+      expectedCallbackUrl: getRedirectUrl(requestUrl.origin).replace('/dashboard', '/auth/callback'),
+      actualCallbackUrl: requestUrl.toString()
     })
 
     const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
