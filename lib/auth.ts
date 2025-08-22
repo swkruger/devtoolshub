@@ -9,8 +9,34 @@ export const authClient = {
   async signInWithOAuth(provider: 'google' | 'github', options?: any) {
     const supabase = createSupabaseClient()
     
-    const redirectTo = `${window.location.origin}/auth/callback`
-    console.log('Starting OAuth sign-in with:', { provider, redirectTo, options })
+    // Determine the correct callback URL based on environment
+    const getCallbackUrl = () => {
+      // For production (Vercel), use the deployed domain
+      if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+        return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/auth/callback`
+      }
+      // For local development
+      if (typeof window !== 'undefined') {
+        if (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')) {
+          return `${window.location.origin}/auth/callback`
+        }
+        // For production domains
+        if (window.location.origin.includes('devtoolskithub.com')) {
+          return 'https://devtoolskithub.com/auth/callback'
+        }
+      }
+      // Fallback
+      return `${window.location.origin}/auth/callback`
+    }
+
+    const redirectTo = getCallbackUrl()
+    console.log('Starting OAuth sign-in with:', {
+      provider,
+      redirectTo,
+      options,
+      origin: window.location.origin,
+      vercelUrl: process.env.NEXT_PUBLIC_VERCEL_URL
+    })
     
     // Force re-authentication by using appropriate OAuth parameters
     const queryParams = {

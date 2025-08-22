@@ -26,6 +26,12 @@ export async function GET(request: NextRequest) {
       userId: string | null
       error: string | null
     }
+    redirect: {
+      origin: string
+      vercelUrl: string | undefined
+      nextPublicVercelUrl: string | undefined
+      callbackUrl: string | null
+    }
   } = {
     environment: {
       NODE_ENV: process.env.NODE_ENV,
@@ -48,6 +54,12 @@ export async function GET(request: NextRequest) {
       hasSession: false,
       userId: null,
       error: null
+    },
+    redirect: {
+      origin: new URL(request.url).origin,
+      vercelUrl: process.env.VERCEL_URL,
+      nextPublicVercelUrl: process.env.NEXT_PUBLIC_VERCEL_URL,
+      callbackUrl: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/auth/callback` : null
     }
   }
 

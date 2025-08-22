@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   alternates: { canonical: '/dashboard' },
 }
+
+// Force dynamic rendering to avoid build-time database calls
+export const dynamic = 'force-dynamic'
 import Link from "next/link"
 import Image from "next/image"
 

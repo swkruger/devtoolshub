@@ -14,10 +14,28 @@ export async function GET(request: NextRequest) {
     url: requestUrl.toString()
   })
 
+  // Determine the correct redirect URL based on environment
+  const getRedirectUrl = (origin: string) => {
+    // For Vercel production, use the correct domain
+    if (process.env.VERCEL_URL) {
+      return `https://${process.env.VERCEL_URL}/dashboard`
+    }
+    // For local development
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return `${origin}/dashboard`
+    }
+    // For production, try to use the correct domain
+    if (origin.includes('devtoolskithub.com')) {
+      return 'https://devtoolskithub.com/dashboard'
+    }
+    // Fallback
+    return `${origin}/dashboard`
+  }
+
   // Handle OAuth errors
   if (error) {
     console.error('OAuth error:', { error, errorDescription })
-    const signInUrl = new URL('/sign-in', requestUrl.origin)
+    const signInUrl = new URL('/sign-in', getRedirectUrl(requestUrl.origin).replace('/dashboard', ''))
     signInUrl.searchParams.set('error', 'oauth_error')
     signInUrl.searchParams.set('error_description', errorDescription || 'OAuth authentication failed')
     return NextResponse.redirect(signInUrl)
@@ -25,13 +43,14 @@ export async function GET(request: NextRequest) {
 
   if (!code) {
     console.error('No authorization code received')
-    const signInUrl = new URL('/sign-in', requestUrl.origin)
+    const signInUrl = new URL('/sign-in', getRedirectUrl(requestUrl.origin).replace('/dashboard', ''))
     signInUrl.searchParams.set('error', 'no_code')
     signInUrl.searchParams.set('error_description', 'No authorization code received')
     return NextResponse.redirect(signInUrl)
   }
 
-  let response = NextResponse.redirect(`${requestUrl.origin}/dashboard`)
+  const redirectUrl = getRedirectUrl(requestUrl.origin)
+  let response = NextResponse.redirect(redirectUrl)
 
   try {
     const supabase = createServerClient(
@@ -52,47 +71,73 @@ export async function GET(request: NextRequest) {
       }
     )
 
-    console.log('Exchanging code for session...')
+    console.log('Exchanging code for session...', {
+      code: code.substring(0, 20) + '...', // Log partial code for debugging
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...'
+    })
+
     const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
 
     if (exchangeError) {
-      console.error('Code exchange error:', exchangeError)
+      console.error('Code exchange error:', {
+        message: exchangeError.message,
+        status: exchangeError.status,
+        details: exchangeError
+      })
       throw exchangeError
+    }
+
+    if (!data.session) {
+      console.error('Code exchange succeeded but no session returned')
+      throw new Error('No session returned from code exchange')
     }
 
     console.log('Code exchange successful:', {
       hasSession: !!data.session,
       hasUser: !!data.user,
       userId: data.user?.id,
-      userEmail: data.user?.email
+      userEmail: data.user?.email,
+      sessionExpiry: data.session?.expires_at ? new Date(data.session.expires_at * 1000).toISOString() : null
     })
 
     // Set proper cookie options for Vercel production
-    if (data.session?.access_token) {
-      response.cookies.set('sb-access-token', data.session.access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-        path: '/',
-      })
-    }
+    try {
+      if (data.session?.access_token) {
+        response.cookies.set('sb-access-token', data.session.access_token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7, // 7 days
+          path: '/',
+        })
+        console.log('Access token cookie set')
+      }
 
-    if (data.session?.refresh_token) {
-      response.cookies.set('sb-refresh-token', data.session.refresh_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-        path: '/',
-      })
-    }
+      if (data.session?.refresh_token) {
+        response.cookies.set('sb-refresh-token', data.session.refresh_token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 30, // 30 days
+          path: '/',
+        })
+        console.log('Refresh token cookie set')
+      }
 
-    console.log('Session cookies set, redirecting to dashboard for profile sync...')
+      console.log('Session cookies set, redirecting to dashboard for profile sync...', {
+        redirectUrl,
+        origin: requestUrl.origin,
+        hasAccessToken: !!data.session?.access_token,
+        hasRefreshToken: !!data.session?.refresh_token
+      })
+    } catch (cookieError) {
+      console.error('Error setting cookies:', cookieError)
+      // Continue with redirect even if cookie setting fails
+    }
 
   } catch (error) {
     console.error('Error in OAuth callback:', error)
-    const signInUrl = new URL('/sign-in', requestUrl.origin)
+    const signInUrl = new URL('/sign-in', getRedirectUrl(requestUrl.origin).replace('/dashboard', ''))
     signInUrl.searchParams.set('error', 'auth_error')
     signInUrl.searchParams.set('error_description', 'Failed to complete authentication')
     return NextResponse.redirect(signInUrl)

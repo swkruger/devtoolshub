@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import GoPremiumClient from './GoPremiumClient'
 
+// Force dynamic rendering to avoid build-time database calls
+export const dynamic = 'force-dynamic'
+
 export default async function GoPremiumPage() {
   // Get the current user
   const user = await authServer.getUser()
