@@ -237,9 +237,9 @@ async function createCheckoutSession(user: any, plan: string, supabase: any) {
 
     // Get or create Stripe customer
     let customerId = profile.stripe_customer_id
-    
+
     if (!customerId) {
-      console.log('👤 Creating new Stripe customer for user:', user.id)
+      console.log('👤 No existing customer ID, creating new Stripe customer for user:', user.id)
       try {
         const customer = await stripe.customers.create({
           email: user.email,
@@ -269,7 +269,51 @@ async function createCheckoutSession(user: any, plan: string, supabase: any) {
         return NextResponse.json({ error: 'Failed to create customer account' }, { status: 500 })
       }
     } else {
-      console.log('👤 Using existing Stripe customer:', customerId)
+      console.log('👤 Verifying existing Stripe customer:', customerId)
+
+      // Verify the customer exists in Stripe
+      try {
+        const existingCustomer = await stripe.customers.retrieve(customerId)
+        if (existingCustomer.deleted) {
+          throw new Error('Customer has been deleted')
+        }
+        console.log('✅ Existing Stripe customer verified:', customerId)
+      } catch (error) {
+        console.error('❌ Existing customer verification failed:', error)
+        console.log('🔄 Creating new customer to replace invalid one...')
+
+        try {
+          // Create a new customer since the existing one is invalid
+          const newCustomer = await stripe.customers.create({
+            email: user.email,
+            metadata: {
+              user_id: user.id,
+              replaced_invalid_customer: customerId
+            }
+          })
+
+          customerId = newCustomer.id
+          console.log('✅ Created replacement Stripe customer:', customerId)
+
+          // Update user profile with new Stripe customer ID
+          const { error: updateError } = await supabase
+            .from('users')
+            .update({ stripe_customer_id: customerId })
+            .eq('id', user.id)
+
+          if (updateError) {
+            console.error('❌ Error updating user with new customer ID:', updateError)
+          } else {
+            console.log('✅ User profile updated with new customer ID')
+          }
+        } catch (createError) {
+          console.error('❌ Error creating replacement customer:', createError)
+          return NextResponse.json({
+            error: 'Customer account error. Please contact support.',
+            details: 'Unable to create or verify customer account'
+          }, { status: 500 })
+        }
+      }
     }
 
     // Validate price ID before creating checkout session
