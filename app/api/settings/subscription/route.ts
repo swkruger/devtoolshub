@@ -153,6 +153,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { action, plan } = body
 
+    console.log('📥 Received request body:', { action, plan })
+
+    if (!action) {
+      console.error('❌ Missing action in request body')
+      return NextResponse.json({ error: 'Missing action parameter' }, { status: 400 })
+    }
+
     switch (action) {
       case 'create_checkout_session':
         return await createCheckoutSession(user, plan, supabase)
@@ -200,6 +207,7 @@ export async function POST(request: NextRequest) {
 async function createCheckoutSession(user: any, plan: string, supabase: any) {
   try {
     console.log('🛒 Creating checkout session for user:', user.id, 'plan:', plan)
+    console.log('📋 User object:', { id: user.id, email: user.email })
 
     // Check if Stripe is configured
     if (!stripe) {
@@ -208,15 +216,24 @@ async function createCheckoutSession(user: any, plan: string, supabase: any) {
     }
 
     // Get user profile
-    const { data: profile } = await supabase
+    console.log('🔍 Fetching user profile from database...')
+    const { data: profile, error: profileError } = await supabase
       .from('users')
       .select('*')
       .eq('id', user.id)
       .single()
 
+    if (profileError) {
+      console.error('❌ Database error fetching user profile:', profileError)
+      return NextResponse.json({ error: 'Database error fetching user profile' }, { status: 500 })
+    }
+
     if (!profile) {
+      console.error('❌ User profile not found in database')
       return NextResponse.json({ error: 'User profile not found' }, { status: 404 })
     }
+
+    console.log('✅ User profile found:', { id: profile.id, email: profile.email, plan: profile.plan, stripe_customer_id: profile.stripe_customer_id })
 
     // Get or create Stripe customer
     let customerId = profile.stripe_customer_id
