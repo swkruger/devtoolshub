@@ -1,9 +1,9 @@
 import Stripe from 'stripe'
 
 // Server-side Stripe instance
-export const stripe = process.env.STRIPE_SECRET_KEY 
+export const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2025-07-30.basil',
+      apiVersion: '2024-10-28.acacia' as any, // Stable API version with type assertion
       typescript: true,
     })
   : null

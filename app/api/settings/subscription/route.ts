@@ -94,19 +94,52 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔄 Subscription POST request started')
+
+    // Environment variable validation
+    const requiredEnvVars = [
+      'STRIPE_SECRET_KEY',
+      'STRIPE_WEBHOOK_SECRET',
+      'STRIPE_PREMIUM_PRICE_ID',
+      'NEXT_PUBLIC_APP_URL',
+      'NEXT_PUBLIC_SUPABASE_URL',
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY'
+    ]
+
+    const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar])
+    if (missingEnvVars.length > 0) {
+      console.error('❌ Missing environment variables:', missingEnvVars)
+      return NextResponse.json({
+        error: `Missing required environment variables: ${missingEnvVars.join(', ')}`
+      }, { status: 500 })
+    }
+
+    console.log('✅ Environment variables validated')
+
     const supabase = createSupabaseServerClient()
-    
+
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
+
+    if (authError) {
+      console.error('❌ Authentication error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    if (!user) {
+      console.error('❌ No user found in auth session')
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    console.log('✅ User authenticated:', user.id)
+
     // Check if Stripe is configured
     if (!stripe) {
+      console.error('❌ Stripe not configured - STRIPE_SECRET_KEY missing or invalid')
       return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
     }
+
+    console.log('✅ Stripe configured successfully')
 
     const body = await request.json()
     const { action, plan } = body
@@ -125,15 +158,43 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
   } catch (error) {
-    console.error('Subscription POST error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('❌ Subscription POST error:', error)
+
+    // Provide detailed error information
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      })
+    }
+
+    // Return appropriate error message based on error type
+    let errorMessage = 'Internal server error'
+    let statusCode = 500
+
+    if (error instanceof Error) {
+      if (error.message.includes('STRIPE')) {
+        errorMessage = 'Stripe configuration error'
+      } else if (error.message.includes('auth')) {
+        errorMessage = 'Authentication error'
+        statusCode = 401
+      } else if (error.message.includes('network')) {
+        errorMessage = 'Network error - please try again'
+      }
+    }
+
+    return NextResponse.json({ error: errorMessage }, { status: statusCode })
   }
 }
 
 async function createCheckoutSession(user: any, plan: string, supabase: any) {
   try {
+    console.log('🛒 Creating checkout session for user:', user.id, 'plan:', plan)
+
     // Check if Stripe is configured
     if (!stripe) {
+      console.error('❌ Stripe not configured in createCheckoutSession')
       return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
     }
 
@@ -152,48 +213,96 @@ async function createCheckoutSession(user: any, plan: string, supabase: any) {
     let customerId = profile.stripe_customer_id
     
     if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          user_id: user.id
+      console.log('👤 Creating new Stripe customer for user:', user.id)
+      try {
+        const customer = await stripe.customers.create({
+          email: user.email,
+          metadata: {
+            user_id: user.id
+          }
+        })
+
+        customerId = customer.id
+        console.log('✅ Created Stripe customer:', customerId)
+
+        // Update user profile with Stripe customer ID
+        console.log('📝 Updating user profile with customer ID')
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({ stripe_customer_id: customerId })
+          .eq('id', user.id)
+
+        if (updateError) {
+          console.error('❌ Error updating user with customer ID:', updateError)
+          // Continue anyway - we can still create the checkout session
+        } else {
+          console.log('✅ User profile updated with customer ID')
         }
-      })
-      
-      customerId = customer.id
-      
-      // Update user profile with Stripe customer ID
-      await supabase
-        .from('users')
-        .update({ stripe_customer_id: customerId })
-        .eq('id', user.id)
+      } catch (error) {
+        console.error('❌ Error creating Stripe customer:', error)
+        return NextResponse.json({ error: 'Failed to create customer account' }, { status: 500 })
+      }
+    } else {
+      console.log('👤 Using existing Stripe customer:', customerId)
     }
 
     // Create checkout session
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: SUBSCRIPTION_PLANS.premium.priceId,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?canceled=true`,
-      metadata: {
-        user_id: user.id,
-        plan: 'premium'
-      },
-      subscription_data: {
+    console.log('💳 Creating Stripe checkout session')
+    console.log('Price ID:', SUBSCRIPTION_PLANS.premium.priceId)
+    console.log('Customer ID:', customerId)
+    console.log('App URL:', process.env.NEXT_PUBLIC_APP_URL)
+
+    try {
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: SUBSCRIPTION_PLANS.premium.priceId,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?canceled=true`,
         metadata: {
           user_id: user.id,
           plan: 'premium'
+        },
+        subscription_data: {
+          metadata: {
+            user_id: user.id,
+            plan: 'premium'
+          }
+        }
+      })
+
+      console.log('✅ Checkout session created successfully:', session.id)
+      return NextResponse.json({ sessionId: session.id, url: session.url })
+    } catch (error) {
+      console.error('❌ Error creating checkout session:', error)
+
+      // Provide specific error messages based on Stripe error types
+      if (error instanceof Error) {
+        if (error.message.includes('price')) {
+          return NextResponse.json({
+            error: 'Invalid price configuration. Please contact support.'
+          }, { status: 500 })
+        } else if (error.message.includes('customer')) {
+          return NextResponse.json({
+            error: 'Invalid customer configuration. Please try refreshing the page.'
+          }, { status: 500 })
+        } else if (error.message.includes('API key')) {
+          return NextResponse.json({
+            error: 'Stripe API configuration error. Please contact support.'
+          }, { status: 500 })
         }
       }
-    })
 
-    return NextResponse.json({ sessionId: session.id, url: session.url })
+      return NextResponse.json({
+        error: 'Failed to create checkout session. Please try again or contact support.'
+      }, { status: 500 })
+    }
   } catch (error) {
     console.error('Error creating checkout session:', error)
     return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 })
