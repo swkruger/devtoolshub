@@ -13,9 +13,9 @@ export async function GET(request: NextRequest) {
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL
     },
     stripe_tests: {
-      price_retrieval: null,
-      customer_creation: null,
-      checkout_session_creation: null
+      price_retrieval: null as any,
+      customer_creation: null as any,
+      checkout_session_creation: null as any
     },
     errors: [] as string[]
   }
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
         const testCustomer = await stripe.customers.create({
           email: 'test@example.com',
           metadata: {
-            test_user: true
+            test_user: 'true'
           }
         })
         results.stripe_tests.customer_creation = {
