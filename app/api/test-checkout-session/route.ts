@@ -40,6 +40,21 @@ export async function GET(request: NextRequest) {
       stripeCustomerId: profile.stripe_customer_id
     })
 
+    // Verify existing customer if one exists
+    if (profile.stripe_customer_id && stripe) {
+      console.log('🔍 Verifying existing Stripe customer:', profile.stripe_customer_id)
+      try {
+        const existingCustomer = await stripe.customers.retrieve(profile.stripe_customer_id)
+        if (existingCustomer.deleted) {
+          throw new Error('Customer has been deleted')
+        }
+        console.log('✅ Existing Stripe customer verified')
+      } catch (error) {
+        console.error('❌ Existing customer verification failed:', error)
+        console.log('⚠️  Customer ID may be invalid - this will be handled in the real endpoint')
+      }
+    }
+
     // Test the exact same checkout session creation as the real endpoint
     if (!stripe) {
       return NextResponse.json({
