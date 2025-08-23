@@ -114,6 +114,15 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
+    // Additional validation for price ID format
+    const priceId = process.env.STRIPE_PREMIUM_PRICE_ID
+    if (!priceId || priceId.startsWith('price_') === false) {
+      console.error('❌ Invalid STRIPE_PREMIUM_PRICE_ID format:', priceId)
+      return NextResponse.json({
+        error: 'Invalid price ID configuration. Please contact support.'
+      }, { status: 500 })
+    }
+
     console.log('✅ Environment variables validated')
 
     const supabase = createSupabaseServerClient()
@@ -246,11 +255,28 @@ async function createCheckoutSession(user: any, plan: string, supabase: any) {
       console.log('👤 Using existing Stripe customer:', customerId)
     }
 
-    // Create checkout session
+    // Validate price ID before creating checkout session
+    const priceId = SUBSCRIPTION_PLANS.premium.priceId
     console.log('💳 Creating Stripe checkout session')
-    console.log('Price ID:', SUBSCRIPTION_PLANS.premium.priceId)
+    console.log('Price ID:', priceId)
     console.log('Customer ID:', customerId)
     console.log('App URL:', process.env.NEXT_PUBLIC_APP_URL)
+
+    if (!priceId || priceId === 'undefined') {
+      console.error('❌ Invalid or missing price ID:', priceId)
+      console.error('STRIPE_PREMIUM_PRICE_ID env var:', process.env.STRIPE_PREMIUM_PRICE_ID)
+      return NextResponse.json({
+        error: 'Invalid price configuration. Please contact support.'
+      }, { status: 500 })
+    }
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL
+    if (!appUrl) {
+      console.error('❌ Missing NEXT_PUBLIC_APP_URL environment variable')
+      return NextResponse.json({
+        error: 'Application configuration error. Please contact support.'
+      }, { status: 500 })
+    }
 
     try {
       const session = await stripe.checkout.sessions.create({
@@ -258,13 +284,13 @@ async function createCheckoutSession(user: any, plan: string, supabase: any) {
         payment_method_types: ['card'],
         line_items: [
           {
-            price: SUBSCRIPTION_PLANS.premium.priceId,
+            price: priceId,
             quantity: 1,
           },
         ],
         mode: 'subscription',
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?success=true&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?canceled=true`,
+        success_url: `${appUrl}/settings?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${appUrl}/settings?canceled=true`,
         metadata: {
           user_id: user.id,
           plan: 'premium'
