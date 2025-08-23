@@ -19,21 +19,6 @@ export const authClient = {
     }
 
     const redirectTo = getCallbackUrl()
-    console.log('🚀 OAUTH SIGN-IN INITIATED:', {
-      timestamp: new Date().toISOString(),
-      provider,
-      redirectTo,
-      origin: window.location.origin,
-      currentUrl: window.location.href,
-      options: {
-        ...options,
-        queryParams: options?.queryParams ? '[HIDDEN]' : undefined
-      },
-      environment: {
-        vercelUrl: process.env.NEXT_PUBLIC_VERCEL_URL,
-        nodeEnv: process.env.NODE_ENV
-      }
-    })
     
     // Force re-authentication by using appropriate OAuth parameters
     const queryParams = {
@@ -59,8 +44,6 @@ export const authClient = {
       },
     })
 
-    console.log('OAuth sign-in result:', { data, error })
-
     if (error) {
       throw new Error(`Failed to sign in with ${provider}: ${error.message}`)
     }
@@ -70,18 +53,13 @@ export const authClient = {
 
   // Sign out
   async signOut() {
-    console.log('Starting sign out process...')
     const supabase = createSupabaseClient()
     
     const { error } = await supabase.auth.signOut()
     
-    console.log('Sign out result:', { error: error?.message || 'No error' })
-    
     if (error) {
       throw new Error(`Failed to sign out: ${error.message}`)
     }
-    
-    console.log('Sign out completed successfully')
   },
 
   // Get current session with refresh handling
@@ -92,27 +70,22 @@ export const authClient = {
       const { data: { session }, error } = await supabase.auth.getSession()
 
       if (error) {
-        console.error('Error getting session:', error)
         throw new Error(`Failed to get session: ${error.message}`)
       }
 
       // If session exists but is expired, try to refresh it
       if (session && new Date(session.expires_at! * 1000) < new Date()) {
-        console.log('Session expired, attempting refresh...')
         const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
 
         if (refreshError) {
-          console.error('Session refresh failed:', refreshError)
           return null
         }
 
-        console.log('Session refreshed successfully')
         return refreshData.session
       }
 
       return session
     } catch (error) {
-      console.error('Error in getSession:', error)
       return null
     }
   },
@@ -177,17 +150,8 @@ export const authClient = {
       const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
       
       if (authError || !authUser) {
-        console.error('Failed to get auth user for profile sync:', authError)
         return null
       }
-
-      console.log('🔄 Syncing profile for:', authUser.email)
-      console.log('📊 User metadata:', {
-        name: authUser.user_metadata?.name,
-        full_name: authUser.user_metadata?.full_name,
-        avatar_url: authUser.user_metadata?.avatar_url,
-        picture: authUser.user_metadata?.picture
-      })
 
       // Check if this is a new user (profile doesn't exist yet)
       const { data: existingProfile } = await supabase
@@ -211,12 +175,6 @@ export const authClient = {
         updated_at: new Date().toISOString()
       }
 
-      console.log('💾 Updating profile with:', {
-        name: userData.name,
-        avatar_url: userData.avatar_url,
-        isNewUser
-      })
-
       // Update user profile (RLS allows this since we have proper session)
       const { data, error } = await supabase
         .from('users')
@@ -226,19 +184,11 @@ export const authClient = {
         .single()
 
       if (error) {
-        console.error('❌ Profile sync failed:', error.message)
         return null
       }
 
-      console.log('✅ Profile synced successfully!')
-      console.log('👤 Updated profile:', {
-        name: data.name,
-        avatar_url: data.avatar_url
-      })
-
       // Send email notifications for new users
       if (isNewUser && data) {
-        console.log('🎉 New user detected, sending notifications...')
         
         // Determine signup method from auth provider
         const signupMethod = authUser.app_metadata?.provider === 'google' ? 'google' : 'github'
@@ -267,7 +217,6 @@ export const authClient = {
       return data
 
     } catch (error) {
-      console.error('🚨 Error during profile sync:', error)
       return null
     }
   }

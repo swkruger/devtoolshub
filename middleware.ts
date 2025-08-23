@@ -41,18 +41,6 @@ export async function middleware(request: NextRequest) {
     const code = request.nextUrl.searchParams.get('code')
     const error = request.nextUrl.searchParams.get('error')
     const errorDescription = request.nextUrl.searchParams.get('error_description')
-    
-    console.error('🔐🔐🔐 OAUTH CODE DETECTED ON ROOT DOMAIN 🔐🔐🔐', {
-      timestamp: new Date().toISOString(),
-      code,
-      error,
-      errorDescription,
-      pathname,
-      method: request.method,
-      userAgent: request.headers.get('user-agent'),
-      referer: request.headers.get('referer'),
-      host: request.headers.get('host')
-    })
 
     if (code) {
       // Redirect to the proper callback route
@@ -70,18 +58,6 @@ export async function middleware(request: NextRequest) {
       }
       return NextResponse.redirect(signInUrl)
     }
-  }
-
-  // Log auth-related requests for debugging
-  if (pathname.startsWith('/auth') || pathname.startsWith('/sign-in')) {
-    console.error('🔐🔐🔐 AUTH MIDDLEWARE HIT 🔐🔐🔐', {
-      timestamp: new Date().toISOString(),
-      pathname,
-      method: request.method,
-      userAgent: request.headers.get('user-agent'),
-      referer: request.headers.get('referer'),
-      host: request.headers.get('host')
-    })
   }
 
   // Refresh session if expired - required for Server Components
