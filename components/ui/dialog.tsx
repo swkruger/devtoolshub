@@ -72,7 +72,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
       <div className="relative w-full max-w-md mx-4 bg-background border border-border rounded-lg shadow-lg">
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
-            return React.cloneElement(child, { onClose: handleClose })
+            return React.cloneElement(child, { onClose: handleClose } as any)
           }
           return child
         })}
@@ -135,7 +135,7 @@ export function DialogTrigger({ children, asChild }: DialogTriggerProps) {
     return React.cloneElement(children, {
       onClick: handleClick,
       'data-dialog-trigger': true
-    })
+    } as any)
   }
 
   return (

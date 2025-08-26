@@ -9,6 +9,7 @@ import { BookOpen, ArrowRight } from 'lucide-react'
 import { BlogPreviewRenderer, FeaturedBlogPreviewRenderer } from '@/components/blog/blog-content-renderer'
 import { authClient } from '@/lib/auth'
 import { PricingSection } from './pricing-section'
+import { marked } from 'marked'
 
 // Configure marked for consistent output
 marked.setOptions({
