@@ -113,4 +113,84 @@ export function validateProductionEnvironment() {
 
   console.log('✅ Environment validation passed')
   return true
+}
+
+/**
+ * Detects if the current request is from a search engine crawler
+ * @param userAgent - The User-Agent header string
+ * @returns boolean indicating if it's a crawler
+ */
+export function isSearchEngineCrawler(userAgent: string | null): boolean {
+  if (!userAgent) return false
+  
+  const crawlerPatterns = [
+    // Google
+    /googlebot/i,
+    /google-bot/i,
+    /adsbot-google/i,
+    /apis-google/i,
+    /mediapartners-google/i,
+    
+    // Bing
+    /bingbot/i,
+    /msnbot/i,
+    
+    // Yahoo
+    /yahoo.*slurp/i,
+    /yahooseeker/i,
+    
+    // DuckDuckGo
+    /duckduckbot/i,
+    
+    // Facebook
+    /facebookexternalhit/i,
+    /facebookcatalog/i,
+    
+    // Twitter
+    /twitterbot/i,
+    
+    // LinkedIn
+    /linkedinbot/i,
+    
+    // Pinterest
+    /pinterest/i,
+    
+    // Yandex
+    /yandex/i,
+    
+    // Baidu
+    /baiduspider/i,
+    
+    // Common crawler patterns
+    /bot/i,
+    /crawler/i,
+    /spider/i,
+    /scraper/i,
+    
+    // SEO tools
+    /ahrefs/i,
+    /semrush/i,
+    /moz/i,
+    /screaming frog/i,
+    
+    // Social media crawlers
+    /whatsapp/i,
+    /telegram/i,
+    /discord/i,
+    /slack/i,
+  ]
+  
+  return crawlerPatterns.some(pattern => pattern.test(userAgent))
+}
+
+/**
+ * Gets the User-Agent from request headers
+ * @param headers - Request headers object
+ * @returns User-Agent string or null
+ */
+export function getUserAgent(headers: Headers | Record<string, string>): string | null {
+  if (headers instanceof Headers) {
+    return headers.get('user-agent')
+  }
+  return headers['user-agent'] || headers['User-Agent'] || null
 } 

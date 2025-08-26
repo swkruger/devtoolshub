@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { isSearchEngineCrawler, getUserAgent } from '@/lib/utils'
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -85,8 +86,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
-  if (pathname === '/' && user) {
+  // Check if this is a search engine crawler
+  const userAgent = getUserAgent(request.headers)
+  const isCrawler = isSearchEngineCrawler(userAgent)
+
+  if (pathname === '/' && user && !isCrawler) {
     // User is authenticated and accessing root - redirect to dashboard
+    // BUT allow crawlers to access the home page content
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

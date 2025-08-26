@@ -58,10 +58,46 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
   const tools = getAllTools()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <>
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'DevToolsHub',
+            description: 'All-in-one developer toolkit with essential web development tools',
+            url: process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: {
+                '@type': 'EntryPoint',
+                urlTemplate: `${process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'}/tools?search={search_term_string}`
+              },
+              'query-input': 'required name=search_term_string'
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'DevToolsHub',
+              url: process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'
+            },
+            inLanguage: 'en-US',
+            isAccessibleForFree: true,
+            offers: {
+              '@type': 'Offer',
+              price: '0',
+              priceCurrency: 'USD',
+              availability: 'https://schema.org/InStock'
+            }
+          })
+        }}
+      />
       
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        
 
-      {/* Header */}
+        {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -435,6 +471,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   )
 }

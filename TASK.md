@@ -1,5 +1,84 @@
 # DevToolsHub Development Tasks
 
+## Current Sprint: Home Page Indexing Fix - IN PROGRESS 🔄
+
+### 🔍 Home Page SEO & Indexing Issues (2025-01-27) - IN PROGRESS 🔄
+- [x] **Investigate Google indexing redirect issues** - Research and identify all potential redirect problems preventing home page indexing
+- [x] **Fix authenticated user redirects** - Modify middleware and home page to allow crawlers to access home page content
+- [x] **Implement crawler detection** - Add logic to detect search engine crawlers and serve them the home page content
+- [x] **Add structured data for home page** - Implement proper JSON-LD structured data for better SEO
+- [x] **Test home page accessibility** - Verify home page is accessible to search engines without redirects
+- [ ] **Add Google Search Console verification** - Implement proper meta tags for Google Search Console
+- [x] **Optimize robots.txt and sitemap** - Ensure proper crawling directives
+- [x] **Fix cookie errors** - Resolved Supabase cookie setting errors during SSR
+- [ ] **Test with Google Search Console** - Submit home page for re-indexing and monitor results
+
+### 🔧 Technical Issues Identified:
+
+1. **Critical Redirect Problem**: 
+   - Middleware redirects authenticated users from `/` to `/dashboard`
+   - Home page component also has redirect logic for authenticated users
+   - This could prevent Google crawler from accessing home page content
+
+2. **OAuth Code Handling**:
+   - Middleware redirects OAuth codes from root to `/auth/callback`
+   - Could potentially interfere with crawler requests
+
+3. **Missing SEO Optimizations**:
+   - No specific structured data for home page
+   - Could benefit from enhanced meta tags
+
+### 🎯 Proposed Solutions:
+
+1. **Crawler Detection**: Implement logic to detect search engine crawlers and serve them home page content regardless of auth status
+2. **Conditional Redirects**: Only redirect authenticated users if they're not crawlers
+3. **Enhanced SEO**: Add proper structured data and meta tags for home page
+4. **Testing**: Verify home page accessibility with various tools
+
+### ✅ Solutions Implemented:
+
+1. **Crawler Detection System** (`lib/utils.ts`):
+   - Added `isSearchEngineCrawler()` function with comprehensive crawler patterns
+   - Added `getUserAgent()` helper function
+   - Detects Google, Bing, Yahoo, social media crawlers, and SEO tools
+
+2. **Fixed Middleware Redirects** (`middleware.ts`):
+   - Modified root path redirect logic to allow crawlers
+   - Added crawler detection before redirecting authenticated users
+   - Crawlers can now access home page content regardless of auth status
+
+3. **Fixed Home Page Redirects** (`app/page.tsx`):
+   - Added crawler detection in home page component
+   - Modified auth redirect logic to allow crawlers
+   - Enhanced metadata with better SEO tags
+
+4. **Enhanced SEO** (`components/shared/home-page-client.tsx`):
+   - Added structured data (JSON-LD) for WebSite schema
+   - Includes search action and organization information
+   - Proper schema markup for better search engine understanding
+
+5. **Optimized Robots.txt** (`app/robots.ts`):
+   - Added specific rules for Googlebot
+   - Explicitly disallowed private routes
+   - Ensured home page and tools are crawlable
+
+6. **Test API Route** (`app/api/test-crawler/route.ts`):
+   - Created endpoint to test crawler detection
+   - Useful for debugging and verification
+
+7. **Fixed Cookie Errors** (`lib/supabase-server.ts` & `app/page.tsx`):
+   - Improved error handling for cookie operations during SSR
+   - Added graceful fallback when cookies can't be set
+   - Reduced console spam in development mode
+
+### 🔧 Key Changes Made:
+
+- **Middleware**: Now detects crawlers and allows them to access home page
+- **Home Page**: Enhanced with crawler detection and better SEO metadata
+- **Structured Data**: Added comprehensive JSON-LD schema markup
+- **Robots.txt**: Optimized for better crawling directives
+- **Utils**: Added crawler detection utilities for reuse across the app
+
 ## Current Sprint: Rich Text Editor Implementation - COMPLETED ✅
 
 ### 📝 Full-Featured Rich Text Editor (2025-01-27) - COMPLETED ✅

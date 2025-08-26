@@ -45,7 +45,12 @@ export const createSupabaseServerClient = () => {
             const cookieStore = cookies()
             cookieStore.set(name, value, options)
           } catch (error) {
-            console.warn(`Failed to set cookie ${name}:`, error)
+            // Silently ignore cookie setting errors in development
+            // These are expected when called during SSR outside of Server Actions
+            if (process.env.NODE_ENV === 'development') {
+              // Only log in development to avoid spam
+              console.debug(`Cookie set failed (expected during SSR): ${name}`)
+            }
           }
         },
         remove(name: string, options: any) {
@@ -53,7 +58,12 @@ export const createSupabaseServerClient = () => {
             const cookieStore = cookies()
             cookieStore.set(name, '', { ...options, maxAge: 0 })
           } catch (error) {
-            console.warn(`Failed to remove cookie ${name}:`, error)
+            // Silently ignore cookie removal errors in development
+            // These are expected when called during SSR outside of Server Actions
+            if (process.env.NODE_ENV === 'development') {
+              // Only log in development to avoid spam
+              console.debug(`Cookie remove failed (expected during SSR): ${name}`)
+            }
           }
         },
       },
