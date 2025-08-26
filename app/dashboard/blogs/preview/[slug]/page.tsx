@@ -313,8 +313,11 @@ export default function BlogPreviewPage() {
           )}
 
           {/* Content */}
-          <div className="prose prose-lg dark:prose-invert max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: sanitized }} />
+          <div className="max-w-none">
+            <div 
+              className="blog-content text-gray-800 dark:text-gray-200 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: sanitized }} 
+            />
           </div>
 
           {/* SEO Preview Section */}

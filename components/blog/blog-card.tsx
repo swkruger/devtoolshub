@@ -2,8 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import type { Blog } from '@/lib/types/blog'
-import { marked } from 'marked'
-import DOMPurify from 'isomorphic-dompurify'
+import { BlogPreviewRenderer } from './blog-content-renderer'
 
 interface BlogCardProps {
   blog: Blog
@@ -53,27 +52,11 @@ export function BlogCard({ blog }: BlogCardProps) {
             </h3>
           </Link>
           
-          <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 prose dark:prose-invert max-w-none">
-            {(() => {
-              try {
-                const md: any = (blog as any).content_markdown
-                const html = md ? (marked.parse(md) as string) : (blog.content_html || '')
-                const safe = DOMPurify.sanitize(html, { 
-                  USE_PROFILES: { html: true },
-                  ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-                  ALLOWED_ATTR: []
-                })
-                return (
-                  <div
-                    dangerouslySetInnerHTML={{ __html: safe }}
-                  />
-                )
-              } catch (error) {
-                // Fallback to plain text if markdown parsing fails
-                const content = blog.content_html || (blog as any).content_markdown || ''
-                return content.replace(/<[^>]*>/g, '').substring(0, 120) + '...'
-              }
-            })()}
+          <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+            <BlogPreviewRenderer 
+              content={blog.content_html || (blog as any).content_markdown || ''}
+              isMarkdown={Boolean((blog as any).content_markdown)}
+            />
           </div>
           
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">

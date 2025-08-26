@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
-import DOMPurify from 'isomorphic-dompurify'
-import { marked } from 'marked'
 import { getPublishedBlogBySlug, listPopularBlogs } from '@/lib/services/blogs'
+import { BlogContentRenderer } from '@/components/blog/blog-content-renderer'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -88,8 +87,6 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
   const popular = (await listPopularBlogs(5)).filter((b) => b.id !== blog.id)
 
   const isMarkdown = Boolean((blog as any).content_markdown)
-  const htmlFromMarkdown = isMarkdown ? marked.parse((blog as any).content_markdown || '') : ''
-  const sanitized = DOMPurify.sanitize(isMarkdown ? (htmlFromMarkdown as string) : blog.content_html, { USE_PROFILES: { html: true } })
 
   // Calculate read time (rough estimate: 200 words per minute)
   const textForCount = isMarkdown ? (blog as any).content_markdown : blog.content_html
@@ -222,9 +219,10 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
           )}
 
           {/* Blog Content */}
-          <div className="prose prose-lg dark:prose-invert max-w-none">
-            <div 
-              dangerouslySetInnerHTML={{ __html: sanitized }} 
+          <div className="max-w-none">
+            <BlogContentRenderer 
+              content={blog.content_html || (blog as any).content_markdown || ''}
+              isMarkdown={isMarkdown}
               className="text-gray-800 dark:text-gray-200 leading-relaxed"
             />
           </div>

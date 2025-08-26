@@ -5,14 +5,9 @@ import { Button } from '@/components/ui/button'
 import { BlogList } from '@/components/blog/blog-list'
 import { listFeaturedBlogs, listPopularBlogs, listPublishedBlogs } from '@/lib/services/blogs'
 import { ArrowLeft } from 'lucide-react'
-import { marked } from 'marked'
-import DOMPurify from 'isomorphic-dompurify'
+import { BlogPreviewRenderer, FeaturedBlogPreviewRenderer } from '@/components/blog/blog-content-renderer'
 
-// Configure marked for consistent output
-marked.setOptions({
-  gfm: true,
-  breaks: true
-})
+
 
 const PAGE_SIZE = 12
 
@@ -224,27 +219,11 @@ function MainFeaturedBlogCard({ blog }: { blog: any }) {
             </h3>
           </Link>
           
-          <div className="text-lg text-gray-600 dark:text-gray-300 mb-6 line-clamp-4 prose dark:prose-invert max-w-none">
-            {(() => {
-              try {
-                const md: any = (blog as any).content_markdown
-                const html = md ? (marked.parse(md) as string) : (blog.content_html || '')
-                const safe = DOMPurify.sanitize(html, { 
-                  USE_PROFILES: { html: true },
-                  ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-                  ALLOWED_ATTR: []
-                })
-                return (
-                  <div
-                    dangerouslySetInnerHTML={{ __html: safe }}
-                  />
-                )
-              } catch (error) {
-                // Fallback to plain text if markdown parsing fails
-                const content = blog.content_html || (blog as any).content_markdown || ''
-                return content.replace(/<[^>]*>/g, '').substring(0, 200) + '...'
-              }
-            })()}
+          <div className="text-lg text-gray-600 dark:text-gray-300 mb-6 line-clamp-4">
+            <FeaturedBlogPreviewRenderer 
+              content={blog.content_html || (blog as any).content_markdown || ''}
+              isMarkdown={Boolean((blog as any).content_markdown)}
+            />
           </div>
           
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
@@ -308,27 +287,11 @@ function BlogCard({ blog }: { blog: any }) {
           </h3>
         </Link>
         
-        <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 prose dark:prose-invert max-w-none">
-          {(() => {
-            try {
-              const md: any = (blog as any).content_markdown
-              const html = md ? (marked.parse(md) as string) : (blog.content_html || '')
-              const safe = DOMPurify.sanitize(html, { 
-                USE_PROFILES: { html: true },
-                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-                ALLOWED_ATTR: []
-              })
-              return (
-                <div
-                  dangerouslySetInnerHTML={{ __html: safe }}
-                />
-              )
-            } catch (error) {
-              // Fallback to plain text if markdown parsing fails
-              const content = blog.content_html || (blog as any).content_markdown || ''
-              return content.replace(/<[^>]*>/g, '').substring(0, 100) + '...'
-            }
-          })()}
+        <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+          <BlogPreviewRenderer 
+            content={blog.content_html || (blog as any).content_markdown || ''}
+            isMarkdown={Boolean((blog as any).content_markdown)}
+          />
         </div>
         
         <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
@@ -387,27 +350,11 @@ function FeaturedBlogCard({ blog }: { blog: any }) {
             </h3>
           </Link>
           
-          <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 prose dark:prose-invert max-w-none">
-            {(() => {
-              try {
-                const md: any = (blog as any).content_markdown
-                const html = md ? (marked.parse(md) as string) : (blog.content_html || '')
-                const safe = DOMPurify.sanitize(html, { 
-                  USE_PROFILES: { html: true },
-                  ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-                  ALLOWED_ATTR: []
-                })
-                return (
-                  <div
-                    dangerouslySetInnerHTML={{ __html: safe }}
-                  />
-                )
-              } catch (error) {
-                // Fallback to plain text if markdown parsing fails
-                const content = blog.content_html || (blog as any).content_markdown || ''
-                return content.replace(/<[^>]*>/g, '').substring(0, 120) + '...'
-              }
-            })()}
+          <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+            <BlogPreviewRenderer 
+              content={blog.content_html || (blog as any).content_markdown || ''}
+              isMarkdown={Boolean((blog as any).content_markdown)}
+            />
           </div>
           
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
@@ -462,27 +409,11 @@ function PopularBlogCard({ blog }: { blog: any }) {
           </h3>
         </Link>
         
-        <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 prose dark:prose-invert max-w-none">
-          {(() => {
-            try {
-              const md: any = (blog as any).content_markdown
-              const html = md ? (marked.parse(md) as string) : (blog.content_html || '')
-              const safe = DOMPurify.sanitize(html, { 
-                USE_PROFILES: { html: true },
-                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-                ALLOWED_ATTR: []
-              })
-              return (
-                <div
-                  dangerouslySetInnerHTML={{ __html: safe }}
-                />
-              )
-            } catch (error) {
-              // Fallback to plain text if markdown parsing fails
-              const content = blog.content_html || (blog as any).content_markdown || ''
-              return content.replace(/<[^>]*>/g, '').substring(0, 100) + '...'
-            }
-          })()}
+        <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+          <BlogPreviewRenderer 
+            content={blog.content_html || (blog as any).content_markdown || ''}
+            isMarkdown={Boolean((blog as any).content_markdown)}
+          />
         </div>
         
         <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">

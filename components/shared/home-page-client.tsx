@@ -6,8 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getAllTools } from '@/lib/tools'
 import { BookOpen, ArrowRight } from 'lucide-react'
-import { marked } from 'marked'
-import DOMPurify from 'isomorphic-dompurify'
+import { BlogPreviewRenderer, FeaturedBlogPreviewRenderer } from '@/components/blog/blog-content-renderer'
 import { authClient } from '@/lib/auth'
 import { PricingSection } from './pricing-section'
 
@@ -235,27 +234,10 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                    </Link>
                    
                    <div className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3">
-                     {(() => {
-                       try {
-                         const md: any = featuredBlogs[0].content_markdown
-                         const html = md ? (marked.parse(md) as string) : (featuredBlogs[0].content_html || '')
-                         const safe = DOMPurify.sanitize(html, { 
-                           USE_PROFILES: { html: true },
-                           ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-                           ALLOWED_ATTR: []
-                         })
-                         return (
-                           <div
-                             className="prose dark:prose-invert max-w-none"
-                             dangerouslySetInnerHTML={{ __html: safe }}
-                           />
-                         )
-                       } catch (error) {
-                         // Fallback to plain text if markdown parsing fails
-                         const content = featuredBlogs[0].content_html || featuredBlogs[0].content_markdown || ''
-                         return content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'
-                       }
-                     })()}
+                     <FeaturedBlogPreviewRenderer
+                       content={featuredBlogs[0].content_html || featuredBlogs[0].content_markdown || ''}
+                       isMarkdown={Boolean(featuredBlogs[0].content_markdown)}
+                     />
                    </div>
                    
                    <div className="flex items-center justify-between">
@@ -339,27 +321,10 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                     </Link>
                     
                     <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                      {(() => {
-                        try {
-                          const md: any = (blog as any).content_markdown
-                          const html = md ? (marked.parse(md) as string) : (blog.content_html || '')
-                          const safe = DOMPurify.sanitize(html, { 
-                            USE_PROFILES: { html: true },
-                            ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-                            ALLOWED_ATTR: []
-                          })
-                          return (
-                            <div
-                              className="prose dark:prose-invert max-w-none"
-                              dangerouslySetInnerHTML={{ __html: safe }}
-                            />
-                          )
-                        } catch (error) {
-                          // Fallback to plain text if markdown parsing fails
-                          const content = blog.content_html || (blog as any).content_markdown || ''
-                          return content.replace(/<[^>]*>/g, '').substring(0, 100) + '...'
-                        }
-                      })()}
+                      <BlogPreviewRenderer
+                        content={blog.content_html || (blog as any).content_markdown || ''}
+                        isMarkdown={Boolean((blog as any).content_markdown)}
+                      />
                     </div>
                     
                     <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">

@@ -3,7 +3,7 @@ import { useEffect, useState, useTransition } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { WysiwygEditor } from '@/components/blog/wysiwyg-editor'
+import { TipTapEditor } from '@/components/blog/tiptap-editor'
 
 import { Textarea } from '@/components/ui/textarea'
 
@@ -227,7 +227,7 @@ export default function EditBlogPage() {
           ) : (
             <div>
               <label className="mb-1 block text-sm font-medium">Content (HTML)</label>
-              <WysiwygEditor value={content} onChange={setContent} placeholder="Write your blog post..." />
+              <TipTapEditor value={content} onChange={setContent} placeholder="Write your blog post..." />
             </div>
           )}
         </div>
