@@ -123,64 +123,73 @@ export function validateProductionEnvironment() {
 export function isSearchEngineCrawler(userAgent: string | null): boolean {
   if (!userAgent) return false
   
+  // Convert to lowercase for case-insensitive matching
+  const ua = userAgent.toLowerCase()
+  
+  // Only check for specific, well-known crawler patterns
+  // This avoids false positives with regular browsers
   const crawlerPatterns = [
     // Google
-    /googlebot/i,
-    /google-bot/i,
-    /adsbot-google/i,
-    /apis-google/i,
-    /mediapartners-google/i,
+    'googlebot',
+    'google-bot',
+    'adsbot-google',
+    'apis-google',
+    'mediapartners-google',
     
     // Bing
-    /bingbot/i,
-    /msnbot/i,
+    'bingbot',
+    'msnbot',
     
     // Yahoo
-    /yahoo.*slurp/i,
-    /yahooseeker/i,
+    'yahoo slurp',
+    'yahooseeker',
     
     // DuckDuckGo
-    /duckduckbot/i,
+    'duckduckbot',
     
     // Facebook
-    /facebookexternalhit/i,
-    /facebookcatalog/i,
+    'facebookexternalhit',
+    'facebookcatalog',
     
     // Twitter
-    /twitterbot/i,
+    'twitterbot',
     
     // LinkedIn
-    /linkedinbot/i,
+    'linkedinbot',
     
     // Pinterest
-    /pinterest/i,
+    'pinterest',
     
     // Yandex
-    /yandex/i,
+    'yandex',
     
     // Baidu
-    /baiduspider/i,
-    
-    // Common crawler patterns
-    /bot/i,
-    /crawler/i,
-    /spider/i,
-    /scraper/i,
+    'baiduspider',
     
     // SEO tools
-    /ahrefs/i,
-    /semrush/i,
-    /moz/i,
-    /screaming frog/i,
+    'ahrefs',
+    'semrush',
+    'mozbot',
+    'screaming frog',
     
     // Social media crawlers
-    /whatsapp/i,
-    /telegram/i,
-    /discord/i,
-    /slack/i,
+    'whatsapp',
+    'telegram',
+    'discord',
+    'slack',
   ]
   
-  return crawlerPatterns.some(pattern => pattern.test(userAgent))
+  // Check for specific crawler patterns only
+  for (const pattern of crawlerPatterns) {
+    if (ua.includes(pattern)) {
+      return true
+    }
+  }
+  
+  // Remove the generic bot pattern check to avoid false positives
+  // Only rely on specific, well-known crawler patterns
+  
+  return false
 }
 
 /**

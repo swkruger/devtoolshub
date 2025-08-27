@@ -52,8 +52,34 @@ export default async function HomePage() {
   const userAgent = getUserAgent(headersList)
   const isCrawler = isSearchEngineCrawler(userAgent)
 
-  // Check if user is already authenticated (only during request time, not build time)
-  // BUT allow crawlers to access the home page content regardless of auth status
+  // For crawlers, always serve the home page content regardless of auth status
+  if (isCrawler) {
+    const tools = getAllTools()
+    const availableCount = tools.length
+
+    // Fetch blog data
+    let featuredBlogs: any[] = []
+    let popularBlogs: any[] = []
+    
+    try {
+      [featuredBlogs, popularBlogs] = await Promise.all([
+        listFeaturedBlogs(1), // Get just the main featured blog
+        listPopularBlogs(3),  // Get 3 popular blogs
+      ])
+    } catch (error) {
+      console.log('Could not fetch blog data:', error)
+    }
+
+    return (
+      <HomePageClient 
+        featuredBlogs={featuredBlogs}
+        popularBlogs={popularBlogs}
+        availableCount={availableCount}
+      />
+    )
+  }
+
+  // For non-crawlers, check authentication and redirect if needed
   let user = null
   try {
     user = await authServer.getUser()
@@ -63,8 +89,8 @@ export default async function HomePage() {
     console.log('Auth check failed (likely during build time or cookie restrictions):', error)
   }
 
-  // Only redirect authenticated users who are NOT crawlers
-  if (user && !isCrawler) {
+  // Redirect authenticated users to dashboard
+  if (user) {
     redirect('/dashboard')
   }
 

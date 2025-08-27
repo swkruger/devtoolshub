@@ -37,8 +37,12 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Handle OAuth codes that land on root domain
-  if (pathname === '/' && request.nextUrl.searchParams.has('code')) {
+  // Check if this is a search engine crawler FIRST
+  const userAgent = getUserAgent(request.headers)
+  const isCrawler = isSearchEngineCrawler(userAgent)
+
+  // Handle OAuth codes that land on root domain (but NOT for crawlers)
+  if (pathname === '/' && request.nextUrl.searchParams.has('code') && !isCrawler) {
     const code = request.nextUrl.searchParams.get('code')
     const error = request.nextUrl.searchParams.get('error')
     const errorDescription = request.nextUrl.searchParams.get('error_description')
@@ -85,10 +89,6 @@ export async function middleware(request: NextRequest) {
     // User is authenticated and trying to access sign-in page
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
-
-  // Check if this is a search engine crawler
-  const userAgent = getUserAgent(request.headers)
-  const isCrawler = isSearchEngineCrawler(userAgent)
 
   if (pathname === '/' && user && !isCrawler) {
     // User is authenticated and accessing root - redirect to dashboard

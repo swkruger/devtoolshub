@@ -94,6 +94,62 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
         }}
       />
       
+      {/* Additional Structured Data for Tools */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: 'Developer Tools Collection',
+            description: 'Essential web development tools for developers',
+            url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'}/tools`,
+            numberOfItems: availableCount,
+            itemListElement: tools.slice(0, 10).map((tool, index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              item: {
+                '@type': 'SoftwareApplication',
+                name: tool.name,
+                description: tool.description,
+                url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'}${tool.path}`,
+                applicationCategory: 'DeveloperApplication',
+                operatingSystem: 'Web Browser',
+                offers: {
+                  '@type': 'Offer',
+                  price: '0',
+                  priceCurrency: 'USD',
+                  availability: 'https://schema.org/InStock'
+                }
+              }
+            }))
+          })
+        }}
+      />
+      
+      {/* Organization Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'DevToolsHub',
+            url: process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app',
+            logo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'}/icons/icon-192x192.png`,
+            description: 'All-in-one developer toolkit with essential web development tools',
+            sameAs: [
+              'https://github.com/swkruger/devtoolshub'
+            ],
+            contactPoint: {
+              '@type': 'ContactPoint',
+              contactType: 'customer service',
+              url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'}/support`
+            }
+          })
+        }}
+      />
+      
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
         
 

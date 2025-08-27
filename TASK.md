@@ -1,17 +1,15 @@
 # DevToolsHub Development Tasks
 
-## Current Sprint: Home Page Indexing Fix - IN PROGRESS 🔄
+## Current Sprint: Google Indexing Redirect Issue Investigation - IN PROGRESS 🔄
 
-### 🔍 Home Page SEO & Indexing Issues (2025-01-27) - IN PROGRESS 🔄
-- [x] **Investigate Google indexing redirect issues** - Research and identify all potential redirect problems preventing home page indexing
-- [x] **Fix authenticated user redirects** - Modify middleware and home page to allow crawlers to access home page content
-- [x] **Implement crawler detection** - Add logic to detect search engine crawlers and serve them the home page content
-- [x] **Add structured data for home page** - Implement proper JSON-LD structured data for better SEO
-- [x] **Test home page accessibility** - Verify home page is accessible to search engines without redirects
-- [ ] **Add Google Search Console verification** - Implement proper meta tags for Google Search Console
-- [x] **Optimize robots.txt and sitemap** - Ensure proper crawling directives
-- [x] **Fix cookie errors** - Resolved Supabase cookie setting errors during SSR
+### 🔍 Google Indexing Redirect Issue (2025-01-27) - IN PROGRESS 🔄
+- [x] **Analyze runtime logs for redirect patterns** - Investigate the provided Vercel runtime logs to identify redirect issues
+- [x] **Test crawler detection accuracy** - Fixed crawler detection function to avoid false positives with regular browsers
+- [x] **Check for middleware redirect conflicts** - Fixed OAuth code handling to exclude crawlers and simplified redirect logic
+- [x] **Verify home page accessibility** - Enhanced home page to serve content to crawlers regardless of auth status
+- [x] **Create crawler test endpoint** - Built comprehensive test endpoint to verify crawler detection is working correctly
 - [ ] **Test with Google Search Console** - Submit home page for re-indexing and monitor results
+- [ ] **Add Google Search Console verification** - Implement proper meta tags for Google Search Console
 
 ### 🔧 Technical Issues Identified:
 
@@ -37,33 +35,41 @@
 
 ### ✅ Solutions Implemented:
 
-1. **Crawler Detection System** (`lib/utils.ts`):
-   - Added `isSearchEngineCrawler()` function with comprehensive crawler patterns
-   - Added `getUserAgent()` helper function
-   - Detects Google, Bing, Yahoo, social media crawlers, and SEO tools
+1. **Fixed Crawler Detection System** (`lib/utils.ts`):
+   - **CRITICAL FIX**: Completely rewrote `isSearchEngineCrawler()` function to eliminate false positives
+   - Removed generic bot pattern matching that was causing false positives
+   - **FIXED**: Changed "moz" to "mozbot" to prevent false matches with "Mozilla" in browser user agents
+   - **FIXED**: Changed "yahoo.*slurp" to "yahoo slurp" to avoid regex in string matching
+   - Now only uses specific, well-known crawler patterns for maximum accuracy
+   - Chrome and other regular browsers will no longer be detected as crawlers
 
-2. **Fixed Middleware Redirects** (`middleware.ts`):
-   - Modified root path redirect logic to allow crawlers
-   - Added crawler detection before redirecting authenticated users
+2. **Enhanced Middleware Redirects** (`middleware.ts`):
+   - **FIXED**: OAuth code handling now excludes crawlers to prevent interference
+   - Moved crawler detection to the top of middleware logic
    - Crawlers can now access home page content regardless of auth status
+   - Simplified redirect logic to avoid race conditions
 
-3. **Fixed Home Page Redirects** (`app/page.tsx`):
-   - Added crawler detection in home page component
-   - Modified auth redirect logic to allow crawlers
+3. **Optimized Home Page Logic** (`app/page.tsx`):
+   - **IMPROVED**: Crawlers are served content immediately without auth checks
+   - Separated crawler logic from user authentication logic
    - Enhanced metadata with better SEO tags
+   - Eliminated potential double redirect scenarios
 
 4. **Enhanced SEO** (`components/shared/home-page-client.tsx`):
-   - Added structured data (JSON-LD) for WebSite schema
-   - Includes search action and organization information
-   - Proper schema markup for better search engine understanding
+   - Added comprehensive structured data (JSON-LD) including:
+     - WebSite schema with search action
+     - ItemList schema for tools collection
+     - Organization schema with contact information
+   - Better schema markup for search engine understanding
 
 5. **Optimized Robots.txt** (`app/robots.ts`):
    - Added specific rules for Googlebot
    - Explicitly disallowed private routes
    - Ensured home page and tools are crawlable
 
-6. **Test API Route** (`app/api/test-crawler/route.ts`):
-   - Created endpoint to test crawler detection
+6. **Enhanced Test API Route** (`app/api/test-crawler-detection/route.ts`):
+   - **NEW**: Comprehensive test endpoint with multiple user agent tests
+   - Shows how different user agents are detected
    - Useful for debugging and verification
 
 7. **Fixed Cookie Errors** (`lib/supabase-server.ts` & `app/page.tsx`):
