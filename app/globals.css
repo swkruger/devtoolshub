@@ -196,7 +196,7 @@
   }
 
   .blog-content img {
-    @apply max-w-full h-auto rounded-lg shadow-md my-6;
+    @apply w-1/2 h-auto rounded-lg shadow-md my-6 float-right ml-6;
   }
 
   .blog-content hr {

@@ -14,6 +14,7 @@ export default function EditBlogPage() {
   const [slug, setSlug] = useState('')
   const [content, setContent] = useState('')
   const [imageUrl, setImageUrl] = useState('')
+  const [coverImageAltText, setCoverImageAltText] = useState('')
   const [status, setStatus] = useState<'draft' | 'published'>('draft')
   const [isPopular, setIsPopular] = useState(false)
   const [isFeatured, setIsFeatured] = useState(false)
@@ -72,6 +73,7 @@ export default function EditBlogPage() {
             setSlug(blog.slug)
             setContent(blog.content_html || '')
             setImageUrl(blog.image_url || '')
+            setCoverImageAltText(blog.cover_image_alt_text || '')
             setStatus(blog.status)
             setIsPopular(Boolean(blog.is_popular))
             setIsFeatured(Boolean(blog.is_featured))
@@ -108,6 +110,7 @@ export default function EditBlogPage() {
         content_html: useMarkdown ? contentMarkdown : content,
         content_markdown: useMarkdown ? contentMarkdown : null,
         image_url: imageUrl || null,
+        cover_image_alt_text: coverImageAltText || null,
         status,
         is_featured: isFeatured,
         is_popular: isPopular,
@@ -199,6 +202,18 @@ export default function EditBlogPage() {
             onChange={(e) => setImageUrl(e.target.value)} 
             placeholder="https://example.com/image.jpg"
           />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium">Cover Image Alt Text (optional)</label>
+          <Input 
+            value={coverImageAltText} 
+            onChange={(e) => setCoverImageAltText(e.target.value)} 
+            placeholder="Describe the cover image for accessibility"
+            maxLength={255}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            {coverImageAltText.length}/255 characters - Describe what the image shows for screen readers and SEO
+          </p>
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium">Status</label>

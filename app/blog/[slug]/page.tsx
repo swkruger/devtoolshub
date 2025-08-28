@@ -209,7 +209,7 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
             <div className="aspect-video rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
               <Image
                 src={blog.image_url}
-                alt={blog.title}
+                alt={blog.cover_image_alt_text || blog.title}
                 width={1200}
                 height={600}
                 className="w-full h-full object-cover"
@@ -262,7 +262,7 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
                         <div className="flex-shrink-0 w-16 h-12 rounded overflow-hidden bg-gray-200 dark:bg-gray-600">
                           <Image
                             src={post.image_url}
-                            alt={post.title}
+                            alt={post.cover_image_alt_text || post.title}
                             width={64}
                             height={48}
                             className="w-full h-full object-cover"

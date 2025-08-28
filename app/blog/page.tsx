@@ -191,7 +191,7 @@ function MainFeaturedBlogCard({ blog }: { blog: any }) {
             {blog.image_url ? (
               <Image
                 src={blog.image_url}
-                alt={blog.title}
+                alt={blog.cover_image_alt_text || blog.title}
                 width={800}
                 height={400}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -254,7 +254,7 @@ function BlogCard({ blog }: { blog: any }) {
         {blog.image_url ? (
           <Image
             src={blog.image_url}
-            alt={blog.title}
+            alt={blog.cover_image_alt_text || blog.title}
             width={800}
             height={400}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -323,7 +323,7 @@ function FeaturedBlogCard({ blog }: { blog: any }) {
             {blog.image_url ? (
               <Image
                 src={blog.image_url}
-                alt={blog.title}
+                alt={blog.cover_image_alt_text || blog.title}
                 width={400}
                 height={300}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -383,7 +383,7 @@ function PopularBlogCard({ blog }: { blog: any }) {
         {blog.image_url ? (
           <Image
             src={blog.image_url}
-            alt={blog.title}
+            alt={blog.cover_image_alt_text || blog.title}
             width={800}
             height={400}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

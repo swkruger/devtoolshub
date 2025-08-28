@@ -13,6 +13,7 @@ export interface Blog {
   published_at: string | null
   author_id: string
   image_url?: string | null
+  cover_image_alt_text?: string | null
   // SEO fields
   meta_description?: string | null
   meta_keywords?: string | null
@@ -39,6 +40,7 @@ export interface CreateBlogData {
   is_popular?: boolean
   published_at?: string | null
   image_url?: string | null
+  cover_image_alt_text?: string | null
   // SEO fields
   meta_description?: string | null
   meta_keywords?: string | null
@@ -59,6 +61,7 @@ export interface UpdateBlogData {
   is_popular?: boolean
   published_at?: string | null
   image_url?: string | null
+  cover_image_alt_text?: string | null
   // SEO fields
   meta_description?: string | null
   meta_keywords?: string | null
