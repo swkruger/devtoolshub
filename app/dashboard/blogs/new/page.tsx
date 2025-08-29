@@ -16,6 +16,7 @@ export default function NewBlogPage() {
   const [contentMarkdown, setContentMarkdown] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [coverImageAltText, setCoverImageAltText] = useState('')
+  const [coverImageCaption, setCoverImageCaption] = useState('')
   const [isPopular, setIsPopular] = useState(false)
   const [isFeatured, setIsFeatured] = useState(false)
   // SEO fields
@@ -76,7 +77,8 @@ export default function NewBlogPage() {
           content_markdown: useMarkdown ? contentMarkdown : null,
           image_url: imageUrl || null,
           cover_image_alt_text: coverImageAltText || null,
-          status: 'draft',
+          cover_image_caption: coverImageCaption || null,
+          status: 'draft' as const,
           is_featured: isFeatured,
           is_popular: isPopular,
           author_id: user.id,
@@ -144,6 +146,18 @@ export default function NewBlogPage() {
           />
           <p className="text-xs text-gray-500 mt-1">
             {coverImageAltText.length}/255 characters - Describe what the image shows for screen readers and SEO
+          </p>
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium">Cover Image Caption (optional)</label>
+          <Input 
+            value={coverImageCaption} 
+            onChange={(e) => setCoverImageCaption(e.target.value)} 
+            placeholder="Short caption displayed below the cover image"
+            maxLength={100}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            {coverImageCaption.length}/100 characters - Brief caption shown below the cover image
           </p>
         </div>
         <div className="space-y-2">

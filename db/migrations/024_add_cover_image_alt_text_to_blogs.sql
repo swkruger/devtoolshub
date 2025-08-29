@@ -9,3 +9,4 @@ COMMENT ON COLUMN public.blogs.cover_image_alt_text IS 'Alt text for the cover i
 
 -- Create index for better query performance when filtering by cover_image_alt_text
 CREATE INDEX IF NOT EXISTS idx_blogs_cover_image_alt_text ON public.blogs(cover_image_alt_text) WHERE cover_image_alt_text IS NOT NULL;
+

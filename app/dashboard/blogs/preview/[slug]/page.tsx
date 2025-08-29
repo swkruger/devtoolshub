@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { BlogStatusBadge } from '@/components/blog/blog-status-badge'
 import { 
   Heart, 
   MessageCircle, 
@@ -30,7 +31,7 @@ interface Blog {
   slug: string
   content_html: string
   content_markdown?: string
-  status: 'draft' | 'published'
+  status: 'draft' | 'published' | 'editing' | 'rejected' | 'ready to publish'
   is_featured: boolean
   is_popular: boolean
   created_at: string
@@ -38,6 +39,8 @@ interface Blog {
   published_at: string | null
   author_id: string
   image_url?: string | null
+  cover_image_alt_text?: string | null
+  cover_image_caption?: string | null
   meta_description?: string | null
   meta_keywords?: string | null
   og_title?: string | null
@@ -283,9 +286,7 @@ export default function BlogPreviewPage() {
               </div>
 
               {/* Status Badge */}
-              <Badge variant={blog.status === 'published' ? 'default' : 'secondary'}>
-                {blog.status === 'published' ? 'Published' : 'Draft'}
-              </Badge>
+              <BlogStatusBadge status={blog.status} size="sm" />
 
               {/* Featured/Popular Badges */}
               {blog.is_featured && (
@@ -303,12 +304,22 @@ export default function BlogPreviewPage() {
 
           {/* Featured Image */}
           {blog.image_url && (
-            <div className="aspect-video overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
-              <img
-                src={blog.image_url}
-                alt={blog.title}
-                className="w-full h-full object-cover"
-              />
+            <div className="space-y-2">
+              <div className="aspect-video overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                <img
+                  src={blog.image_url}
+                  alt={blog.cover_image_alt_text || blog.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Cover Image Caption */}
+              {blog.cover_image_caption && (
+                <div className="text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                    {blog.cover_image_caption}
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

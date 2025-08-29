@@ -15,7 +15,8 @@ export default function EditBlogPage() {
   const [content, setContent] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [coverImageAltText, setCoverImageAltText] = useState('')
-  const [status, setStatus] = useState<'draft' | 'published'>('draft')
+  const [coverImageCaption, setCoverImageCaption] = useState('')
+  const [status, setStatus] = useState<'draft' | 'published' | 'editing' | 'rejected' | 'ready to publish'>('draft')
   const [isPopular, setIsPopular] = useState(false)
   const [isFeatured, setIsFeatured] = useState(false)
   const [useMarkdown, setUseMarkdown] = useState(false)
@@ -74,6 +75,7 @@ export default function EditBlogPage() {
             setContent(blog.content_html || '')
             setImageUrl(blog.image_url || '')
             setCoverImageAltText(blog.cover_image_alt_text || '')
+            setCoverImageCaption(blog.cover_image_caption || '')
             setStatus(blog.status)
             setIsPopular(Boolean(blog.is_popular))
             setIsFeatured(Boolean(blog.is_featured))
@@ -111,6 +113,7 @@ export default function EditBlogPage() {
         content_markdown: useMarkdown ? contentMarkdown : null,
         image_url: imageUrl || null,
         cover_image_alt_text: coverImageAltText || null,
+        cover_image_caption: coverImageCaption || null,
         status,
         is_featured: isFeatured,
         is_popular: isPopular,
@@ -216,10 +219,25 @@ export default function EditBlogPage() {
           </p>
         </div>
         <div>
+          <label className="mb-1 block text-sm font-medium">Cover Image Caption (optional)</label>
+          <Input 
+            value={coverImageCaption} 
+            onChange={(e) => setCoverImageCaption(e.target.value)} 
+            placeholder="Short caption displayed below the cover image"
+            maxLength={100}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            {coverImageCaption.length}/100 characters - Brief caption shown below the cover image
+          </p>
+        </div>
+        <div>
           <label className="mb-1 block text-sm font-medium">Status</label>
           <select className="w-full rounded border bg-background p-2" value={status} onChange={(e) => setStatus(e.target.value as any)}>
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
+            <option value="draft">📝 Draft</option>
+            <option value="editing">✏️ Editing</option>
+            <option value="ready to publish">✅ Ready to Publish</option>
+            <option value="rejected">❌ Rejected</option>
+            <option value="published">📤 Published</option>
           </select>
         </div>
         <div className="space-y-2">

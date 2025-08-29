@@ -72,7 +72,7 @@ export interface UpsertBlogInput {
   title: string
   slug: string
   content_html: string
-  status: 'draft' | 'published'
+  status: 'draft' | 'published' | 'editing' | 'rejected' | 'ready to publish'
   is_featured?: boolean
   is_popular?: boolean
 }
@@ -93,6 +93,8 @@ export async function createBlog(input: UpsertBlogInput): Promise<Blog> {
   // Ensure published_at when publishing
   if (input.status === 'published') {
     payload.published_at = new Date().toISOString()
+  } else {
+    payload.published_at = null
   }
 
   const { data, error } = await supabase

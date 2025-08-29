@@ -206,15 +206,37 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
 
           {/* Featured Image */}
           {blog.image_url && (
-            <div className="aspect-video rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
-              <Image
-                src={blog.image_url}
-                alt={blog.cover_image_alt_text || blog.title}
-                width={1200}
-                height={600}
-                className="w-full h-full object-cover"
-                priority={true}
-              />
+            <div className="space-y-2">
+              <div className="aspect-video rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                <Image
+                  src={blog.image_url}
+                  alt={blog.cover_image_alt_text || blog.title}
+                  width={1200}
+                  height={600}
+                  className="w-full h-full object-cover"
+                  priority={true}
+                />
+              </div>
+              {/* Cover Image Caption */}
+              {blog.cover_image_caption && (
+                <div className="text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                    {blog.cover_image_caption}
+                  </p>
+                </div>
+              )}
+              {/* Debug: Show if caption field exists but is empty */}
+              {blog.cover_image_caption === '' && (
+                <div className="text-center">
+                  <p className="text-sm text-red-500">Debug: Caption field exists but is empty</p>
+                </div>
+              )}
+              {/* Debug: Show if caption field doesn't exist */}
+              {!('cover_image_caption' in blog) && (
+                <div className="text-center">
+                  <p className="text-sm text-red-500">Debug: Caption field missing from blog object</p>
+                </div>
+              )}
             </div>
           )}
 

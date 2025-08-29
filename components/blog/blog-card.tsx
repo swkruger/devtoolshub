@@ -29,6 +29,26 @@ export function BlogCard({ blog }: BlogCardProps) {
               </div>
             )}
           </div>
+          {/* Cover Image Caption */}
+          {blog.cover_image_caption && (
+            <div className="px-4 py-2 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+                {blog.cover_image_caption}
+              </p>
+            </div>
+          )}
+          {/* Debug: Show if caption field exists but is empty */}
+          {blog.cover_image_caption === '' && (
+            <div className="px-4 py-2 text-center">
+              <p className="text-xs text-red-500">Debug: Caption field exists but is empty</p>
+            </div>
+          )}
+          {/* Debug: Show if caption field doesn't exist */}
+          {!('cover_image_caption' in blog) && (
+            <div className="px-4 py-2 text-center">
+              <p className="text-xs text-red-500">Debug: Caption field missing from blog object</p>
+            </div>
+          )}
         </div>
         
         {/* Content Section */}

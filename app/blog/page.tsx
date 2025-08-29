@@ -203,6 +203,14 @@ function MainFeaturedBlogCard({ blog }: { blog: any }) {
               </div>
             )}
           </div>
+          {/* Cover Image Caption */}
+          {blog.cover_image_caption && (
+            <div className="px-8 lg:px-12 py-2 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+                {blog.cover_image_caption}
+              </p>
+            </div>
+          )}
         </div>
         
         {/* Content Section */}
@@ -265,6 +273,14 @@ function BlogCard({ blog }: { blog: any }) {
           </div>
         )}
       </div>
+      {/* Cover Image Caption */}
+      {blog.cover_image_caption && (
+        <div className="px-6 py-2 text-center">
+          <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+            {blog.cover_image_caption}
+          </p>
+        </div>
+      )}
       
       {/* Blog Content */}
       <div className="p-6">
@@ -334,6 +350,14 @@ function FeaturedBlogCard({ blog }: { blog: any }) {
               </div>
             )}
           </div>
+          {/* Cover Image Caption */}
+          {blog.cover_image_caption && (
+            <div className="px-4 py-2 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+                {blog.cover_image_caption}
+              </p>
+            </div>
+          )}
         </div>
         
         {/* Content Section */}
@@ -394,6 +418,14 @@ function PopularBlogCard({ blog }: { blog: any }) {
           </div>
         )}
       </div>
+      {/* Cover Image Caption */}
+      {blog.cover_image_caption && (
+        <div className="px-6 py-2 text-center">
+          <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+            {blog.cover_image_caption}
+          </p>
+        </div>
+      )}
       
       {/* Blog Content */}
       <div className="p-6">

@@ -1,4 +1,4 @@
-export type BlogStatus = 'draft' | 'published'
+export type BlogStatus = 'draft' | 'published' | 'editing' | 'rejected' | 'ready to publish'
 
 export interface Blog {
   id: string
@@ -14,6 +14,7 @@ export interface Blog {
   author_id: string
   image_url?: string | null
   cover_image_alt_text?: string | null
+  cover_image_caption?: string | null
   // SEO fields
   meta_description?: string | null
   meta_keywords?: string | null
@@ -41,6 +42,7 @@ export interface CreateBlogData {
   published_at?: string | null
   image_url?: string | null
   cover_image_alt_text?: string | null
+  cover_image_caption?: string | null
   // SEO fields
   meta_description?: string | null
   meta_keywords?: string | null
@@ -62,6 +64,7 @@ export interface UpdateBlogData {
   published_at?: string | null
   image_url?: string | null
   cover_image_alt_text?: string | null
+  cover_image_caption?: string | null
   // SEO fields
   meta_description?: string | null
   meta_keywords?: string | null
