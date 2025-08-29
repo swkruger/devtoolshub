@@ -1,6 +1,19 @@
 # DevToolsHub Development Tasks
 
-## Current Sprint: Blog Management System Enhancement - COMPLETED ✅
+## Current Sprint: Hero Section Enhancement - COMPLETED ✅
+
+### 🎨 Hero Section Rotating Screenshots (2025-01-27) - COMPLETED ✅
+- [x] **Create rotating screenshots component** - Built RotatingScreenshots component with carousel functionality, navigation dots, and prev/next buttons
+- [x] **Update hero section layout** - Modified hero section to use two-column layout with text on left and screenshots on right
+- [x] **Add placeholder images** - Added 5 placeholder screenshots for different tools (JSON Formatter, Regex Tester, JWT Decoder, Image Compressor, World Clock)
+- [x] **Update Next.js image config** - Added via.placeholder.com to allowed image domains
+- [x] **Add responsive design** - Ensured hero section works on mobile and desktop with proper responsive behavior
+- [x] **Replace placeholder images** - Replaced placeholder images with actual tool screenshots from public/images folder
+- [x] **Add smooth transitions** - Enhanced transitions between screenshots with 4-second intervals and smooth opacity transitions
+- [x] **Add screenshot descriptions** - Added detailed tool descriptions that appear with each screenshot in the overlay
+- [x] **Optimize for performance** - Used local WebP images for fast loading and smooth animations
+
+## Previous Sprint: Blog Management System Enhancement - COMPLETED ✅
 
 ### 📝 Blog Management System Enhancement (2025-01-27) - COMPLETED ✅
 - [x] **Add cover image alt text field** - Added cover_image_alt_text field to database and all blog components

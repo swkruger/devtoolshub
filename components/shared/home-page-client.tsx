@@ -9,6 +9,7 @@ import { BookOpen, ArrowRight } from 'lucide-react'
 import { BlogPreviewRenderer, FeaturedBlogPreviewRenderer } from '@/components/blog/blog-content-renderer'
 import { authClient } from '@/lib/auth'
 import { PricingSection } from './pricing-section'
+import { RotatingScreenshots } from './rotating-screenshots'
 import { marked } from 'marked'
 
 // Configure marked for consistent output
@@ -202,22 +203,36 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
              {/* Hero Section */}
        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-blue-50">
          <div className="max-w-7xl mx-auto">
-           <div className="text-center mb-16">
-             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-               Essential Developer Tools
-               <span className="block text-blue-600">All in One Place</span>
-             </h1>
-             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-               Streamline your development workflow with our comprehensive suite of essential tools. 
-               {availableCount} powerful tools available now, with more coming soon. Everything you need to code faster and better.
-             </p>
-             <div className="flex justify-center">
-               <Link 
-                 href="/sign-in" 
-                 className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
-               >
-                 Start Building Now
-               </Link>
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+             {/* Left Column - Text Content */}
+             <div className="text-left">
+               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+                 Essential Developer Tools
+                 <span className="block text-blue-600">All in One Place</span>
+               </h1>
+               <p className="text-xl text-gray-600 mb-8">
+                 Streamline your development workflow with our comprehensive suite of essential tools. 
+                 {availableCount} powerful tools available now, with more coming soon. Everything you need to code faster and better.
+               </p>
+               <div className="flex flex-col sm:flex-row gap-4">
+                 <Link 
+                   href="/sign-in" 
+                   className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors text-center"
+                 >
+                   Start Building Now
+                 </Link>
+                 <Link 
+                   href="#tools" 
+                   className="border border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors text-center"
+                 >
+                   Explore Tools
+                 </Link>
+               </div>
+             </div>
+             
+             {/* Right Column - Rotating Screenshots */}
+             <div className="relative">
+               <RotatingScreenshots />
              </div>
            </div>
          </div>
