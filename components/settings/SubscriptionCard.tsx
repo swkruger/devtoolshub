@@ -28,14 +28,14 @@ interface Profile {
   email: string
   name: string
   avatar_url?: string
-  plan: 'free' | 'premium'
+  plan: 'free' | 'backer'
   stripe_customer_id?: string
 }
 
 interface SubscriptionCardProps {
   user: User
   profile: Profile | null
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
 interface SubscriptionData {
@@ -46,14 +46,14 @@ interface SubscriptionData {
   plans: typeof SUBSCRIPTION_PLANS
 }
 
-export default function SubscriptionCard({ user, profile, isPremiumUser }: SubscriptionCardProps) {
+export default function SubscriptionCard({ user, profile, isBackerUser }: SubscriptionCardProps) {
   const [subscriptionData, setSubscriptionData] = useState<SubscriptionData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isUpgrading, setIsUpgrading] = useState(false)
   const [isManagingBilling, setIsManagingBilling] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
   const [showCancelModal, setShowCancelModal] = useState(false)
-  const [premiumPrice, setPremiumPrice] = useState<number>(9.99)
+  const [backerPrice, setBackerPrice] = useState<number>(9.99)
 
 
   // Helper function to format subscription date
@@ -84,7 +84,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
 
   useEffect(() => {
     fetchSubscriptionData()
-    fetchPremiumPrice()
+    fetchBackerPrice()
     
     // Check for success URL parameter and show success message
     const urlParams = new URLSearchParams(window.location.search)
@@ -115,8 +115,8 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
            fetchSubscriptionData()
          }
          
-         // Stop polling after max attempts or if user becomes premium
-         if (pollCount >= maxPolls || subscriptionData?.currentPlan === 'premium') {
+         // Stop polling after max attempts or if user becomes backer
+         if (pollCount >= maxPolls || subscriptionData?.currentPlan === 'backer') {
            clearInterval(pollInterval)
          }
        }, 2000) // Poll every 2 seconds
@@ -146,16 +146,16 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
     }
   }
 
-  const fetchPremiumPrice = async () => {
+  const fetchBackerPrice = async () => {
     try {
-      const response = await fetch('/api/premium-price')
+      const response = await fetch('/api/backer-price')
       if (!response.ok) {
-        throw new Error('Failed to fetch premium price')
+        throw new Error('Failed to fetch backer price')
       }
       const data = await response.json()
-      setPremiumPrice(data.price)
+      setBackerPrice(data.price)
     } catch (error) {
-      console.error('Error fetching premium price:', error)
+      console.error('Error fetching backer price:', error)
       // Keep default price if fetch fails
     }
   }
@@ -168,7 +168,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
       const response = await fetch('/api/settings/subscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'create_checkout_session', plan: 'premium' })
+        body: JSON.stringify({ action: 'create_checkout_session', plan: 'backer' })
       })
 
       if (!response.ok) {
@@ -213,7 +213,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
       // Show specific error messages based on the error
       if (error instanceof Error) {
         if (error.message.includes('No subscription found')) {
-          toast.error('No subscription found. Please upgrade to premium first.')
+          toast.error('No subscription found. Please become a backer first.')
         } else if (error.message.includes('Customer not found')) {
           toast.error('Subscription not found in Stripe. Please contact support.')
         } else if (error.message.includes('Billing portal not configured')) {
@@ -246,7 +246,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
         throw new Error('Failed to cancel subscription')
       }
 
-             toast.success('Subscription cancelled successfully. You will remain premium until the end of your billing period.')
+             toast.success('Subscription cancelled successfully. You will remain a backer until the end of your billing period.')
       await fetchSubscriptionData() // Refresh data
     } catch (error) {
       console.error('Error cancelling subscription:', error)
@@ -328,19 +328,19 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                {currentPlan === 'premium' ? (
+                {currentPlan === 'backer' ? (
                   <>
                     <Crown className="h-5 w-5 text-yellow-500" />
-                    Premium Plan
+                    Backer Plan
                   </>
                 ) : (
                   'Free Plan'
                 )}
               </h3>
                                              <p className="text-sm text-muted-foreground">
-                  {currentPlan === 'premium' ? (
+                  {currentPlan === 'backer' ? (
                     <>
-                      ${premiumPrice}/month
+                      ${backerPrice}/month
                       {subscription && (
                         <span className="ml-2">
                           • {subscription.cancel_at_period_end ? 'Access until' : 'Next billing'}: {formatSubscriptionDate(subscription.current_period_end)}
@@ -352,24 +352,24 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
                   )}
                 </p>
             </div>
-                         <Badge variant={currentPlan === 'premium' ? 'default' : 'secondary'}>
-               {currentPlan === 'premium' ? (
+                         <Badge variant={currentPlan === 'backer' ? 'default' : 'secondary'}>
+               {currentPlan === 'backer' ? (
                  subscription?.cancel_at_period_end ? 'Cancelled' : 'Active'
                ) : 'Free'}
              </Badge>
           </div>
 
-                     {currentPlan === 'premium' && subscription && (
+                     {currentPlan === 'backer' && subscription && (
              <Alert>
                <AlertDescription className="flex items-center gap-2">
                  <CheckCircle className="h-4 w-4 text-green-500" />
                                    {subscription.cancel_at_period_end ? (
                     <>
-                      Your premium subscription is active until {formatSubscriptionDate(subscription.current_period_end)}. 
+                      Your backer subscription is active until {formatSubscriptionDate(subscription.current_period_end)}. 
                       It will not renew after this date.
                     </>
                   ) : (
-                    'Your premium subscription is active and will automatically renew'
+                    'Your backer subscription is active and will automatically renew'
                   )}
                </AlertDescription>
              </Alert>
@@ -384,7 +384,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
                    ) : (
                      <ArrowUpRight className="h-4 w-4" />
                    )}
-                   Upgrade to Premium
+                   Become a Backer
                  </Button>
                  
                </>
@@ -437,14 +437,14 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
               >
                                  <div className="flex items-center justify-between mb-3">
                    <h4 className="font-semibold flex items-center gap-2">
-                     {planKey === 'premium' && <Crown className="h-4 w-4 text-yellow-500" />}
+                     {planKey === 'backer' && <Crown className="h-4 w-4 text-yellow-500" />}
                      {plan.name}
                    </h4>
                    <div className="text-right">
                      <div className="font-bold">
-                       {planKey === 'premium' ? `$${premiumPrice}` : (plan.price === 0 ? 'Free' : formatPrice(plan.price))}
+                       {planKey === 'backer' ? `$${backerPrice}` : (plan.price === 0 ? 'Free' : formatPrice(plan.price))}
                      </div>
-                     {planKey === 'premium' || plan.price > 0 ? <div className="text-xs text-muted-foreground">per month</div> : null}
+                     {planKey === 'backer' || plan.price > 0 ? <div className="text-xs text-muted-foreground">per month</div> : null}
                    </div>
                  </div>
 
@@ -477,7 +477,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
       </Card>
 
       {/* Billing History */}
-      {currentPlan === 'premium' && billingHistory.length > 0 && (
+      {currentPlan === 'backer' && billingHistory.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -498,7 +498,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
                        })}
                      </div>
                      <div className="text-sm text-muted-foreground">
-                       {invoice.description || 'Premium Subscription'}
+                       {invoice.description || 'Backer Subscription'}
                      </div>
                      {invoice.period_start && invoice.period_end && (
                        <div className="text-xs text-muted-foreground">
@@ -534,7 +534,7 @@ export default function SubscriptionCard({ user, profile, isPremiumUser }: Subsc
          onClose={() => setShowCancelModal(false)}
          onConfirm={confirmCancelSubscription}
          title="Cancel Subscription"
-         message="Are you sure you want to cancel your subscription? You will keep all premium features until the end of your current billing period, but your subscription will not renew automatically."
+         message="Are you sure you want to cancel your subscription? You will keep all backer features until the end of your current billing period, but your subscription will not renew automatically."
          confirmText="Cancel Subscription"
          cancelText="Keep Subscription"
          variant="destructive"

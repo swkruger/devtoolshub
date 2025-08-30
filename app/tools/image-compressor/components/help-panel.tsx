@@ -29,10 +29,10 @@ import {
 interface HelpPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  isPremiumUser: boolean;
+  isBackerUser: boolean;
 }
 
-export default function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
+export default function HelpPanel({ isOpen, onClose, isBackerUser }: HelpPanelProps) {
   if (!isOpen) return null;
 
   const helpContent = {
@@ -467,7 +467,7 @@ export default function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelP
           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Info className="h-4 w-4" />
             <span>
-              {isPremiumUser ? "Premium user - All features available" : "Free user - Upgrade for premium features"}
+                              {isBackerUser ? "Backer user - All features available" : "Free user - Become a backer for advanced features"}
             </span>
           </div>
           <Button onClick={onClose}>

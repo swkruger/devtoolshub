@@ -10,7 +10,7 @@ interface EnhancedTooltipProps {
   description: string
   shortcut?: string
   isPremium?: boolean
-  isPremiumUser?: boolean
+  isBackerUser?: boolean
   examples?: string[]
   tips?: string[]
   children: React.ReactNode
@@ -22,7 +22,7 @@ export function EnhancedTooltip({
   description,
   shortcut,
   isPremium = false,
-  isPremiumUser = false,
+  isBackerUser = false,
   examples = [],
   tips = [],
   children,
@@ -129,23 +129,23 @@ export function EnhancedTooltip({
             </CardHeader>
 
             <CardContent className="pt-0 space-y-3">
-              {/* Premium Status */}
+              {/* Backer Status */}
               {isPremium && (
                 <div className={`p-2 rounded-lg text-xs ${
-                  isPremiumUser
+                  isBackerUser
                     ? 'bg-green-50 dark:bg-green-950/20 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800'
                     : 'bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800'
                 }`}>
                   <div className="flex items-center gap-2 mb-1">
                     <Crown className="w-3 h-3" />
                     <span className="font-medium">
-                      {isPremiumUser ? 'Premium Feature' : 'Premium Required'}
+                      {isBackerUser ? 'Backer Feature' : 'Backer Required'}
                     </span>
                   </div>
                   <p>
-                    {isPremiumUser 
-                      ? 'You have access to this premium feature.' 
-                      : 'Upgrade to premium to unlock this feature.'}
+                    {isBackerUser 
+                      ? 'You have access to this backer feature.' 
+                      : 'Become a backer to unlock this feature.'}
                   </p>
                 </div>
               )}

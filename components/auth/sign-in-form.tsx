@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CheckCircle, Shield, Zap } from "lucide-react"
 import { authClient } from "@/lib/auth"
 
 export function SignInForm() {
@@ -133,8 +134,24 @@ export function SignInForm() {
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Welcome to DevToolsHub</CardTitle>
         <CardDescription>
-          Sign in to access your developer toolkit
+          Sign in to access your developer toolkit - Free forever, no credit cards required
         </CardDescription>
+        
+        {/* Benefits Section */}
+        <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 space-y-3 mt-4">
+          <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+            <CheckCircle className="w-4 h-4" />
+            <span className="font-medium">Free Forever</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+            <Shield className="w-4 h-4" />
+            <span>No Credit Cards Required</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+            <Zap className="w-4 h-4" />
+            <span>Access All Tools Instantly</span>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (

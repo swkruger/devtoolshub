@@ -17,7 +17,7 @@ import Link from "next/link"
 import { EnhancedTooltip } from "./enhanced-tooltip"
 
 interface BatchConverterProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   selectedTimezone: string
   selectedFormat: string
 }
@@ -29,7 +29,7 @@ interface BatchResult {
   error?: string
 }
 
-export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat }: BatchConverterProps) {
+export function BatchConverter({ isBackerUser, selectedTimezone, selectedFormat }: BatchConverterProps) {
 
   const [batchInput, setBatchInput] = useState("")
   const [batchResults, setBatchResults] = useState<BatchResult[]>([])
@@ -39,9 +39,9 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
 
   // Process batch input
   const processBatch = async () => {
-    if (!isPremiumUser) {
-      toast.warning("Premium Required", {
-        description: "Batch conversion requires a premium plan"
+    if (!isBackerUser) {
+      toast.warning("Backer Required", {
+        description: "Batch conversion requires a backer plan"
       })
       return
     }
@@ -171,7 +171,7 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
 
   // Export results
   const exportResults = () => {
-    if (!isPremiumUser || batchResults.length === 0) return
+    if (!isBackerUser || batchResults.length === 0) return
 
     try {
       let content: string
@@ -217,7 +217,7 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
 
   // Copy all results
   const copyAllResults = async () => {
-    if (!isPremiumUser || batchResults.length === 0) return
+    if (!isBackerUser || batchResults.length === 0) return
 
     try {
       const successfulResults = batchResults.filter(r => !r.error)
@@ -241,7 +241,7 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
     setBatchInput("")
   }
 
-  if (!isPremiumUser) {
+  if (!isBackerUser) {
     return (
       <Card>
         <CardContent className="pt-6">
@@ -249,9 +249,9 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
             <div className="flex items-center justify-center mb-4">
               <Crown className="w-10 h-10 text-amber-500" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Premium Feature</h3>
+            <h3 className="text-lg font-semibold mb-2">Backer Feature</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Batch timestamp conversion is available with a premium plan
+              Batch timestamp conversion is available with a backer plan
             </p>
             <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
               <p>• Convert up to 1000 timestamps at once</p>
@@ -260,8 +260,8 @@ export function BatchConverter({ isPremiumUser, selectedTimezone, selectedFormat
               <p>• Progress tracking for large batches</p>
             </div>
             <Button className="mt-4" asChild>
-              <Link href="/go-premium">
-                Upgrade to Premium
+              <Link href="/go-backer">
+                Become a Backer
               </Link>
             </Button>
           </div>

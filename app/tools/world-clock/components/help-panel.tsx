@@ -22,10 +22,10 @@ import {
 interface HelpPanelProps {
   isOpen: boolean
   onClose: () => void
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
-export default function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
+export default function HelpPanel({ isOpen, onClose, isBackerUser }: HelpPanelProps) {
   if (!isOpen) return null
 
   return (
@@ -198,7 +198,7 @@ export default function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelP
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                Meeting Planner {!isPremiumUser && <Badge variant="outline"><Crown className="w-3 h-3 mr-1" />Premium</Badge>}
+                Meeting Planner {!isBackerUser && <Badge variant="outline"><Crown className="w-3 h-3 mr-1" />Backer</Badge>}
               </h3>
               <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
                 <div>
@@ -235,7 +235,7 @@ export default function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelP
                 </div>
                 
                 <div>
-                  <p className="font-medium text-gray-800 dark:text-gray-200 mb-1">iCal Export {!isPremiumUser && <Badge variant="outline" className="text-xs"><Crown className="w-2 h-2 mr-1" />Premium</Badge>}</p>
+                  <p className="font-medium text-gray-800 dark:text-gray-200 mb-1">iCal Export {!isBackerUser && <Badge variant="outline" className="text-xs"><Crown className="w-2 h-2 mr-1" />Backer</Badge>}</p>
                   <p>Export meeting times as calendar events that can be imported into any calendar application.</p>
                 </div>
               </div>

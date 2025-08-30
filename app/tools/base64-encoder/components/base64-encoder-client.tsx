@@ -32,14 +32,14 @@ import { BatchProcessor } from "./batch-processor"
 import { ConversionHistory } from "./conversion-history"
 
 interface Base64EncoderClientProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   userId: string | null
 }
 
 type ConversionMode = 'encode' | 'decode'
 type InputType = 'text' | 'file'
 
-export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClientProps) {
+export function Base64EncoderClient({ isBackerUser, userId }: Base64EncoderClientProps) {
   const showSuccess = (title: string, description?: string) => toast.success(title, { description })
   const showError = (title: string, description?: string) => toast.error(title, { description })
   
@@ -83,7 +83,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
 
   // Load history from localStorage on mount
   useEffect(() => {
-    if (!isPremiumUser) return
+    if (!isBackerUser) return
     
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
@@ -98,11 +98,11 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
     } catch (error) {
       console.error('Failed to load history:', error)
     }
-  }, [isPremiumUser])
+  }, [isBackerUser])
 
   // Save history to localStorage
   const saveHistory = useCallback((newHistory: any[]) => {
-    if (!isPremiumUser) return
+    if (!isBackerUser) return
     
     try {
       // Keep only the latest MAX_HISTORY_ITEMS
@@ -112,7 +112,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
     } catch (error) {
       console.error('Failed to save history:', error)
     }
-  }, [isPremiumUser])
+  }, [isBackerUser])
 
   // Auto-detect input type and convert
   useEffect(() => {
@@ -206,10 +206,10 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
     setErrors([])
 
     // Validate file size
-    const maxSize = isPremiumUser ? config.maxFileSize.premium : config.maxFileSize.free
+    const maxSize = isBackerUser ? config.maxFileSize.premium : config.maxFileSize.free
     if (file.size > maxSize) {
       const maxSizeFormatted = formatFileSize(maxSize)
-      setErrors([`File size exceeds limit (${maxSizeFormatted} for ${isPremiumUser ? 'premium' : 'free'} users)`])
+      setErrors([`File size exceeds limit (${maxSizeFormatted} for ${isBackerUser ? 'backer' : 'free'} users)`])
       setIsProcessing(false)
       return
     }
@@ -259,7 +259,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
     } finally {
       setIsProcessing(false)
     }
-  }, [encodingOptions, isPremiumUser, showDataUrl, toast])
+  }, [encodingOptions, isBackerUser, showDataUrl, toast])
 
   // Handle drag and drop
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -316,7 +316,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
 
   // Add to history helper
   const addToHistory = useCallback((result: string, dataUrl?: string) => {
-    if (!isPremiumUser) return
+    if (!isBackerUser) return
     
     try {
       const newEntry = {
@@ -342,7 +342,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
     } catch (error) {
       console.warn('Failed to add to history:', error)
     }
-  }, [isPremiumUser, inputType, mode, uploadedFile, conversionStats, fileMimeType, encodingOptions, history, saveHistory, toast])
+  }, [isBackerUser, inputType, mode, uploadedFile, conversionStats, fileMimeType, encodingOptions, history, saveHistory, toast])
 
   // Clear all
   const clearAll = useCallback(() => {
@@ -458,13 +458,13 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
             if (outputText) downloadResult()
             break
           case 'b':
-            if (event.shiftKey && isPremiumUser) {
+            if (event.shiftKey && isBackerUser) {
               event.preventDefault()
               setActiveTab('batch')
             }
             break
           case 'h':
-            if (event.shiftKey && isPremiumUser) {
+            if (event.shiftKey && isBackerUser) {
               event.preventDefault()
               setActiveTab('history')
             }
@@ -496,7 +496,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [outputText, clearAll, copyToClipboard, downloadResult, isPremiumUser])
+  }, [outputText, clearAll, copyToClipboard, downloadResult, isBackerUser])
 
   return (
     <div className="space-y-6">
@@ -531,11 +531,11 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="single">Single</TabsTrigger>
-          <TabsTrigger value="batch" disabled={!isPremiumUser}>
-            Batch {!isPremiumUser && <Crown className="w-3 h-3 ml-1" />}
+          <TabsTrigger value="batch" disabled={!isBackerUser}>
+            Batch {!isBackerUser && <Crown className="w-3 h-3 ml-1" />}
           </TabsTrigger>
-          <TabsTrigger value="history" disabled={!isPremiumUser}>
-            History {!isPremiumUser && <Crown className="w-3 h-3 ml-1" />}
+          <TabsTrigger value="history" disabled={!isBackerUser}>
+            History {!isBackerUser && <Crown className="w-3 h-3 ml-1" />}
           </TabsTrigger>
         </TabsList>
 
@@ -696,7 +696,7 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
                               Drop files here or click to upload
                             </p>
                             <p className="text-sm text-gray-500">
-                              Max size: {formatFileSize(isPremiumUser ? config.maxFileSize.premium : config.maxFileSize.free)}
+                              Max size: {formatFileSize(isBackerUser ? config.maxFileSize.premium : config.maxFileSize.free)}
                             </p>
                           </div>
                           <Button
@@ -719,8 +719,8 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
                 )}
               </div>
 
-              {/* Encoding Options (Premium) */}
-              {isPremiumUser && (
+              {/* Encoding Options (Backer) */}
+              {isBackerUser && (
                 <Card className="p-4">
                    <div className="flex items-center gap-2 mb-3">
                     <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Encoding Options</Label>
@@ -925,15 +925,15 @@ export function Base64EncoderClient({ isPremiumUser, userId }: Base64EncoderClie
 
         <TabsContent value="batch" className="space-y-4">
           <BatchProcessor 
-            isPremiumUser={isPremiumUser}
+            isBackerUser={isBackerUser}
             encodingOptions={encodingOptions}
-            maxFileSize={isPremiumUser ? config.maxFileSize.premium : config.maxFileSize.free}
+            maxFileSize={isBackerUser ? config.maxFileSize.premium : config.maxFileSize.free}
           />
         </TabsContent>
 
         <TabsContent value="history" className="space-y-4">
           <ConversionHistory 
-            isPremiumUser={isPremiumUser}
+            isBackerUser={isBackerUser}
             onReuse={handleHistoryReuse}
             history={history}
             setHistory={setHistory}

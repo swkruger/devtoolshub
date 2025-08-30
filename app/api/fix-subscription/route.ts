@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
           return NextResponse.json({ 
             success: true, 
-            message: 'Plan updated to premium',
+            message: 'Plan updated to backer',
             subscription: subscriptions.data[0]
           })
         } else {
@@ -84,11 +84,11 @@ export async function POST(request: NextRequest) {
             })
 
             if (subscriptions.data.length > 0) {
-              // Update user with customer ID and premium plan
+              // Update user with customer ID and backer plan
               const { error: updateError } = await supabase
                 .from('users')
                 .update({ 
-                  plan: 'premium',
+                  plan: 'backer',
                   stripe_customer_id: customer.id
                 })
                 .eq('id', user.id)

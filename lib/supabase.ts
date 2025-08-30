@@ -36,7 +36,7 @@ export type User = {
   email: string
   name: string
   avatar_url?: string
-  plan: 'free' | 'premium'
+  plan: 'free' | 'backer'
   created_at: string
   updated_at: string
 }

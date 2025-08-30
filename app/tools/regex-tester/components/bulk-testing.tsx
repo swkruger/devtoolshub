@@ -44,13 +44,13 @@ interface BulkTestResults {
 interface BulkTestingProps {
   isOpen: boolean
   onClose: () => void
-  isPremiumUser: boolean
+  isBackerUser: boolean
   pattern: string
   language: RegexLanguage
   flags: string[]
 }
 
-export function BulkTesting({ isOpen, onClose, isPremiumUser, pattern, language, flags }: BulkTestingProps) {
+export function BulkTesting({ isOpen, onClose, isBackerUser, pattern, language, flags }: BulkTestingProps) {
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [testItems, setTestItems] = useState<BulkTestItem[]>([])
@@ -127,9 +127,9 @@ export function BulkTesting({ isOpen, onClose, isPremiumUser, pattern, language,
   }, [])
 
   const runBulkTest = useCallback(async () => {
-    if (!isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Bulk testing requires a premium plan'
+    if (!isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Bulk testing requires a backer plan'
       })
       return
     }
@@ -231,7 +231,7 @@ export function BulkTesting({ isOpen, onClose, isPremiumUser, pattern, language,
     toast.success('Bulk testing completed', {
       description: `Processed ${testItems.length} items with ${totalMatches} total matches`
     })
-  }, [isPremiumUser, pattern, language, flags, testItems, toast])
+  }, [isBackerUser, pattern, language, flags, testItems, toast])
 
   const exportResults = useCallback(() => {
     if (!results || testItems.length === 0) return
@@ -296,7 +296,7 @@ Average Execution Time: ${results.averageExecutionTime.toFixed(2)}ms`
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-blue-600" />
                 Bulk Testing
-                {!isPremiumUser && (
+                {!isBackerUser && (
                   <Badge className="bg-amber-100 text-amber-800 border-amber-200">
                     Premium
                   </Badge>
@@ -375,7 +375,7 @@ Average Execution Time: ${results.averageExecutionTime.toFixed(2)}ms`
                 <div className="flex gap-2">
                   <Button
                     onClick={runBulkTest}
-                    disabled={isProcessing || !pattern || !isPremiumUser}
+                    disabled={isProcessing || !pattern || !isBackerUser}
                     size="sm"
                   >
                     {isProcessing ? (

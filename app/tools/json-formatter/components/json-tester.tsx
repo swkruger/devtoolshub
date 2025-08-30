@@ -42,11 +42,11 @@ interface TestSuite {
 }
 
 export function JsonTester({ 
-  isPremiumUser, 
+  isBackerUser, 
   onTestJson, 
   onTestOperation 
 }: {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   onTestJson: (json: string) => { isValid: boolean; error?: string }
   onTestOperation: (operation: string, json: string) => Promise<{ success: boolean; result?: any; error?: string }>
 }) {
@@ -511,12 +511,12 @@ export function JsonTester({
       case 'tree-view':
       case 'snippet-management':
         // For now, just verify the test structure
-        if (!isPremiumUser) {
+        if (!isBackerUser) {
           // Should show upgrade prompt
-          updateTestStatus('premium-features', testId, 'warning', 'Premium feature correctly gated - upgrade prompt should appear')
+          updateTestStatus('premium-features', testId, 'warning', 'Backer feature correctly gated - upgrade prompt should appear')
         } else {
           // Should have access
-          updateTestStatus('premium-features', testId, 'passed', 'Premium feature correctly accessible')
+          updateTestStatus('premium-features', testId, 'passed', 'Backer feature correctly accessible')
         }
         break
         

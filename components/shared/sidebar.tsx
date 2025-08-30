@@ -49,27 +49,27 @@ interface SidebarProps {
 
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
-  const { user, loading } = useUser()
-  const [apiPremiumStatus, setApiPremiumStatus] = React.useState<boolean | null>(null)
+  const { user, loading, isBackerUser: hookBackerStatus } = useUser()
+  const [apiBackerStatus, setApiBackerStatus] = React.useState<boolean | null>(null)
   const [apiAdminStatus, setApiAdminStatus] = React.useState<boolean | null>(null)
   const [apiLoading, setApiLoading] = React.useState(true)
   
-  // Determine premium status - prioritize API result since useUser is not working
-  const isPremiumUser = apiPremiumStatus === true || user?.plan === 'premium'
+  // Determine backer status - prioritize API result for consistency
+  const isBackerUser = apiBackerStatus === true || hookBackerStatus
   const isAdminUser = apiAdminStatus === true
-  const shouldShowGoPremium = !apiLoading && !isPremiumUser
+  const shouldShowGoBacker = !apiLoading && !isBackerUser
   
   // Debug logging
   console.log('Sidebar - User data:', { 
     user, 
     loading, 
-    isPremiumUser, 
+    isBackerUser, 
     isAdminUser,
     plan: user?.plan, 
-    apiPremiumStatus,
+    apiBackerStatus,
     apiAdminStatus,
     apiLoading,
-    shouldShowGoPremium,
+    shouldShowGoBacker,
     userId: user?.id 
   })
   
@@ -88,10 +88,10 @@ export function Sidebar({ className }: SidebarProps) {
         
         if (premiumResponse.ok) {
           const premiumData = await premiumResponse.json()
-          console.log('Sidebar - API premium status:', premiumData)
-          setApiPremiumStatus(premiumData.isPremium)
+          console.log('Sidebar - API backer status:', premiumData)
+          setApiBackerStatus(premiumData.isBacker)
         } else {
-          console.error('Sidebar - Premium API error:', premiumResponse.status, premiumResponse.statusText)
+          console.error('Sidebar - Backer API error:', premiumResponse.status, premiumResponse.statusText)
         }
         
         if (adminResponse.ok) {
@@ -116,7 +116,7 @@ export function Sidebar({ className }: SidebarProps) {
     name: tool.name,
     href: tool.path,
     icon: tool.icon,
-    isPremium: tool.isPremium,
+    isBacker: tool.isBacker,
     tags: tool.tags,
     description: tool.description,
     category: tool.category,
@@ -245,7 +245,7 @@ export function Sidebar({ className }: SidebarProps) {
                           <tool.icon className="h-4 w-4 mr-2" />
                           <span className="flex-1 text-left">{tool.name}</span>
                           <div className="flex items-center gap-2">
-                            {tool.isPremium && (
+                            {tool.isBacker && (
                               <Crown className="h-3 w-3 text-primary" />
                             )}
                             <Star
@@ -297,15 +297,15 @@ export function Sidebar({ className }: SidebarProps) {
         {/* Bottom Actions */}
         <div className="px-3 py-2">
           <div className="space-y-1">
-            {shouldShowGoPremium && (
+            {shouldShowGoBacker && (
               <Button
                 variant="ghost"
                 className="w-full justify-start"
                 asChild
               >
-                <Link href="/go-premium">
+                <Link href="/go-backer">
                   <Crown className="h-4 w-4 mr-2" />
-                  Go Premium
+                                      Become a Backer
                 </Link>
               </Button>
             )}

@@ -35,7 +35,7 @@ import NamespaceManager from './namespace-manager';
 import UuidHistory from './uuid-history';
 
 interface UuidGeneratorClientProps {
-  isPremiumUser: boolean;
+  isBackerUser: boolean;
   userId?: string;
 }
 
@@ -52,7 +52,7 @@ interface UuidEntry {
 type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5';
 type UuidFormat = 'standard' | 'compact' | 'base64' | 'binary';
 
-export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGeneratorClientProps) {
+export default function UuidGeneratorClient({ isBackerUser, userId }: UuidGeneratorClientProps) {
   const showSuccess = (title: string, description?: string) => toast.success(title, { description })
   const showError = (title: string, description?: string) => toast.error(title, { description })
   const [currentUuid, setCurrentUuid] = useState<string>('');
@@ -195,9 +195,9 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
 
   // Download UUIDs
   const downloadUuids = (format: 'json' | 'csv' | 'txt') => {
-    if (!isPremiumUser) {
-      toast.error('Premium Feature Required', {
-        description: 'Download functionality is a premium feature. Please upgrade to access this feature.'
+    if (!isBackerUser) {
+      toast.error('Backer Feature Required', {
+        description: 'Download functionality is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -259,9 +259,9 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
   };
 
   const handleBulkGenerate = () => {
-    if (!isPremiumUser) {
-      toast.error('Premium Feature Required', {
-        description: 'Bulk generation is a premium feature. Please upgrade to access this feature.'
+    if (!isBackerUser) {
+      toast.error('Backer Feature Required', {
+        description: 'Bulk generation is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -269,9 +269,9 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
   };
 
   const handleNamespaceManager = () => {
-    if (!isPremiumUser) {
-      toast.error('Premium Feature Required', {
-        description: 'Namespace management is a premium feature. Please upgrade to access this feature.'
+    if (!isBackerUser) {
+      toast.error('Backer Feature Required', {
+        description: 'Namespace management is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -279,9 +279,9 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
   };
 
   const handleHistory = () => {
-    if (!isPremiumUser) {
-      toast.error('Premium Feature Required', {
-        description: 'UUID history is a premium feature. Please upgrade to access this feature.'
+    if (!isBackerUser) {
+      toast.error('Backer Feature Required', {
+        description: 'UUID history is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -457,10 +457,10 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
             <Button
               variant="outline"
               onClick={handleBulkGenerate}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className="flex items-center gap-2"
             >
-              {!isPremiumUser && <Crown className="w-4 h-4 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-4 h-4 animate-pulse" />}
               <Zap className="w-4 h-4" />
               Bulk Generate
             </Button>
@@ -468,10 +468,10 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
             <Button
               variant="outline"
               onClick={handleNamespaceManager}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className="flex items-center gap-2"
             >
-              {!isPremiumUser && <Crown className="w-4 h-4 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-4 h-4 animate-pulse" />}
               <Database className="w-4 h-4" />
               Namespaces
             </Button>
@@ -479,10 +479,10 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
             <Button
               variant="outline"
               onClick={handleHistory}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className="flex items-center gap-2"
             >
-              {!isPremiumUser && <Crown className="w-4 h-4 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-4 h-4 animate-pulse" />}
               <History className="w-4 h-4" />
               History
             </Button>
@@ -537,8 +537,8 @@ export default function UuidGeneratorClient({ isPremiumUser, userId }: UuidGener
         </Card>
       )}
 
-      {/* Download Options for Premium Users */}
-      {isPremiumUser && generatedUuids.length > 0 && (
+      {/* Download Options for Backer Users */}
+      {isBackerUser && generatedUuids.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

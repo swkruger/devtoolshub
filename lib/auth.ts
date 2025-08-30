@@ -281,10 +281,10 @@ export const authServer = {
     return profile
   },
 
-  // Check if user has premium plan
-  async isPremiumUser(userId?: string): Promise<boolean> {
+  // Check if user has backer plan
+  async isBackerUser(userId?: string): Promise<boolean> {
     const profile = await this.getUserProfile(userId)
-    return profile?.plan === 'premium'
+    return profile?.plan === 'backer'
   },
 
   // Check if user is admin (users.is_admin)

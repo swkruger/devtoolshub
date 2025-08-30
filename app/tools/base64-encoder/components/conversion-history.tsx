@@ -33,7 +33,7 @@ interface HistoryEntry {
 }
 
 interface ConversionHistoryProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   onReuse?: (entry: HistoryEntry) => void
   history: HistoryEntry[]
   setHistory: (history: HistoryEntry[]) => void
@@ -44,7 +44,7 @@ const STORAGE_KEY = 'base64-conversion-history'
 const MAX_HISTORY_ITEMS = 100
 
 export function ConversionHistory({ 
-  isPremiumUser, 
+  isBackerUser, 
   onReuse, 
   history, 
   setHistory, 
@@ -148,7 +148,7 @@ export function ConversionHistory({
 
   // No longer needed - history is managed by parent component
 
-  if (!isPremiumUser) {
+  if (!isBackerUser) {
     return (
       <Card>
         <CardContent className="pt-6 text-center py-8">

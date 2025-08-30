@@ -24,10 +24,10 @@ import {
 interface HelpPanelProps {
   isOpen: boolean
   onClose: () => void
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
-export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
+export function HelpPanel({ isOpen, onClose, isBackerUser }: HelpPanelProps) {
   const [activeTab, setActiveTab] = useState<'examples' | 'shortcuts' | 'tips' | 'accessibility'>('examples')
 
   if (!isOpen) return null
@@ -310,7 +310,7 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
                   <div 
                     key={index} 
                     className={`flex items-center justify-between p-3 rounded-lg border ${
-                      shortcut.premium && !isPremiumUser 
+                      shortcut.premium && !isBackerUser 
                         ? 'border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20' 
                         : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50'
                     }`}
@@ -335,7 +335,7 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
                 ))}
               </div>
 
-              {!isPremiumUser && (
+                              {!isBackerUser && (
                 <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Crown className="w-4 h-4 text-amber-600" />

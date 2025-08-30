@@ -19,7 +19,7 @@ import { BatchConverter } from "./batch-converter"
 import { TimezoneComparison } from "./timezone-comparison"
 
 interface TimestampConverterClientProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   userId: string | null
 }
 
@@ -53,7 +53,7 @@ const DATE_FORMATS = [
   { value: 'custom-3', label: 'DD.MM.YYYY HH:mm', example: '01.01.2024 12:00' }
 ]
 
-export function TimestampConverterClient({ isPremiumUser, userId }: TimestampConverterClientProps) {
+export function TimestampConverterClient({ isBackerUser, userId }: TimestampConverterClientProps) {
 
   const showSuccess = (title: string, description?: string) => toast.success(title, { description })
   const showError = (title: string, description?: string) => toast.error(title, { description })
@@ -396,12 +396,12 @@ export function TimestampConverterClient({ isPremiumUser, userId }: TimestampCon
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="single">Single</TabsTrigger>
-          <TabsTrigger value="batch" disabled={!isPremiumUser}>
-            Batch {!isPremiumUser && <Crown className="w-3 h-3 ml-1" />}
-          </TabsTrigger>
-          <TabsTrigger value="compare" disabled={!isPremiumUser}>
-            Current & Compare {!isPremiumUser && <Crown className="w-3 h-3 ml-1" />}
-          </TabsTrigger>
+                      <TabsTrigger value="batch" disabled={!isBackerUser}>
+              Batch {!isBackerUser && <Crown className="w-3 h-3 ml-1" />}
+            </TabsTrigger>
+            <TabsTrigger value="compare" disabled={!isBackerUser}>
+              Current & Compare {!isBackerUser && <Crown className="w-3 h-3 ml-1" />}
+            </TabsTrigger>
         </TabsList>
 
         <TabsContent value="single" className="space-y-4">
@@ -518,7 +518,7 @@ export function TimestampConverterClient({ isPremiumUser, userId }: TimestampCon
 
         <TabsContent value="batch" className="space-y-4">
           <BatchConverter 
-            isPremiumUser={isPremiumUser}
+            isBackerUser={isBackerUser}
             selectedTimezone={selectedTimezone}
             selectedFormat={selectedFormat}
           />
@@ -577,7 +577,7 @@ export function TimestampConverterClient({ isPremiumUser, userId }: TimestampCon
 
           {/* Timezone Comparison Section */}
           <TimezoneComparison 
-            isPremiumUser={isPremiumUser}
+            isBackerUser={isBackerUser}
             userId={userId}
             timestamp={currentTimestamp}
             isAutoUpdate={isAutoUpdate}

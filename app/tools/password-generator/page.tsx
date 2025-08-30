@@ -15,17 +15,17 @@ export const metadata: Metadata = {
 
 export default async function PasswordGeneratorPage() {
   const userProfile = await authServer.getUserProfile()
-  const isPremiumUser = userProfile?.plan === 'premium'
+  const isBackerUser = userProfile?.plan === 'backer'
   const userId = userProfile?.id || null
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-7xl">
       <ToolPageHeader icon={tool.icon} title={tool.name} description={tool.description} />
-      <PasswordGeneratorClient isPremiumUser={!!isPremiumUser} userId={userId} />
-      {!isPremiumUser && (
+      <PasswordGeneratorClient isBackerUser={!!isBackerUser} userId={userId} />
+      {!isBackerUser && (
         <PremiumOverview
-          features={tool.features.premium ?? []}
-          title="Premium Features"
+          features={tool.features.backer ?? []}
+          title="Backer Features"
           subtitle="Unlock key-like generation formats and advanced options"
         />
       )}

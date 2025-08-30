@@ -7,7 +7,7 @@ export const toolConfig = {
   shortDescription: 'World clock with meeting planner & weather integration',
   icon: Globe,
   emoji: '🌍',
-  isPremium: false,
+  isBacker: false,
   category: 'utility' as const,
   tags: ['time', 'timezone', 'clock', 'world', 'meeting', 'weather', 'cities'],
   path: '/tools/world-clock',
@@ -23,7 +23,7 @@ export const toolConfig = {
       'Business hours visualization',
       'Keyboard shortcuts and accessibility'
     ],
-    premium: [
+    backer: [
       'Unlimited cities with collections',
       'Live weather data with current conditions',
       'Advanced meeting planner with business hours',

@@ -3,6 +3,9 @@ import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
 import SessionTracker from '@/components/SessionTracker'
+import { SignInModalProvider } from '@/lib/use-sign-in-modal'
+import { SignInModalWrapper } from '@/components/auth/sign-in-modal-wrapper'
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -50,7 +53,7 @@ export const metadata: Metadata = {
     url: '/',
     siteName: 'DevToolsHub',
     title: 'DevToolsHub - Essential Developer Tools Collection',
-    description: 'Your all-in-one developer toolkit. Format JSON, test regex patterns, decode JWTs, and more. Free tools with premium features.',
+    description: 'Your all-in-one developer toolkit. Format JSON, test regex patterns, decode JWTs, and more. All tools are free forever, no ads. Support the project to unlock advanced features.',
     images: [
       {
         url: '/og-image.png',
@@ -162,11 +165,14 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={inter.className}>
-        {children}
-        <SessionTracker />
-        <Toaster position="top-right" richColors />
-      </body>
+             <body className={inter.className}>
+         <SignInModalProvider>
+           {children}
+           <SignInModalWrapper />
+           <SessionTracker />
+           <Toaster position="top-right" richColors />
+         </SignInModalProvider>
+       </body>
     </html>
   )
 } 

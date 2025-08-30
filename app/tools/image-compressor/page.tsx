@@ -7,7 +7,7 @@ import { PremiumOverview } from '@/components/shared/premium-overview';
 export default async function ImageCompressorPage() {
   const tool = getToolById('image-compressor');
   const user = await authServer.getUserProfile();
-  const isPremiumUser = user?.plan === 'premium';
+  const isBackerUser = user?.plan === 'backer';
 
   if (!tool) {
     return <div>Tool not found</div>;
@@ -19,14 +19,14 @@ export default async function ImageCompressorPage() {
 
       {/* Main tool interface */}
       <ImageCompressorClient 
-        isPremiumUser={isPremiumUser} 
+        isBackerUser={isBackerUser} 
         userId={user?.id}
       />
 
-      {!isPremiumUser && (
+      {!isBackerUser && (
         <PremiumOverview 
-          features={tool.features.premium ?? []}
-          title="Premium Features"
+          features={tool.features.backer ?? []}
+          title="Backer Features"
           subtitle="Get access to advanced image compression capabilities"
         />
       )}

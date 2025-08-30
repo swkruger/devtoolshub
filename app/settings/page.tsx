@@ -53,8 +53,8 @@ export default async function SettingsPage() {
     .eq('user_id', user.id)
     .single()
 
-  // Determine if user is premium
-  const isPremiumUser = profile?.plan === 'premium'
+  // Determine if user is a backer
+  const isBackerUser = profile?.plan === 'backer'
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-7xl">
@@ -62,7 +62,7 @@ export default async function SettingsPage() {
         user={user}
         profile={profile}
         preferences={preferences}
-        isPremiumUser={isPremiumUser}
+        isBackerUser={isBackerUser}
       />
     </div>
   )

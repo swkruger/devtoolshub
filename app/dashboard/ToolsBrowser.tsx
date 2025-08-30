@@ -121,12 +121,12 @@ export default function ToolsBrowser({ initialTools }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sorted.map((tool) => (
-          <Card key={tool.id} className={`tool-card ${tool.isPremium ? 'tool-card-premium' : ''} ${favorites.has(tool.id) ? 'border-yellow-200/60 dark:border-yellow-500/20 bg-yellow-50/40 dark:bg-yellow-500/5' : ''}`}>
-            {tool.isPremium && (
-              <div className="premium-badge">
-                Premium
-              </div>
-            )}
+                  <Card key={tool.id} className={`tool-card ${tool.isPremium ? 'tool-card-backer' : ''} ${favorites.has(tool.id) ? 'border-yellow-200/60 dark:border-yellow-500/20 bg-yellow-50/40 dark:bg-yellow-500/5' : ''}`}>
+          {tool.isPremium && (
+            <div className="backer-badge">
+              Backer
+            </div>
+          )}
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -153,7 +153,7 @@ export default function ToolsBrowser({ initialTools }: Props) {
                   variant="default"
                   asChild
                 >
-                  <Link href="/go-premium">
+                  <Link href="/go-backer">
                     Upgrade to Access
                   </Link>
                 </Button>

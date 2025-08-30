@@ -16,7 +16,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 
 interface JwtDecoderClientProps {
-  isPremiumUser: boolean;
+  isBackerUser: boolean;
   userId?: string;
 }
 
@@ -39,7 +39,7 @@ function decodeJWT(token: string) {
 const SAMPLE_JWT =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
-export default function JwtDecoderClient({ isPremiumUser, userId }: JwtDecoderClientProps) {
+export default function JwtDecoderClient({ isBackerUser, userId }: JwtDecoderClientProps) {
   const [jwt, setJwt] = useState("");
   const [touched, setTouched] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -66,7 +66,7 @@ export default function JwtDecoderClient({ isPremiumUser, userId }: JwtDecoderCl
     }
   };
 
-  // Premium feature handlers
+  // Backer feature handlers
   const handleVerifySignature = () => {
     setIsSignatureVerificationOpen(true);
   };
@@ -178,37 +178,37 @@ export default function JwtDecoderClient({ isPremiumUser, userId }: JwtDecoderCl
             break;
           case "s":
             e.preventDefault();
-            if (isPremiumUser && jwt) {
+            if (isBackerUser && jwt) {
               handleSaveJWT();
             }
             break;
           case "o":
             e.preventDefault();
-            if (isPremiumUser) {
+            if (isBackerUser) {
               handleLoadSaved();
             }
             break;
           case "u":
             e.preventDefault();
-            if (isPremiumUser) {
+            if (isBackerUser) {
               handleUpload();
             }
             break;
           case "d":
             e.preventDefault();
-            if (isPremiumUser && jwt) {
+            if (isBackerUser && jwt) {
               handleDownload();
             }
             break;
           case "v":
             e.preventDefault();
-            if (isPremiumUser && jwt) {
+            if (isBackerUser && jwt) {
               handleVerifySignature();
             }
             break;
           case "i":
             e.preventDefault();
-            if (isPremiumUser && jwt) {
+            if (isBackerUser && jwt) {
               handleTokenInspector();
             }
             break;
@@ -218,7 +218,7 @@ export default function JwtDecoderClient({ isPremiumUser, userId }: JwtDecoderCl
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isPremiumUser, jwt, handleLoadSample, handleClear, handleCopy, handleSaveJWT, handleLoadSaved, handleUpload, handleDownload, handleVerifySignature, handleTokenInspector]);
+  }, [isBackerUser, jwt, handleLoadSample, handleClear, handleCopy, handleSaveJWT, handleLoadSaved, handleUpload, handleDownload, handleVerifySignature, handleTokenInspector]);
 
   return (
     <div className="space-y-4" role="main" aria-label="JWT Decoder Tool">
@@ -246,142 +246,142 @@ export default function JwtDecoderClient({ isPremiumUser, userId }: JwtDecoderCl
           </Button>
         </div>
 
-        {/* Premium Features */}
+        {/* Backer Features */}
         <div className="flex gap-2">
-          <Tooltip content={isPremiumUser ? "Verify JWT signature with public key (Ctrl+V)" : "Signature verification - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Verify JWT signature with public key (Ctrl+V)" : "Signature verification - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleVerifySignature}
-              disabled={!isPremiumUser || !jwt}
+              disabled={!isBackerUser || !jwt}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Verify JWT signature (Ctrl+V)" : "Signature verification - Premium feature"}
+              aria-label={isBackerUser ? "Verify JWT signature (Ctrl+V)" : "Signature verification - Backer feature"}
             >
               <Shield className="w-4 h-4" />
               Verify
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Create and encode new JWT" : "JWT creation - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Create and encode new JWT" : "JWT creation - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleCreateJWT}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Create new JWT" : "JWT creation - Premium feature"}
+              aria-label={isBackerUser ? "Create new JWT" : "JWT creation - Backer feature"}
             >
               <Key className="w-4 h-4" />
               Create
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Bulk decode multiple JWTs" : "Bulk decode - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Bulk decode multiple JWTs" : "Bulk decode - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleBulkDecode}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Bulk decode JWTs" : "Bulk decode - Premium feature"}
+              aria-label={isBackerUser ? "Bulk decode JWTs" : "Bulk decode - Backer feature"}
             >
               <FileText className="w-4 h-4" />
               Bulk
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Detailed claim analysis and explanations (Ctrl+I)" : "Token Inspector - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Detailed claim analysis and explanations (Ctrl+I)" : "Token Inspector - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleTokenInspector}
-              disabled={!isPremiumUser || !jwt}
+              disabled={!isBackerUser || !jwt}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Token Inspector (Ctrl+I)" : "Token Inspector - Premium feature"}
+              aria-label={isBackerUser ? "Token Inspector (Ctrl+I)" : "Token Inspector - Backer feature"}
             >
               <Search className="w-4 h-4" />
               Inspector
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Save JWT to your profile (Ctrl+S)" : "Save JWTs - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Save JWT to your profile (Ctrl+S)" : "Save JWTs - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleSaveJWT}
-              disabled={!isPremiumUser || !jwt || !userId}
+              disabled={!isBackerUser || !jwt || !userId}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Save JWT snippet (Ctrl+S)" : "Save JWTs - Premium feature"}
+              aria-label={isBackerUser ? "Save JWT snippet (Ctrl+S)" : "Save JWTs - Backer feature"}
             >
               <Save className="w-4 h-4" />
               Save
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Load saved JWT from profile (Ctrl+O)" : "Load saved JWTs - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Load saved JWT from profile (Ctrl+O)" : "Load saved JWTs - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleLoadSaved}
-              disabled={!isPremiumUser || !userId}
+              disabled={!isBackerUser || !userId}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Load saved JWTs (Ctrl+O)" : "Load saved JWTs - Premium feature"}
+              aria-label={isBackerUser ? "Load saved JWTs (Ctrl+O)" : "Load saved JWTs - Backer feature"}
             >
               <FolderOpen className="w-4 h-4" />
               Load
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Download decoded JWT as file (Ctrl+D)" : "Download - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Download decoded JWT as file (Ctrl+D)" : "Download - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleDownload}
-              disabled={!isPremiumUser || !jwt}
+              disabled={!isBackerUser || !jwt}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Download JWT (Ctrl+D)" : "Download - Premium feature"}
+              aria-label={isBackerUser ? "Download JWT (Ctrl+D)" : "Download - Backer feature"}
             >
               <Download className="w-4 h-4" />
               Download
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
             </Button>
           </Tooltip>
           {/* Download payload button (optional, only if payload exists) */}
-          {isPremiumUser && payload && (
+                      {isBackerUser && payload && (
             <Tooltip content="Download decoded payload as JSON">
               <Button
                 size="sm"
@@ -395,22 +395,22 @@ export default function JwtDecoderClient({ isPremiumUser, userId }: JwtDecoderCl
             </Tooltip>
           )}
 
-          <Tooltip content={isPremiumUser ? "Upload JWT from file (Ctrl+U)" : "Upload - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Upload JWT from file (Ctrl+U)" : "Upload - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleUpload}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Upload JWT file (Ctrl+U)" : "Upload - Premium feature"}
+              aria-label={isBackerUser ? "Upload JWT file (Ctrl+U)" : "Upload - Backer feature"}
             >
               <Upload className="w-4 h-4" />
               Upload
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
             </Button>
             <input
               ref={fileInputRef}

@@ -34,12 +34,12 @@ import { DatePicker } from './date-picker'
 import CollapsibleSection from './collapsible-section'
 
 interface WorldClockClientProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   userId: string
 }
 
-export default function WorldClockClient({ isPremiumUser, userId }: WorldClockClientProps) {
-  const [state, actions] = useWorldClock(isPremiumUser, userId)
+export default function WorldClockClient({ isBackerUser, userId }: WorldClockClientProps) {
+  const [state, actions] = useWorldClock(isBackerUser, userId)
   const [showHelp, setShowHelp] = useState(false)
   const [activeTab, setActiveTab] = useState('clock')
   const showSuccess = (title: string, description?: string) => toast.success(title, { description })
@@ -52,14 +52,14 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
     if (state.isInitialized && state.selectedCities.length === 0) {
       console.log('Initializing with popular cities...')
       const initializePopularCities = async () => {
-        const popularCities = getPopularCities().slice(0, isPremiumUser ? 3 : 2)
+        const popularCities = getPopularCities().slice(0, isBackerUser ? 3 : 2)
         for (const city of popularCities) {
           await actions.addCity(city)
         }
       }
       initializePopularCities()
     }
-  }, [state.isInitialized, state.selectedCities.length, isPremiumUser, actions.addCity])
+  }, [state.isInitialized, state.selectedCities.length, isBackerUser, actions.addCity])
 
   // Store refreshWeather in a ref to avoid dependency issues
   const refreshWeatherRef = useRef(actions.refreshWeather)
@@ -67,9 +67,9 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
 
   // Auto-refresh weather for premium users (with rate limiting)
   useEffect(() => {
-    console.log('Weather effect triggered:', { isPremiumUser, citiesCount: state.selectedCities.length })
+    console.log('Weather effect triggered:', { isBackerUser, citiesCount: state.selectedCities.length })
     
-    if (isPremiumUser && state.selectedCities.length > 0) {
+    if (isBackerUser && state.selectedCities.length > 0) {
       console.log('Setting up weather auto-refresh...')
       
       // Initial load - only once when cities are first loaded  
@@ -90,9 +90,9 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
         clearInterval(weatherInterval)
       }
     } else {
-      console.log('Weather auto-refresh not set up:', { isPremiumUser, citiesCount: state.selectedCities.length })
+      console.log('Weather auto-refresh not set up:', { isBackerUser, citiesCount: state.selectedCities.length })
     }
-  }, [isPremiumUser, state.selectedCities.length]) // Only depend on stable values
+  }, [isBackerUser, state.selectedCities.length]) // Only depend on stable values
 
   // Set up keyboard shortcuts
   useWorldClockKeyboard(actions)
@@ -104,13 +104,13 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
         description: `${city.name}, ${city.country} has been added to your world clock.`,
       })
     } else if (state.selectedCities.length >= state.maxCities) {
-      if (isPremiumUser) {
+      if (isBackerUser) {
         toast.error("City Limit Reached", {
           description: "You've reached the maximum number of cities."
         })
       } else {
         toast.warning("Free Limit Reached", {
-          description: `Free users can add up to ${state.maxCities} cities. Upgrade to premium for unlimited cities.`
+          description: `Free users can add up to ${state.maxCities} cities. Become a backer for unlimited cities.`
         })
       }
     } else {
@@ -253,7 +253,7 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
               <Badge variant="outline" className="text-xs">
                 {state.selectedCities.length} cities
               </Badge>
-              {!isPremiumUser && (
+              {!isBackerUser && (
                 <Badge variant="secondary" className="text-xs">
                   <Crown className="w-3 h-3 mr-1" />
                   Free Plan
@@ -285,7 +285,7 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
                   onClearSearch={actions.clearSearch}
                   selectedCitiesCount={state.selectedCities.length}
                   maxCities={state.maxCities}
-                  isPremiumUser={isPremiumUser}
+                  isBackerUser={isBackerUser}
                 />
               </div>
 
@@ -402,13 +402,13 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
             </Button>
             
             {/* Debug: Manual Weather Refresh */}
-            {isPremiumUser && (
+            {isBackerUser && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => {
                   console.log('Manual weather refresh triggered')
-                  console.log('isPremiumUser:', isPremiumUser)
+                  console.log('isBackerUser:', isBackerUser)
                   console.log('selectedCities:', state.selectedCities.length)
                   actions.refreshWeather()
                 }}
@@ -434,9 +434,9 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
               size="sm"
               onClick={actions.findBestMeetingTimes}
               disabled={state.selectedCities.length < 2 || state.isLoading}
-              className={!isPremiumUser ? 'opacity-60' : ''}
+              className={!isBackerUser ? 'opacity-60' : ''}
             >
-              {!isPremiumUser && <Crown className="w-3 h-3 mr-1" />}
+              {!isBackerUser && <Crown className="w-3 h-3 mr-1" />}
               <Users className="w-3 h-3 mr-1" />
               Find Meeting Times
             </Button>
@@ -484,7 +484,7 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-500">
                   Free users can add up to {state.maxCities} cities
-                  {!isPremiumUser && ' • Premium users get unlimited cities'}
+                  {!isBackerUser && ' • Backer users get unlimited cities'}
                 </p>
               </CardContent>
             </Card>
@@ -501,7 +501,7 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
                   onMoveDown={handleMoveDown}
                   canMoveUp={index > 0}
                   canMoveDown={index < state.cityTimezones.length - 1}
-                  isPremiumUser={isPremiumUser}
+                  isBackerUser={isBackerUser}
                   showWeather={true}
                 />
               ))}
@@ -518,7 +518,7 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
             onDurationChange={actions.setMeetingDuration}
             onFindMeetingTimes={actions.findBestMeetingTimes}
             isLoading={state.isLoading}
-            isPremiumUser={isPremiumUser}
+            isBackerUser={isBackerUser}
           />
         </TabsContent>
 
@@ -542,7 +542,7 @@ export default function WorldClockClient({ isPremiumUser, userId }: WorldClockCl
       <HelpPanel 
         isOpen={showHelp} 
         onClose={() => setShowHelp(false)} 
-        isPremiumUser={isPremiumUser}
+        isBackerUser={isBackerUser}
       />
     </div>
   )

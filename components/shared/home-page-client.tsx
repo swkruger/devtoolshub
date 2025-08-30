@@ -11,6 +11,8 @@ import { authClient } from '@/lib/auth'
 import { PricingSection } from './pricing-section'
 import { RotatingScreenshots } from './rotating-screenshots'
 import { marked } from 'marked'
+import { useSignInModal } from '@/lib/use-sign-in-modal'
+
 
 // Configure marked for consistent output
 marked.setOptions({
@@ -26,6 +28,7 @@ interface HomePageClientProps {
 
 export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: HomePageClientProps) {
   const router = useRouter()
+  const { openModal } = useSignInModal()
 
   useEffect(() => {
     // Check if user just signed out and needs to be forced to re-authenticate
@@ -179,7 +182,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                 href="#pricing" 
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
-                Pricing
+                Support the Project
               </Link>
               <Link 
                 href="https://github.com/swkruger/devtoolshub" 
@@ -189,12 +192,12 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
               >
                 GitHub
               </Link>
-              <Link 
-                href="/sign-in" 
+              <button 
+                onClick={() => openModal()}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Get Started
-              </Link>
+              </button>
             </nav>
           </div>
         </div>
@@ -212,15 +215,15 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                </h1>
                <p className="text-xl text-gray-600 mb-8">
                  Streamline your development workflow with our comprehensive suite of essential tools. 
-                 {availableCount} powerful tools available now, with more coming soon. Everything you need to code faster and better.
+                 {availableCount} powerful tools available now, all completely free forever with no ads. Support the project to unlock advanced features and help us build more tools.
                </p>
                <div className="flex flex-col sm:flex-row gap-4">
-                 <Link 
-                   href="/sign-in" 
+                 <button 
+                   onClick={() => openModal()}
                    className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors text-center"
                  >
                    Start Building Now
-                 </Link>
+                 </button>
                  <Link 
                    href="#tools" 
                    className="border border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors text-center"
@@ -290,8 +293,8 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <PricingSection id="pricing" />
+              {/* Support Section */}
+        <PricingSection id="pricing" />
 
       {/* Featured Blog Section */}
       {featuredBlogs.length > 0 && (
@@ -477,12 +480,12 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
             Join thousands of developers who trust DevToolsHub for their daily development needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href="/sign-in" 
+            <button 
+              onClick={() => openModal()}
               className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors"
             >
               Get Started
-            </Link>            
+            </button>            
           </div>
         </div>
       </section>

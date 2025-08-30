@@ -12,7 +12,7 @@ interface UpgradeModalProps {
   context?: 'json-formatter' | 'general'
 }
 
-const PREMIUM_BENEFITS = {
+const BACKER_BENEFITS = {
   'json-formatter': [
     { icon: Zap, title: "File Upload/Download", description: "Upload JSON files up to 5MB and download formatted results" },
     { icon: Sparkles, title: "Format Conversion", description: "Convert JSON to XML, CSV, YAML, and JavaScript objects" },
@@ -20,7 +20,7 @@ const PREMIUM_BENEFITS = {
     { icon: Clock, title: "Snippet Management", description: "Save and organize unlimited JSON snippets online" }
   ],
   'general': [
-    { icon: Zap, title: "Advanced Features & Algorithms", description: "Access all premium tools and functionality" },
+    { icon: Zap, title: "Advanced Features & Algorithms", description: "Access all backer tools and functionality" },
     { icon: Sparkles, title: "Unlimited Saved Items", description: "Save unlimited items across all tools" },
     { icon: Shield, title: "Advanced Analytics & Insights", description: "Get detailed analytics and insights" },
     { icon: Clock, title: "Early Access to New Tools", description: "Be the first to try new features" }
@@ -32,12 +32,12 @@ export function UpgradeModal({ isOpen, onClose, feature, context = 'general' }: 
   
   if (!isOpen) return null
 
-  const benefits = PREMIUM_BENEFITS[context]
+  const benefits = BACKER_BENEFITS[context]
   
   const handleUpgrade = async () => {
     setIsLoading(true)
-    // Redirect to the Go Premium page
-    window.location.href = '/go-premium'
+    // Redirect to the Go Backer page
+    window.location.href = '/go-backer'
   }
 
   return (
@@ -57,12 +57,12 @@ export function UpgradeModal({ isOpen, onClose, feature, context = 'general' }: 
             <Crown className="w-8 h-8 text-white" />
           </div>
           <CardTitle className="text-xl font-bold">
-            {feature ? `Unlock ${feature}` : 'Upgrade to Premium'}
+            {feature ? `Unlock ${feature}` : 'Become a Backer'}
           </CardTitle>
           <p className="text-sm text-muted-foreground mt-2">
             {feature 
-              ? `${feature} is a premium feature. Upgrade now to access it along with all other premium tools.`
-              : 'Get access to all premium features and enhance your development workflow.'
+                  ? `${feature} is a backer feature. Become a backer now to access it along with all other backer tools.`
+    : 'Support the project and get access to all backer features to enhance your development workflow.'
             }
           </p>
         </CardHeader>
@@ -111,7 +111,7 @@ export function UpgradeModal({ isOpen, onClose, feature, context = 'general' }: 
               ) : (
                 <>
                   <Crown className="w-4 h-4 mr-2" />
-                  Upgrade to Premium
+                  Become a Backer
                 </>
               )}
             </Button>

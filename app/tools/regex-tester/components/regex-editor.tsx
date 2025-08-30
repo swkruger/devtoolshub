@@ -61,7 +61,7 @@ const AceEditor = dynamic(
 )
 
 interface RegexEditorProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   userId?: string
 }
 
@@ -82,7 +82,7 @@ function useDebounce(value: any, delay: number) {
   return debouncedValue
 }
 
-export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
+export function RegexEditor({ isBackerUser, userId }: RegexEditorProps) {
 
   const showSuccess = (title: string, description?: string) => toast.success(title, { description })
   const showError = (title: string, description?: string) => toast.error(title, { description })
@@ -440,10 +440,10 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
 
   // Live testing effect (premium only)
   useEffect(() => {
-    if (liveTesting && isPremiumUser && (debouncedPattern || debouncedTestText)) {
+    if (liveTesting && isBackerUser && (debouncedPattern || debouncedTestText)) {
       testRegex(true)
     }
-  }, [debouncedPattern, debouncedTestText, language, flags, liveTesting, testRegex, isPremiumUser])
+  }, [debouncedPattern, debouncedTestText, language, flags, liveTesting, testRegex, isBackerUser])
 
   // Re-highlight when current line changes
   useEffect(() => {
@@ -502,9 +502,9 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
   }, [toast, clearMarkers])
 
   const handleLanguageChange = (newLanguage: RegexLanguage) => {
-    if (newLanguage !== 'javascript' && !isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Multi-language support requires a premium plan'
+    if (newLanguage !== 'javascript' && !isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Multi-language support requires a backer plan'
       })
       return
     }
@@ -517,9 +517,9 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
   }
 
   const explainPattern = useCallback(() => {
-    if (!isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Pattern explanations require a premium plan'
+    if (!isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Pattern explanations require a backer plan'
       })
       return
     }
@@ -547,7 +547,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
         description: 'Unable to analyze the pattern'
       })
     }
-  }, [pattern, isPremiumUser, toast])
+  }, [pattern, isBackerUser, toast])
 
   const loadPatternFromLibrary = useCallback((patternItem: PatternLibraryItem) => {
     setPattern(patternItem.pattern)
@@ -565,20 +565,20 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
   }, [toast, clearMarkers])
 
   const openPatternLibrary = useCallback(() => {
-    if (!isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Pattern library access requires a premium plan'
+    if (!isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Pattern library access requires a backer plan'
       })
       return
     }
 
     setShowPatternLibrary(true)
-  }, [isPremiumUser, toast])
+  }, [isBackerUser, toast])
 
   const openBulkTesting = useCallback(() => {
-    if (!isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Bulk testing requires a premium plan'
+    if (!isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Bulk testing requires a backer plan'
       })
       return
     }
@@ -591,12 +591,12 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
     }
 
     setShowBulkTesting(true)
-  }, [isPremiumUser, pattern, toast])
+  }, [isBackerUser, pattern, toast])
 
   const openAdvancedAnalytics = useCallback(() => {
-    if (!isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Advanced analytics requires a premium plan'
+    if (!isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Advanced analytics requires a backer plan'
       })
       return
     }
@@ -609,12 +609,12 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
     }
 
     setShowAdvancedAnalytics(true)
-  }, [isPremiumUser, matches.length, toast])
+  }, [isBackerUser, matches.length, toast])
 
   const openRegexVisualizer = useCallback(() => {
-    if (!isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Regex visualization requires a premium plan'
+    if (!isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Regex visualization requires a backer plan'
       })
       return
     }
@@ -627,12 +627,12 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
     }
 
     setShowRegexVisualizer(true)
-  }, [isPremiumUser, pattern, toast])
+  }, [isBackerUser, pattern, toast])
 
   const toggleReplaceMode = useCallback(() => {
-    if (!isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Replace functionality requires a premium plan'
+    if (!isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Replace functionality requires a backer plan'
       })
       return
     }
@@ -642,12 +642,12 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
       setReplaceText('')
       setReplaceResults(null)
     }
-  }, [isPremiumUser, showReplaceMode, toast])
+  }, [isBackerUser, showReplaceMode, toast])
 
   const performReplace = useCallback((replaceAll: boolean = false) => {
-    if (!isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Replace functionality requires a premium plan'
+    if (!isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Replace functionality requires a backer plan'
       })
       return
     }
@@ -693,7 +693,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
         description: 'An error occurred during replacement'
       })
     }
-  }, [isPremiumUser, pattern, testText, language, flags, replaceText, toast])
+  }, [isBackerUser, pattern, testText, language, flags, replaceText, toast])
 
   const copyReplaceResults = useCallback(() => {
     if (replaceResults) {
@@ -714,9 +714,9 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
   }
 
   const toggleLiveTesting = () => {
-    if (!isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Live pattern testing requires a premium plan. Upgrade to enable automatic testing as you type.'
+    if (!isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Live pattern testing requires a backer plan. Become a backer to enable automatic testing as you type.'
       })
       return
     }
@@ -832,13 +832,13 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
               </Tooltip>
 
               <EnhancedTooltip
-                title={isPremiumUser ? "Advanced Analytics" : "Advanced Analytics (Premium)"}
-                description={isPremiumUser 
+                title={isBackerUser ? "Advanced Analytics" : "Advanced Analytics (Backer)"}
+                description={isBackerUser 
                   ? "Detailed match statistics, performance metrics, and optimization insights"
-                  : "Comprehensive analytics and performance insights - Premium feature"
+                  : "Comprehensive analytics and performance insights - Backer feature"
                 }
-                shortcut={isPremiumUser ? "Click to analyze" : undefined}
-                showPremiumBadge={!isPremiumUser}
+                shortcut={isBackerUser ? "Click to analyze" : undefined}
+                showPremiumBadge={!isBackerUser}
                 examples={[
                   'Match coverage and density analysis',
                   'Performance throughput metrics',
@@ -857,20 +857,20 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                   variant="outline"
                   className="flex items-center gap-2"
                 >
-                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  {!isBackerUser && <Crown className="w-4 h-4 mr-1" />}
                   <BarChart3 className="w-4 h-4" />
                   Analytics
                 </Button>
               </EnhancedTooltip>
 
               <EnhancedTooltip
-                title={isPremiumUser ? "Regex Visualizer" : "Regex Visualizer (Premium)"}
-                description={isPremiumUser 
+                title={isBackerUser ? "Regex Visualizer" : "Regex Visualizer (Backer)"}
+                description={isBackerUser 
                   ? "Interactive flow diagram showing your regex pattern structure"
-                  : "Visual regex diagrams and flow charts - Premium feature"
+                  : "Visual regex diagrams and flow charts - Backer feature"
                 }
-                shortcut={isPremiumUser ? "Click to visualize" : undefined}
-                showPremiumBadge={!isPremiumUser}
+                shortcut={isBackerUser ? "Click to visualize" : undefined}
+                showPremiumBadge={!isBackerUser}
                 examples={[
                   'Interactive node-based diagram',
                   'Color-coded pattern components',
@@ -889,20 +889,20 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                   variant="outline"
                   className="flex items-center gap-2"
                 >
-                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  {!isBackerUser && <Crown className="w-4 h-4 mr-1" />}
                   <Workflow className="w-4 h-4" />
                   Visualize
                 </Button>
               </EnhancedTooltip>
               
               <EnhancedTooltip
-                title={isPremiumUser ? (liveTesting ? "Disable live testing" : "Enable live testing") : "Live Testing (Premium)"}
-                description={isPremiumUser 
+                title={isBackerUser ? (liveTesting ? "Disable live testing" : "Enable live testing") : "Live Testing (Backer)"}
+                description={isBackerUser 
                   ? (liveTesting ? "Switch to manual testing mode" : "Enable automatic testing as you type")
-                  : "Automatic pattern testing while you type - Premium feature"
+                  : "Automatic pattern testing while you type - Backer feature"
                 }
-                shortcut={isPremiumUser ? "Click to toggle" : undefined}
-                showPremiumBadge={!isPremiumUser}
+                shortcut={isBackerUser ? "Click to toggle" : undefined}
+                showPremiumBadge={!isBackerUser}
                 examples={[
                   'Tests pattern automatically as you type',
                   'Highlights matches in real-time',
@@ -916,15 +916,15 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
               >
                 <Button
                   onClick={toggleLiveTesting}
-                  disabled={!isPremiumUser}
+                  disabled={!isBackerUser}
                   size="sm"
-                  variant={liveTesting && isPremiumUser ? "default" : "outline"}
+                  variant={liveTesting && isBackerUser ? "default" : "outline"}
                   className="flex items-center gap-2"
                 >
-                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
-                  {liveTesting && isPremiumUser ? <Zap className="w-4 h-4" /> : <ZapOff className="w-4 h-4" />}
-                  {liveTesting && isPremiumUser ? 'Live' : 'Manual'}
-                  {isLiveTesting && isPremiumUser && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse ml-1" />}
+                  {!isBackerUser && <Crown className="w-4 h-4 mr-1" />}
+                  {liveTesting && isBackerUser ? <Zap className="w-4 h-4" /> : <ZapOff className="w-4 h-4" />}
+                  {liveTesting && isBackerUser ? 'Live' : 'Manual'}
+                  {isLiveTesting && isBackerUser && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse ml-1" />}
                 </Button>
               </EnhancedTooltip>
               
@@ -942,13 +942,13 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
               </Tooltip>
 
               <EnhancedTooltip
-                title={isPremiumUser ? "Explain Pattern" : "Pattern Explanation (Premium)"}
-                description={isPremiumUser 
+                title={isBackerUser ? "Explain Pattern" : "Pattern Explanation (Backer)"}
+                description={isBackerUser 
                   ? "Get a detailed breakdown of your regex pattern"
-                  : "Detailed pattern analysis and explanation - Premium feature"
+                  : "Detailed pattern analysis and explanation - Backer feature"
                 }
-                shortcut={isPremiumUser ? "Click to analyze" : undefined}
-                showPremiumBadge={!isPremiumUser}
+                shortcut={isBackerUser ? "Click to analyze" : undefined}
+                showPremiumBadge={!isBackerUser}
                 examples={[
                   'Component-by-component breakdown',
                   'Complexity analysis',
@@ -967,20 +967,20 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                   variant="outline"
                   className="flex items-center gap-2"
                 >
-                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  {!isBackerUser && <Crown className="w-4 h-4 mr-1" />}
                   <Brain className="w-4 h-4" />
                   Explain
                 </Button>
               </EnhancedTooltip>
 
               <EnhancedTooltip
-                title={isPremiumUser ? (showReplaceMode ? "Hide Replace" : "Show Replace") : "Replace Mode (Premium)"}
-                description={isPremiumUser 
+                title={isBackerUser ? (showReplaceMode ? "Hide Replace" : "Show Replace") : "Replace Mode (Backer)"}
+                description={isBackerUser 
                   ? (showReplaceMode ? "Hide replace functionality" : "Enable find and replace with capture group support")
-                  : "Advanced replace functionality with capture groups - Premium feature"
+                  : "Advanced replace functionality with capture groups - Backer feature"
                 }
-                shortcut={isPremiumUser ? "Click to toggle" : undefined}
-                showPremiumBadge={!isPremiumUser}
+                shortcut={isBackerUser ? "Click to toggle" : undefined}
+                showPremiumBadge={!isBackerUser}
                 examples={[
                   'Use $1, $2 for capture group references',
                   'Replace first match or all matches',
@@ -996,10 +996,10 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                   onClick={toggleReplaceMode}
                   disabled={isProcessing}
                   size="sm"
-                  variant={showReplaceMode && isPremiumUser ? "default" : "outline"}
+                  variant={showReplaceMode && isBackerUser ? "default" : "outline"}
                   className="flex items-center gap-2"
                 >
-                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  {!isBackerUser && <Crown className="w-4 h-4 mr-1" />}
                   <Replace className="w-4 h-4" />
                   Replace
                 </Button>
@@ -1025,13 +1025,13 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
               </Tooltip>
 
               <EnhancedTooltip
-                title={isPremiumUser ? "Pattern Library" : "Pattern Library (Premium)"}
-                description={isPremiumUser 
+                title={isBackerUser ? "Pattern Library" : "Pattern Library (Backer)"}
+                description={isBackerUser 
                   ? "Browse 100+ curated regex patterns organized by category"
-                  : "Access comprehensive pattern library - Premium feature"
+                  : "Access comprehensive pattern library - Backer feature"
                 }
-                shortcut={isPremiumUser ? "Click to browse" : undefined}
-                showPremiumBadge={!isPremiumUser}
+                shortcut={isBackerUser ? "Click to browse" : undefined}
+                showPremiumBadge={!isBackerUser}
                 examples={[
                   '100+ validated patterns',
                   'Organized by category and difficulty',
@@ -1050,20 +1050,20 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                   variant="outline"
                   className="flex items-center gap-2"
                 >
-                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  {!isBackerUser && <Crown className="w-4 h-4 mr-1" />}
                   <BookOpen className="w-4 h-4" />
                   Library
                 </Button>
               </EnhancedTooltip>
 
               <EnhancedTooltip
-                title={isPremiumUser ? "Bulk Testing" : "Bulk Testing (Premium)"}
-                description={isPremiumUser 
+                title={isBackerUser ? "Bulk Testing" : "Bulk Testing (Backer)"}
+                description={isBackerUser 
                   ? "Test your pattern against multiple text inputs with file upload support"
-                  : "Advanced bulk testing with file uploads - Premium feature"
+                  : "Advanced bulk testing with file uploads - Backer feature"
                 }
-                shortcut={isPremiumUser ? "Click to open" : undefined}
-                showPremiumBadge={!isPremiumUser}
+                shortcut={isBackerUser ? "Click to open" : undefined}
+                showPremiumBadge={!isBackerUser}
                 examples={[
                   'Upload multiple text files',
                   'Batch process with progress tracking',
@@ -1082,7 +1082,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                   variant="outline"
                   className="flex items-center gap-2"
                 >
-                  {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                  {!isBackerUser && <Crown className="w-4 h-4 mr-1" />}
                   <Upload className="w-4 h-4" />
                   Bulk Test
                 </Button>
@@ -1153,9 +1153,9 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
                     className="appearance-none bg-background border border-input rounded px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-ring min-w-[120px]"
                   >
                     <option value="javascript">JavaScript</option>
-                    <option value="python" disabled={!isPremiumUser}>Python {!isPremiumUser ? '(Premium)' : ''}</option>
-                    <option value="java" disabled={!isPremiumUser}>Java {!isPremiumUser ? '(Premium)' : ''}</option>
-                    <option value="go" disabled={!isPremiumUser}>Go {!isPremiumUser ? '(Premium)' : ''}</option>
+                    <option value="python" disabled={!isBackerUser}>Python {!isBackerUser ? '(Backer)' : ''}</option>
+                    <option value="java" disabled={!isBackerUser}>Java {!isBackerUser ? '(Backer)' : ''}</option>
+                    <option value="go" disabled={!isBackerUser}>Go {!isBackerUser ? '(Backer)' : ''}</option>
                   </select>
                   <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 pointer-events-none" />
                 </div>
@@ -1241,7 +1241,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
           </div>
 
           {/* Replace Mode */}
-          {showReplaceMode && isPremiumUser && (
+          {showReplaceMode && isBackerUser && (
             <div className="border-t pt-4">
               <div className="space-y-4">
                 {/* Replace Input */}
@@ -1422,7 +1422,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
       <PatternLibrary
         isOpen={showPatternLibrary}
         onClose={() => setShowPatternLibrary(false)}
-        isPremiumUser={isPremiumUser}
+        isBackerUser={isBackerUser}
         onLoadPattern={loadPatternFromLibrary}
       />
 
@@ -1430,7 +1430,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
       <BulkTesting
         isOpen={showBulkTesting}
         onClose={() => setShowBulkTesting(false)}
-        isPremiumUser={isPremiumUser}
+        isBackerUser={isBackerUser}
         pattern={pattern}
         language={language}
         flags={flags}
@@ -1453,7 +1453,7 @@ export function RegexEditor({ isPremiumUser, userId }: RegexEditorProps) {
         isOpen={showRegexVisualizer}
         onClose={() => setShowRegexVisualizer(false)}
         pattern={pattern}
-        isPremiumUser={isPremiumUser}
+        isBackerUser={isBackerUser}
       />
 
       

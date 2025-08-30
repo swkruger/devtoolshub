@@ -34,12 +34,12 @@ interface BatchItem {
 }
 
 interface BatchProcessorProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   encodingOptions: EncodingOptions
   maxFileSize: number
 }
 
-export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: BatchProcessorProps) {
+export function BatchProcessor({ isBackerUser, encodingOptions, maxFileSize }: BatchProcessorProps) {
 
   const [batchItems, setBatchItems] = useState<BatchItem[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
@@ -254,7 +254,7 @@ export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: 
      })
   }, [batchItems, toast])
 
-  if (!isPremiumUser) {
+  if (!isBackerUser) {
     return (
       <Card>
         <CardContent className="pt-6 text-center py-8">
@@ -263,12 +263,12 @@ export function BatchProcessor({ isPremiumUser, encodingOptions, maxFileSize }: 
             Batch Processing
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Process multiple files or text entries at once with premium
+            Process multiple files or text entries at once with backer features
           </p>
                       <Button variant="outline" asChild>
-              <Link href="/go-premium">
+              <Link href="/go-backer">
                 <Crown className="h-4 w-4 mr-2" />
-                Upgrade to Premium
+                Become a Backer
               </Link>
             </Button>
         </CardContent>

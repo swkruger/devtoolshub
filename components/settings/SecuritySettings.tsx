@@ -15,7 +15,7 @@ import { toast } from 'sonner'
 
 interface SecuritySettingsProps {
   user: User
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
 
@@ -34,7 +34,7 @@ interface SecurityNotifications {
   newDeviceLogins: boolean
 }
 
-export default function SecuritySettings({ user, isPremiumUser }: SecuritySettingsProps) {
+export default function SecuritySettings({ user, isBackerUser }: SecuritySettingsProps) {
   const [sessions, setSessions] = useState<Session[]>([])
   const [isLoadingSessions, setIsLoadingSessions] = useState(true)
   const [isRevokingSession, setIsRevokingSession] = useState<string | null>(null)

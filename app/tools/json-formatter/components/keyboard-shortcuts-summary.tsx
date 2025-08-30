@@ -4,10 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Crown, Keyboard } from "lucide-react"
 
 interface KeyboardShortcutsSummaryProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
-export function KeyboardShortcutsSummary({ isPremiumUser }: KeyboardShortcutsSummaryProps) {
+export function KeyboardShortcutsSummary({ isBackerUser }: KeyboardShortcutsSummaryProps) {
   const shortcuts = [
     {
       key: 'Ctrl + F',
@@ -157,7 +157,7 @@ export function KeyboardShortcutsSummary({ isPremiumUser }: KeyboardShortcutsSum
           <div className="space-y-2">
             {premiumShortcuts.map((shortcut, index) => (
               <div key={index} className={`flex items-center justify-between p-2 rounded-lg border ${
-                isPremiumUser 
+                isBackerUser 
                   ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800' 
                   : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-600 opacity-60'
               }`}>
@@ -174,7 +174,7 @@ export function KeyboardShortcutsSummary({ isPremiumUser }: KeyboardShortcutsSum
                   </div>
                 </div>
                 <div className={`w-2 h-2 rounded-full ${
-                  isPremiumUser ? 'bg-amber-500' : 'bg-gray-400'
+                  isBackerUser ? 'bg-amber-500' : 'bg-gray-400'
                 }`}></div>
               </div>
             ))}
@@ -199,10 +199,10 @@ export function KeyboardShortcutsSummary({ isPremiumUser }: KeyboardShortcutsSum
           </div>
         </div>
 
-        {!isPremiumUser && (
+        {!isBackerUser && (
           <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
             <p className="text-sm text-amber-700 dark:text-amber-300">
-              <span className="font-medium">Premium shortcuts</span> will show upgrade prompts when used. 
+              <span className="font-medium">Backer shortcuts</span> will show upgrade prompts when used. 
               All keyboard shortcuts are fully functional!
             </p>
           </div>

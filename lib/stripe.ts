@@ -16,8 +16,8 @@ export const getStripe = () => {
   return null
 }
 
-// Helper function to get premium price from environment variable
-export const getPremiumPrice = () => {
+// Helper function to get backer price from environment variable
+export const getBackerPrice = () => {
   // Try both server-side and client-side environment variables
   const envPrice = process.env.STRIPE_PREMIUM_PRICE || process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE
   
@@ -31,9 +31,9 @@ export const getPremiumPrice = () => {
   return 999
 }
 
-// Helper function to get premium price in dollars
-export const getPremiumPriceInDollars = () => {
-  return getPremiumPrice() / 100
+// Helper function to get backer price in dollars
+export const getBackerPriceInDollars = () => {
+  return getBackerPrice() / 100
 }
 
 // Subscription plans configuration
@@ -51,10 +51,10 @@ export const SUBSCRIPTION_PLANS = {
       'No priority support'
     ]
   },
-  premium: {
-    name: 'Premium',
-    price: getPremiumPrice(), // Dynamic price from environment variable
-    priceId: process.env.STRIPE_PREMIUM_PRICE_ID!,
+  backer: {
+    name: 'Backer',
+    price: getBackerPrice(), // Dynamic price from environment variable
+    priceId: process.env.STRIPE_BACKER_PRICE_ID!,
     features: [
       'Unlimited saved items across all tools',
       'Advanced features and algorithms',

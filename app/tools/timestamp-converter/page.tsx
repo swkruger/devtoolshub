@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 
 export default async function TimestampConverterPage() {
   const userProfile = await authServer.getUserProfile()
-  const isPremiumUser = userProfile?.plan === 'premium'
+  const isBackerUser = userProfile?.plan === 'backer'
   const userId = userProfile?.id || null
 
   return (
@@ -49,14 +49,14 @@ export default async function TimestampConverterPage() {
 
       {/* Main tool component */}
       <TimestampConverterClient 
-        isPremiumUser={isPremiumUser}
+        isBackerUser={isBackerUser}
         userId={userId}
       />
 
-      {!isPremiumUser && (
+      {!isBackerUser && (
         <PremiumOverview 
-          features={tool.features.premium ?? []}
-          title="Premium Features"
+          features={tool.features.backer ?? []}
+          title="Backer Features"
           subtitle="Get access to advanced timestamp conversion capabilities"
         />
       )}

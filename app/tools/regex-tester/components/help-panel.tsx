@@ -19,7 +19,7 @@ import { COMMON_PATTERNS } from "../lib/regex-engines"
 interface HelpPanelProps {
   isOpen: boolean
   onClose: () => void
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
 interface PatternData {
@@ -29,7 +29,7 @@ interface PatternData {
   flags: string[]
 }
 
-export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
+export function HelpPanel({ isOpen, onClose, isBackerUser }: HelpPanelProps) {
   const [activeTab, setActiveTab] = useState<'examples' | 'shortcuts' | 'patterns' | 'languages' | 'tips'>('examples')
 
   // Function to load a pattern into the regex editor
@@ -278,13 +278,13 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-base flex items-center gap-2">
                           {lang.language}
-                          {lang.premium && !isPremiumUser && (
+                          {lang.premium && !isBackerUser && (
                             <Crown className="h-4 w-4 text-amber-500" />
                           )}
                         </CardTitle>
-                        {lang.premium && !isPremiumUser && (
+                        {lang.premium && !isBackerUser && (
                           <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
-                            Premium
+                            Backer
                           </span>
                         )}
                       </div>
@@ -361,7 +361,7 @@ export function HelpPanel({ isOpen, onClose, isPremiumUser }: HelpPanelProps) {
                   </CardContent>
                 </Card>
                 
-                {!isPremiumUser && (
+                {!isBackerUser && (
                   <Card className="border border-amber-200 bg-amber-50 dark:bg-amber-950/20">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-base flex items-center gap-2">

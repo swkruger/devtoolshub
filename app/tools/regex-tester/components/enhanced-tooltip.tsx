@@ -10,7 +10,7 @@ interface EnhancedTooltipProps {
   description: string
   shortcut?: string
   isPremium?: boolean
-  isPremiumUser?: boolean
+  isBackerUser?: boolean
   examples?: string[]
   tips?: string[]
   children: React.ReactNode
@@ -23,7 +23,7 @@ export function EnhancedTooltip({
   description,
   shortcut,
   isPremium = false,
-  isPremiumUser = false,
+      isBackerUser = false,
   examples = [],
   tips = [],
   children,
@@ -97,7 +97,7 @@ export function EnhancedTooltip({
                 <div className="flex-1">
                   <CardTitle className="text-sm font-semibold flex items-center gap-2">
                     {title}
-                    {(isPremium || showPremiumBadge) && !isPremiumUser && (
+                    {(isPremium || showPremiumBadge) && !isBackerUser && (
                       <Crown className="h-3 w-3 text-amber-500" />
                     )}
                   </CardTitle>

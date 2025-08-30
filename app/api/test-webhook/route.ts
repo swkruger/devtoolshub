@@ -39,10 +39,10 @@ export async function GET(request: NextRequest) {
 
         if (subscriptions.data.length > 0) {
           // User has an active subscription, update their plan
-          console.log('⬆️ Updating user plan to premium')
+          console.log('⬆️ Updating user plan to backer')
           const { error: updateError } = await supabase
             .from('users')
-            .update({ plan: 'premium' })
+            .update({ plan: 'backer' })
             .eq('id', user.id)
 
           if (updateError) {
@@ -50,12 +50,12 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to update plan', details: updateError }, { status: 500 })
           }
 
-          console.log('✅ Successfully updated plan to premium')
+          console.log('✅ Successfully updated plan to backer')
           return NextResponse.json({ 
             success: true, 
-            message: 'Plan updated to premium',
+            message: 'Plan updated to backer',
             subscription: subscriptions.data[0],
-            profile: { ...profile, plan: 'premium' }
+            profile: { ...profile, plan: 'backer' }
           })
         } else {
           console.log('⚠️ No active subscription found')

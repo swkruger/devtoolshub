@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Check, Crown, Star, Zap, Shield, Users, Clock, ArrowRight } from 'lucide-react'
+import { useSignInModal } from '@/lib/use-sign-in-modal'
+
 
 interface PricingSectionProps {
   className?: string
@@ -10,26 +12,27 @@ interface PricingSectionProps {
 }
 
 export function PricingSection({ className = "", id }: PricingSectionProps) {
-  const [premiumPrice, setPremiumPrice] = useState<number>(9.99)
+  const [backerPrice, setBackerPrice] = useState<number>(9.99)
   const [isLoading, setIsLoading] = useState(true)
+  const { openModal } = useSignInModal()
 
   useEffect(() => {
-    const fetchPremiumPrice = async () => {
+    const fetchBackerPrice = async () => {
       try {
-        const response = await fetch('/api/premium-price')
+        const response = await fetch('/api/backer-price')
         if (response.ok) {
           const data = await response.json()
-          setPremiumPrice(data.price)
+          setBackerPrice(data.price)
         }
       } catch (error) {
-        console.error('Error fetching premium price:', error)
+        console.error('Error fetching backer price:', error)
         // Keep default price if fetch fails
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchPremiumPrice()
+    fetchBackerPrice()
   }, [])
 
   const freeFeatures = [
@@ -53,17 +56,17 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium mb-4">
             <Star className="w-4 h-4" />
-            Simple, Transparent Pricing
+            Support the Project
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Choose Your Plan
+            Support the Project
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Start free and upgrade when you need more power. No hidden fees, no surprises.
+            All tools are completely free forever with no ads. Become a backer to unlock advanced features and help us build more tools for the developer community.
           </p>
         </div>
 
-        {/* Pricing Cards */}
+        {/* Support Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Free Plan */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 relative">
@@ -73,7 +76,7 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
                 $0
                 <span className="text-lg font-normal text-gray-600">/month</span>
               </div>
-              <p className="text-gray-600">Perfect for getting started</p>
+              <p className="text-gray-600">All tools free forever</p>
             </div>
 
             <div className="space-y-4 mb-8">
@@ -85,38 +88,31 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
               ))}
             </div>
 
-            <Link
-              href="/sign-in"
+            <button
+              onClick={() => openModal()}
               className="w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
             >
               Get Started Free
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </button>
           </div>
 
           {/* Premium Plan */}
           <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl shadow-xl border border-blue-500 p-8 relative">
-            {/* Popular Badge */}
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-              <div className="bg-amber-500 text-white px-6 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
-                <Crown className="w-4 h-4" />
-                Most Popular
-              </div>
-            </div>
 
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-white mb-2">Premium</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">Backer</h3>
               <div className="text-4xl font-bold text-white mb-2">
                 {isLoading ? (
                   <div className="animate-pulse bg-white/20 h-12 w-24 mx-auto rounded"></div>
                 ) : (
                   <>
-                    ${premiumPrice}
+                    ${backerPrice}
                     <span className="text-lg font-normal text-blue-100">/month</span>
                   </>
                 )}
               </div>
-              <p className="text-blue-100">For power users and teams</p>
+              <p className="text-blue-100">Support the project & unlock advanced features</p>
             </div>
 
             <div className="space-y-4 mb-8">
@@ -185,19 +181,19 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
         <div className="mt-16 text-center">
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Ready to Supercharge Your Development?
+              Ready to Support the Project?
             </h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Join thousands of developers who have already upgraded to Premium and are coding faster than ever.
+              Join thousands of developers who have become backers and are helping us build more tools for the community.
             </p>
                          <div className="flex justify-center">
-               <Link
-                 href="/sign-in"
+               <button
+                 onClick={() => openModal()}
                  className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                >
                  Get Started
                  <ArrowRight className="w-4 h-4" />
-               </Link>
+               </button>
              </div>
           </div>
         </div>

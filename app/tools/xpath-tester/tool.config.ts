@@ -7,7 +7,7 @@ export const xpathTesterConfig = {
   shortDescription: 'Test XPath and CSS selectors against HTML',
   icon: Code,
   emoji: '🧪',
-  isPremium: false,
+  isBacker: false,
   category: 'web' as const,
   tags: ['xpath', 'css', 'selector', 'html', 'xml', 'web-scraping', 'dom'],
   path: '/tools/xpath-tester',
@@ -24,7 +24,7 @@ export const xpathTesterConfig = {
       'Help panel with examples, shortcuts, tips',
       'Basic selector validation'
     ],
-    premium: [
+    backer: [
       'Upload HTML files with drag & drop support',
       'Test selectors against live URLs',
       'XPath 2.0/3.0 advanced functions',

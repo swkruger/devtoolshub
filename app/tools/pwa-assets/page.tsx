@@ -15,19 +15,19 @@ export const metadata: Metadata = {
 
 export default async function PwaAssetsPage() {
   const userProfile = await authServer.getUserProfile()
-  const isPremiumUser = userProfile?.plan === 'premium'
+  const isBackerUser = userProfile?.plan === 'backer'
   const userId = userProfile?.id || null
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-7xl">
       <ToolPageHeader icon={tool.icon} title={tool.name} description={tool.description} />
 
-      <PwaAssetsClient isPremiumUser={!!isPremiumUser} userId={userId} />
+      <PwaAssetsClient isBackerUser={!!isBackerUser} userId={userId} />
 
-      {!isPremiumUser && (
+      {!isBackerUser && (
         <PremiumOverview
-          features={tool.features.premium ?? []}
-          title="Premium Features"
+          features={tool.features.backer ?? []}
+          title="Backer Features"
           subtitle="Unlock full matrices, splash screens, and advanced exports"
         />
       )}

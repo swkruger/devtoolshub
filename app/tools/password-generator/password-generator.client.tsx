@@ -16,14 +16,14 @@ import { toast } from 'sonner'
 import { SMALL_WORDLIST } from './lib/wordlist'
 
 interface Props {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   userId: string | null
 }
 
 
 type Mode = 'password' | 'passphrase' | 'keylike'
 
-export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
+export default function PasswordGeneratorClient({ isBackerUser }: Props) {
 
   const [mode, setMode] = useState<Mode>('password')
   const [masked, setMasked] = useState(false)
@@ -175,7 +175,7 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
           toast.success('Copied', { description: 'Value copied to clipboard' })
   }
 
-  const premiumDisabled = !isPremiumUser
+  const backerDisabled = !isBackerUser
 
   return (
     <Tabs value={mode} onValueChange={(v) => setMode(v as Mode)}>
@@ -249,15 +249,15 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
         </Card>
       </TabsContent>
 
-      {/* Key-like (Premium) */}
+      {/* Key-like (Backer) */}
       <TabsContent value="keylike">
         <Card>
           <CardContent className="p-4 space-y-4">
-            {!isPremiumUser && (
+            {!isBackerUser && (
               <Alert>
                 <AlertDescription className="text-sm flex items-center gap-2">
                   <Crown className="w-4 h-4 text-yellow-500" />
-                  Key-like generation is a premium feature.
+                  Key-like generation is a backer feature.
                 </AlertDescription>
               </Alert>
             )}
@@ -270,7 +270,7 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
                   className="border rounded-md text-sm px-2 py-1 bg-background"
                   value={keyType}
                   onChange={(e) => setKeyType(e.target.value as KeyLikeType)}
-                  disabled={premiumDisabled}
+                  disabled={backerDisabled}
                 >
                   <option value="hex">Hex (64 chars)</option>
                   <option value="base58">Base58 (44–58)</option>
@@ -281,7 +281,7 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
                 </select>
               </div>
               <div className="self-end">
-                {!isPremiumUser ? (
+                {!isBackerUser ? (
                   <Button disabled className="w-full justify-center">
                     <Crown className="w-4 h-4 mr-2" /> Generate
                   </Button>
@@ -301,7 +301,7 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
                   value={pemText}
                   onChange={(e) => setPemText(e.target.value)}
                   className="font-mono min-h-[180px]"
-                  disabled={premiumDisabled}
+                  disabled={backerDisabled}
                 />
               </div>
             ) : null}
@@ -313,7 +313,7 @@ export default function PasswordGeneratorClient({ isPremiumUser }: Props) {
                 value={output}
                 onCopy={copy}
                 onRegenerate={generate}
-                disabled={premiumDisabled}
+                disabled={backerDisabled}
               />
             )}
           </CardContent>

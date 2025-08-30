@@ -87,7 +87,7 @@ const AceEditor = dynamic(
 
 
 interface JsonEditorProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   userId?: string
 }
 
@@ -178,7 +178,7 @@ const useMemoryMonitor = () => {
   return { checkMemoryUsage, isMemoryHigh }
 }
 
-export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
+export function JsonEditor({ isBackerUser, userId }: JsonEditorProps) {
 
   
   // Performance monitoring and optimization hooks
@@ -923,11 +923,11 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
     })
   }
   
-  // Premium feature placeholders
+  // Backer feature placeholders
   // File upload functionality
   const handleFileUpload = useCallback((file: File) => {
-    if (!isPremiumUser) {
-      showToast('File upload requires premium membership', 'error')
+    if (!isBackerUser) {
+      showToast('File upload requires backer membership', 'error')
       return
     }
 
@@ -942,10 +942,10 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       return
     }
 
-    // Validate file size (5MB limit for premium, 1MB for free)
-    const maxSize = isPremiumUser ? 5 * 1024 * 1024 : 1024 * 1024 // 5MB for premium, 1MB for free
+    // Validate file size (5MB limit for backer, 1MB for free)
+    const maxSize = isBackerUser ? 5 * 1024 * 1024 : 1024 * 1024 // 5MB for backer, 1MB for free
     if (file.size > maxSize) {
-      setUploadError(`File size exceeds ${isPremiumUser ? '5MB' : '1MB'} limit`)
+      setUploadError(`File size exceeds ${isBackerUser ? '5MB' : '1MB'} limit`)
       return
     }
 
@@ -1002,10 +1002,10 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       hideProgress()
     }
     reader.readAsText(file)
-  }, [isPremiumUser, showToast])
+  }, [isBackerUser, showToast])
 
   const handleUpload = () => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       showUpgrade('File Upload')
       return
     }
@@ -1023,7 +1023,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
   }
 
   const handleDownload = () => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       showUpgrade('File Download')
       return
     }
@@ -1111,7 +1111,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
   // Conversion functions
   const convertJson = useCallback(async (targetFormat: string) => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       showUpgrade('Format Conversion')
       return
     }
@@ -1180,10 +1180,10 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
       setIsLoading(false)
       hideProgress()
     }
-  }, [jsonContent, isPremiumUser, showToast])
+  }, [jsonContent, isBackerUser, showToast])
 
   const convertToJson = useCallback(async (sourceFormat: string, content: string) => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       showUpgrade('Format Conversion')
       return
     }
@@ -1223,7 +1223,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [isPremiumUser, showToast])
+  }, [isBackerUser, showToast])
 
   const closeConversionPanel = () => {
     setShowConversionPanel(false)
@@ -1243,10 +1243,10 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
   // Load snippets on component mount
   useEffect(() => {
-    if (userId && isPremiumUser) {
+    if (userId && isBackerUser) {
       loadSnippets()
     }
-  }, [userId, isPremiumUser])
+  }, [userId, isBackerUser])
 
   const loadSnippets = async () => {
     if (!userId) return
@@ -1260,7 +1260,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
   }
 
   const handleSaveSnippet = () => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       showUpgrade('Snippet Management')
       return
     }
@@ -1370,7 +1370,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
 
   // Tree view functions
   const toggleTreeView = () => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       showUpgrade('Tree Visualization')
       return
     }
@@ -1453,7 +1453,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
             break
           case 'o':
             event.preventDefault()
-            if (isPremiumUser) {
+            if (isBackerUser) {
               handleUpload()
             } else {
               showUpgrade('File Upload')
@@ -1469,7 +1469,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
         switch (key.toLowerCase()) {
           case 's':
             event.preventDefault()
-            if (isPremiumUser) {
+            if (isBackerUser) {
               handleSaveSnippet()
             } else {
               showUpgrade('Save Snippet')
@@ -1477,9 +1477,9 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
             break
           case 'l':
             event.preventDefault()
-            if (isPremiumUser && snippets.length > 0) {
+            if (isBackerUser && snippets.length > 0) {
               setShowLoadDialog(true)
-            } else if (!isPremiumUser) {
+            } else if (!isBackerUser) {
               showUpgrade('Load Snippets')
             } else {
               showToast('No saved snippets found', 'info')
@@ -1487,7 +1487,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
             break
           case 'd':
             event.preventDefault()
-            if (isPremiumUser) {
+            if (isBackerUser) {
               handleDownload()
             } else {
               showUpgrade('File Download')
@@ -1495,7 +1495,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
             break
           case 't':
             event.preventDefault()
-            if (isPremiumUser) {
+            if (isBackerUser) {
               toggleTreeView()
             } else {
               showUpgrade('Tree View')
@@ -1515,7 +1515,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-      }, [isPremiumUser, showTreeView, snippets, handleFormat, handleCompact, handleRepair, handleCopy, handleSortAsc, handleSaveSnippet, handleUpload, handleDownload, toggleTreeView, showUpgrade, showToast])
+      }, [isBackerUser, showTreeView, snippets, handleFormat, handleCompact, handleRepair, handleCopy, handleSortAsc, handleSaveSnippet, handleUpload, handleDownload, toggleTreeView, showUpgrade, showToast])
 
   // Optimized tree data update - using debounced content and performance monitoring
   useEffect(() => {
@@ -1695,53 +1695,53 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
           {/* Divider */}
           <div className="hidden sm:block w-px bg-border h-8 self-center mx-1"></div>
 
-          {/* Premium Features Group */}
+          {/* Backer Features Group */}
           <div className="flex flex-wrap gap-1">
-            <Tooltip content={isPremiumUser ? "Upload JSON or text files (up to 5MB) (Ctrl+O)" : "Upload files - Premium feature (Ctrl+O)"}>
+            <Tooltip content={isBackerUser ? "Upload JSON or text files (up to 5MB) (Ctrl+O)" : "Upload files - Backer feature (Ctrl+O)"}>
               <Button
                 onClick={handleUpload}
-                disabled={!isPremiumUser || isLoading}
+                disabled={!isBackerUser || isLoading}
                 size="sm"
                 variant="outline"
                 className={`flex items-center gap-2 relative transition-all duration-200 ${
-                  !isPremiumUser 
+                  !isBackerUser 
                     ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                     : 'hover:shadow-sm'
                 }`}
               >
                 <Upload className="w-4 h-4" />
                 Upload
-                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+                {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
               </Button>
             </Tooltip>
             
-            <Tooltip content={isPremiumUser ? "Download JSON content as a file (Alt+D)" : "Download files - Premium feature (Alt+D)"}>
+            <Tooltip content={isBackerUser ? "Download JSON content as a file (Alt+D)" : "Download files - Backer feature (Alt+D)"}>
               <Button
                 onClick={handleDownload}
-                disabled={!isPremiumUser || isLoading || !jsonContent}
+                disabled={!isBackerUser || isLoading || !jsonContent}
                 size="sm"
                 variant="outline"
                 className={`flex items-center gap-2 relative transition-all duration-200 ${
-                  !isPremiumUser 
+                  !isBackerUser 
                     ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                     : 'hover:shadow-sm'
                 }`}
               >
                 <Download className="w-4 h-4" />
                 Download
-                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+                {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
               </Button>
             </Tooltip>
             
-            <Tooltip content={isPremiumUser ? "Convert JSON to other formats (XML, CSV, YAML, JS)" : "Format conversion - Premium feature"}>
+            <Tooltip content={isBackerUser ? "Convert JSON to other formats (XML, CSV, YAML, JS)" : "Format conversion - Backer feature"}>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    disabled={!isPremiumUser || isLoading || !jsonContent}
+                    disabled={!isBackerUser || isLoading || !jsonContent}
                     size="sm"
                     variant="outline"
                     className={`flex items-center gap-2 relative transition-all duration-200 ${
-                      !isPremiumUser 
+                      !isBackerUser 
                         ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                         : 'hover:shadow-sm'
                     }`}
@@ -1749,7 +1749,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
                     <RefreshCw className="w-4 h-4" />
                     Convert
                     <ChevronDown className="w-3 h-3" />
-                    {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+                    {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
@@ -1769,57 +1769,57 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
               </DropdownMenu>
             </Tooltip>
             
-            <Tooltip content={isPremiumUser ? "Save JSON as a reusable snippet (Alt+S)" : "Save snippets - Premium feature (Alt+S)"}>
+            <Tooltip content={isBackerUser ? "Save JSON as a reusable snippet (Alt+S)" : "Save snippets - Backer feature (Alt+S)"}>
               <Button
                 onClick={handleSaveSnippet}
-                disabled={!isPremiumUser || isLoading || !jsonContent || !userId}
+                disabled={!isBackerUser || isLoading || !jsonContent || !userId}
                 size="sm"
                 variant="outline"
                 className={`flex items-center gap-2 relative transition-all duration-200 ${
-                  !isPremiumUser 
+                  !isBackerUser 
                     ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                     : 'hover:shadow-sm'
                 }`}
               >
                 <Save className="w-4 h-4" />
                 Save
-                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+                {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
               </Button>
             </Tooltip>
             
-            <Tooltip content={isPremiumUser ? "Load a saved JSON snippet (Alt+L)" : "Load snippets - Premium feature (Alt+L)"}>
+            <Tooltip content={isBackerUser ? "Load a saved JSON snippet (Alt+L)" : "Load snippets - Backer feature (Alt+L)"}>
               <Button
                 onClick={() => setShowLoadDialog(true)}
-                disabled={!isPremiumUser || isLoading || !userId || snippets.length === 0}
+                disabled={!isBackerUser || isLoading || !userId || snippets.length === 0}
                 size="sm"
                 variant="outline"
                 className={`flex items-center gap-2 relative transition-all duration-200 ${
-                  !isPremiumUser 
+                  !isBackerUser 
                     ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                     : 'hover:shadow-sm'
                 }`}
               >
                 <FolderOpen className="w-4 h-4" />
                 Load
-                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+                {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
               </Button>
             </Tooltip>
             
-            <Tooltip content={isPremiumUser ? (showTreeView ? "Switch back to editor mode (Alt+T)" : "View JSON as interactive tree (Alt+T)") : "Tree visualization - Premium feature (Alt+T)"}>
+            <Tooltip content={isBackerUser ? (showTreeView ? "Switch back to editor mode (Alt+T)" : "View JSON as interactive tree (Alt+T)") : "Tree visualization - Backer feature (Alt+T)"}>
               <Button
                 onClick={toggleTreeView}
-                disabled={!isPremiumUser || isLoading || !jsonContent}
+                disabled={!isBackerUser || isLoading || !jsonContent}
                 size="sm"
                 variant={showTreeView ? "default" : "outline"}
                 className={`flex items-center gap-2 relative transition-all duration-200 ${
-                  !isPremiumUser 
+                  !isBackerUser 
                     ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                     : 'hover:shadow-sm'
                 }`}
               >
                 <TreePine className="w-4 h-4" />
                 {showTreeView ? 'Show Editor' : 'Tree View'}
-                {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
+                {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" />}
               </Button>
             </Tooltip>
           </div>
@@ -1873,7 +1873,7 @@ export function JsonEditor({ isPremiumUser, userId }: JsonEditorProps) {
                     Drop JSON or text file here
                   </p>
                   <p className="text-xs text-blue-600 dark:text-blue-400">
-                    {isPremiumUser ? 'Up to 5MB supported (.json, .txt)' : 'Premium required for file upload'}
+                    {isBackerUser ? 'Up to 5MB supported (.json, .txt)' : 'Backer required for file upload'}
                   </p>
                 </div>
               </div>

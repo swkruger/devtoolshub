@@ -16,13 +16,13 @@ import { buildZip } from '../lib/zip'
 import { toast } from 'sonner'
 
 interface Props {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   userId: string | null
 }
 
 type Preset = 'minimal' | 'recommended' | 'full'
 
-export default function PwaAssetsClient({ isPremiumUser }: Props) {
+export default function PwaAssetsClient({ isBackerUser }: Props) {
 
   const [activeTab, setActiveTab] = useState<'configure' | 'preview' | 'export' | 'help'>('configure')
   const [sourceFile, setSourceFile] = useState<File | undefined>(undefined)
@@ -41,7 +41,7 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
   const [files, setFiles] = useState<Array<{ path: string; url: string; width: number; height: number }>>([])
   const [includePinned, setIncludePinned] = useState(false)
 
-  const premiumDisabled = !isPremiumUser
+  const backerDisabled = !isBackerUser
 
   const handleFile = (file?: File) => {
     if (!file) return
@@ -49,8 +49,8 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
       toast.error('Unsupported file', { description: 'Please upload a PNG, SVG, or WebP image.' })
       return
     }
-    if (file.size > (isPremiumUser ? 30 : 10) * 1024 * 1024) {
-      toast.error('File too large', { description: `Max ${isPremiumUser ? 30 : 10}MB` })
+    if (file.size > (isBackerUser ? 30 : 10) * 1024 * 1024) {
+      toast.error('File too large', { description: `Max ${isBackerUser ? 30 : 10}MB` })
       return
     }
     // Revoke previous preview URL
@@ -72,7 +72,7 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
     }
     setIsProcessing(true)
     try {
-      const tasks = getPresetTasks({ includeMaskable: maskable, isPremiumUser, preset })
+      const tasks = getPresetTasks({ includeMaskable: maskable, isBackerUser, preset })
       const outputs: Array<{ path: string; url: string; width: number; height: number; blob: Blob }> = []
       for (const t of tasks) {
         // Splash screens are solid background; draw icon centered with higher padding by default
@@ -174,8 +174,8 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
                   <Label>Preset</Label>
                   <select className="border rounded-md text-sm px-2 py-1 bg-background" value={preset} onChange={(e) => setPreset(e.target.value as Preset)}>
                     <option value="minimal">Minimal (Free)</option>
-                    <option value="recommended" disabled={!isPremiumUser}>Recommended { !isPremiumUser && '👑' }</option>
-                    <option value="full" disabled={!isPremiumUser}>Full Matrix { !isPremiumUser && '👑' }</option>
+                                    <option value="recommended" disabled={!isBackerUser}>Recommended { !isBackerUser && '👑' }</option>
+                <option value="full" disabled={!isBackerUser}>Full Matrix { !isBackerUser && '👑' }</option>
                   </select>
                 </div>
                 <div className="col-span-2 flex items-center gap-2">
@@ -186,7 +186,7 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
             </div>
 
             <div className="flex gap-2">
-              {!isPremiumUser && preset !== 'minimal' ? (
+              {!isBackerUser && preset !== 'minimal' ? (
                 <Button disabled>
                   <Crown className="w-4 h-4 mr-1" /> Generate
                 </Button>
@@ -226,7 +226,7 @@ export default function PwaAssetsClient({ isPremiumUser }: Props) {
               >
                 <Download className="w-4 h-4 mr-1" /> Download ZIP
               </Button>
-              {!isPremiumUser && (preset !== 'minimal') && (
+              {!isBackerUser && (preset !== 'minimal') && (
                 <Button disabled>
                   <Crown className="w-4 h-4 mr-1" /> Splash & full matrices (Premium)
                 </Button>

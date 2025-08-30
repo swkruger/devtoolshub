@@ -10,7 +10,7 @@ import { isSearchEngineCrawler, getUserAgent } from '@/lib/utils'
 export const metadata: Metadata = {
   title: 'DevToolsHub – Essential Developer Tools',
   description:
-    'All-in-one developer toolkit with 11 powerful tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 encoder/decoder, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password generator, and PWA assets generator. Free online developer utilities for web development, security, and productivity.',
+    'All-in-one developer toolkit with 11 powerful tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 encoder/decoder, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password generator, and PWA assets generator. All tools are free forever, no ads. Support the project to unlock advanced features.',
   keywords: [
     'dev tools',
     'devtools',
@@ -75,9 +75,9 @@ export const metadata: Metadata = {
     },
   },
   alternates: { canonical: '/' },
-  openGraph: {
-    title: 'DevToolsHub – Essential Developer Tools',
-    description: 'All-in-one developer toolkit with 11 powerful tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 encoder/decoder, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password generator, and PWA assets generator. Free online developer utilities for web development, security, and productivity.',
+      openGraph: {
+      title: 'DevToolsHub – Essential Developer Tools',
+      description: 'All-in-one developer toolkit with 11 powerful tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 encoder/decoder, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password generator, and PWA assets generator. All tools are free forever, no ads. Support the project to unlock advanced features.',
     url: '/',
     siteName: 'DevToolsHub',
     type: 'website',
@@ -90,10 +90,10 @@ export const metadata: Metadata = {
       }
     ],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'DevToolsHub – Essential Developer Tools',
-    description: 'All-in-one developer toolkit with 11 powerful tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 encoder/decoder, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password generator, and PWA assets generator. Free online developer utilities for web development, security, and productivity.',
+      twitter: {
+      card: 'summary_large_image',
+      title: 'DevToolsHub – Essential Developer Tools',
+      description: 'All-in-one developer toolkit with 11 powerful tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 encoder/decoder, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password generator, and PWA assets generator. All tools are free forever, no ads. Support the project to unlock advanced features.',
     images: ['/og-image.png'],
   },
 }

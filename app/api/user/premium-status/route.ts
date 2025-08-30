@@ -24,12 +24,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ isPremium: false, error: 'Failed to fetch profile' }, { status: 500 })
     }
 
-    const isPremium = profile?.plan === 'premium'
+    const isBacker = profile?.plan === 'backer'
     
-    console.log('Premium status API - User:', user.id, 'Plan:', profile?.plan, 'IsPremium:', isPremium)
+    console.log('Backer status API - User:', user.id, 'Plan:', profile?.plan, 'IsBacker:', isBacker)
     
     return NextResponse.json({ 
-      isPremium,
+      isPremium: isBacker, // Keep isPremium for backward compatibility
+      isBacker,
       plan: profile?.plan || 'free'
     })
   } catch (error) {

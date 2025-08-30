@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default async function RegexTesterPage() {
   const tool = getToolById('regex-tester')
   const user = await authServer.getUserProfile()
-  const isPremiumUser = user?.plan === 'premium'
+  const isBackerUser = user?.plan === 'backer'
   
   if (!tool) {
     return <div>Tool not found</div>
@@ -30,14 +30,14 @@ export default async function RegexTesterPage() {
       {/* Main Editor Area */}
       <RegexTesterClient 
         user={user}
-        isPremiumUser={isPremiumUser}
+        isBackerUser={isBackerUser}
       />
 
-      {!isPremiumUser && (
+      {!isBackerUser && (
         <PremiumOverview 
-          features={tool.features.premium ?? []}
-          title="Premium Features"
-          subtitle="Enhance your regex workflow with powerful premium tools"
+          features={tool.features.backer ?? []}
+          title="Backer Features"
+          subtitle="Enhance your regex workflow with powerful backer tools"
         />
       )}
     </div>

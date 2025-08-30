@@ -17,14 +17,14 @@ export interface ToolConfig {
   description: string
   icon: LucideIcon
   emoji: string
-  isPremium: boolean
+  isBacker: boolean
   category: 'text' | 'crypto' | 'image' | 'utility' | 'web' | 'security' // Added 'security' category
   tags: string[]
   path: string
   shortDescription: string
   features: {
     free: string[]
-    premium?: string[]
+    backer?: string[]
   }
 }
 
@@ -36,7 +36,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     shortDescription: 'World clock with meeting planner & weather integration',
     icon: Globe,
     emoji: '🌍',
-    isPremium: false,
+    isBacker: false,
     category: 'utility',
     tags: ['time', 'timezone', 'clock', 'world', 'meeting', 'weather', 'cities'],
     path: '/tools/world-clock',
@@ -52,7 +52,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Business hours visualization',
         'Keyboard shortcuts and accessibility'
       ],
-      premium: [
+      backer: [
         'Unlimited cities with collections',
         'Live weather data with current conditions',
         'Advanced meeting planner with business hours',
@@ -72,13 +72,13 @@ export const toolsConfig: Record<string, ToolConfig> = {
     shortDescription: 'Format and validate JSON data',
     icon: FileJson,
     emoji: '📄',
-    isPremium: false,
+    isBacker: false,
     category: 'text',
     tags: ['json', 'format', 'validate', 'beautify'],
     path: '/tools/json-formatter',
     features: {
       free: ['Format JSON', 'Validate syntax', 'Syntax highlighting', 'Minify JSON'],
-      premium: ['Download formatted files', 'Large file support (>5MB)', 'Batch processing']
+      backer: ['Download formatted files', 'Large file support (>5MB)', 'Batch processing']
     }
   },
   'regex-tester': {
@@ -88,13 +88,13 @@ export const toolsConfig: Record<string, ToolConfig> = {
     shortDescription: 'Test regex patterns with live matching',
     icon: Search,
     emoji: '🔍',
-    isPremium: false,
+    isBacker: false,
     category: 'text',
     tags: ['regex', 'pattern', 'match', 'test', 'javascript', 'python', 'java'],
     path: '/tools/regex-tester',
     features: {
       free: ['JavaScript regex testing', 'Real-time pattern matching', 'Match highlighting', 'Basic flags support', 'Sample patterns', 'Match details with groups'],
-      premium: ['Multi-language engines (Python, Java, Go, PHP, C#)', 'Pattern explanations & breakdown', 'Regex visualization diagrams', 'Pattern library (100+ examples)', 'Save & manage patterns', 'Performance metrics', 'ReDoS detection', 'Replace functionality', 'File upload testing']
+      backer: ['Multi-language engines (Python, Java, Go, PHP, C#)', 'Pattern explanations & breakdown', 'Regex visualization diagrams', 'Pattern library (100+ examples)', 'Save & manage patterns', 'Performance metrics', 'ReDoS detection', 'Replace functionality', 'File upload testing']
     }
   },
   'jwt-decoder': {
@@ -104,7 +104,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     shortDescription: 'JWT decode, encode, verify',
     icon: Shield, // Use Shield icon as JwtIcon does not exist
     emoji: '🔐',
-    isPremium: false, // Tool is accessible to all users
+    isBacker: false, // Tool is accessible to all users
     category: 'security',
     tags: ['jwt', 'token', 'security', 'auth'],
     path: '/tools/jwt-decoder',
@@ -119,7 +119,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Clear/reset editor',
         'Help panel with examples, shortcuts, tips, accessibility'
       ],
-      premium: [
+      backer: [
         'Signature verification (HS256, RS256, ES256, etc.)',
         'JWT creation/encoding',
         'Bulk decode/upload/download',
@@ -127,7 +127,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Save/manage JWTs (Supabase)',
         'File upload/download',
         'Advanced algorithms',
-        'Premium keyboard shortcuts',
+        'Backer keyboard shortcuts',
         'Expiry alerts'
       ]
     }
@@ -139,7 +139,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     shortDescription: 'Compress and optimize images',
     icon: Image,
     emoji: '📸',
-    isPremium: false,
+    isBacker: false,
     category: 'image',
     tags: ['image', 'compress', 'optimize', 'convert', 'webp', 'avif', 'jpeg', 'png'],
     path: '/tools/image-compressor',
@@ -154,7 +154,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Image metadata display',
         'Help panel with examples and shortcuts'
       ],
-      premium: [
+      backer: [
         'Batch processing (multiple images)',
         'Advanced format conversion (WebP, AVIF)',
         'Advanced compression algorithms',
@@ -166,7 +166,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Quality presets and custom settings',
         'Real-time compression preview',
         'Compression statistics and analytics',
-        'Premium keyboard shortcuts',
+        'Backer keyboard shortcuts',
         'Save compression history (optional)'
       ]
     }
@@ -178,7 +178,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     shortDescription: 'Generate unique identifiers',
     icon: Hash,
     emoji: '🧬',
-    isPremium: false,
+    isBacker: false,
     category: 'utility',
     tags: ['uuid', 'unique', 'identifier', 'generate', 'guid', 'random'],
     path: '/tools/uuid-generator',
@@ -195,7 +195,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Basic customization options',
         'Single UUID generation'
       ],
-      premium: [
+      backer: [
         'Bulk UUID generation (1-1000)',
         'Custom UUID formats and patterns',
         'Namespace management (save/load custom namespaces)',
@@ -208,7 +208,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Batch processing with progress tracking',
         'Advanced formatting options',
         'UUID parsing and validation',
-        'Premium keyboard shortcuts',
+        'Backer keyboard shortcuts',
         'Database integration for saved UUIDs'
       ]
     }
@@ -220,7 +220,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     shortDescription: 'Test XPath and CSS selectors against HTML',
     icon: Code,
     emoji: '🧪',
-    isPremium: false,
+    isBacker: false,
     category: 'web',
     tags: ['xpath', 'css', 'selector', 'html', 'xml', 'web-scraping', 'dom'],
     path: '/tools/xpath-tester',
@@ -237,7 +237,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Help panel with examples, shortcuts, tips',
         'Basic selector validation'
       ],
-      premium: [
+      backer: [
         'Upload HTML files with drag & drop support',
         'Test selectors against live URLs',
         'XPath 2.0/3.0 advanced functions',
@@ -250,7 +250,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Categorized selector examples',
         'Import/export selector collections',
         'Advanced match analytics',
-        'Premium keyboard shortcuts',
+        'Backer keyboard shortcuts',
         'File validation and error handling'
       ]
     }
@@ -262,7 +262,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     shortDescription: 'Convert timestamps and dates with timezone support',
     icon: Clock,
     emoji: '⏰',
-    isPremium: false,
+    isBacker: false,
     category: 'utility',
     tags: ['timestamp', 'unix', 'date', 'time', 'timezone', 'epoch', 'conversion'],
     path: '/tools/timestamp-converter',
@@ -279,7 +279,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Live bidirectional conversion',
         'Help panel with examples and shortcuts'
       ],
-      premium: [
+      backer: [
         'Batch timestamp conversion from CSV/text',
         'Custom date format patterns (strftime, moment.js)',
         'Timezone comparison view (multiple zones)',
@@ -289,7 +289,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Relative time calculations ("2 hours ago")',
         'Multiple timestamp formats support',
         'Advanced validation and edge case handling',
-        'Premium keyboard shortcuts',
+        'Backer keyboard shortcuts',
         'File upload for batch processing',
         'Performance metrics and timing'
       ]
@@ -299,10 +299,10 @@ export const toolsConfig: Record<string, ToolConfig> = {
     id: 'base64-encoder',
     name: 'Base64 Encoder/Decoder',
     description: 'Encode and decode Base64 strings and files with advanced character encoding, batch processing, and conversion history',
-    shortDescription: 'Base64 encoding/decoding with file support & premium features',
+    shortDescription: 'Base64 encoding/decoding with file support & backer features',
     icon: Shuffle,
     emoji: '🔄',
-    isPremium: false,
+    isBacker: false,
     category: 'text',
     tags: ['base64', 'encode', 'decode', 'convert', 'files', 'images', 'batch', 'history', 'charset', 'unicode', 'ascii'],
     path: '/tools/base64-encoder',
@@ -317,7 +317,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Input validation and error handling',
         'Keyboard shortcuts and accessibility'
       ],
-      premium: [
+      backer: [
         'Batch processing up to 100 items',
         'Character set support (UTF-8, ASCII, ISO-8859, Windows-1252, CP encodings)',
         'Newline separator handling (LF, CRLF, CR)',
@@ -327,7 +327,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'CSV/JSON export of batch results',
         'History management and reuse',
         'Enhanced file format support',
-        'Premium keyboard shortcuts'
+        'Backer keyboard shortcuts'
       ]
     }
   }
@@ -339,7 +339,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     shortDescription: 'Generate passwords, passphrases, and key-like strings',
     icon: Shield,
     emoji: '🔑',
-    isPremium: false,
+    isBacker: false,
     category: 'security',
     tags: ['security', 'passwords', 'crypto-like', 'utilities'],
     path: '/tools/password-generator',
@@ -350,9 +350,9 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Passphrase mode with separators and suffix options',
         'Entropy display and copy actions'
       ],
-      premium: [
+      backer: [
         'Key-like mode: Hex, Base58, Base64, UUID v4, Bech32-like, PEM-like',
-        'Disclaimer and premium-gated controls'
+        'Disclaimer and backer-gated controls'
       ]
     }
   }
@@ -364,7 +364,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     shortDescription: 'Generate PWA icons and manifest.json',
     icon: Globe,
     emoji: '📱',
-    isPremium: false,
+    isBacker: false,
     category: 'web',
     tags: ['pwa', 'icons', 'manifest', 'favicon', 'maskable', 'ios', 'android'],
     path: '/tools/pwa-assets',
@@ -377,7 +377,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
         'Manifest.json + basic link tags',
         'ZIP export'
       ],
-      premium: [
+      backer: [
         'Full iOS/Android matrices',
         'Splash screens (light/dark)',
         'Windows tiles & Safari pinned tab',
@@ -402,11 +402,11 @@ export const getToolsByCategory = (category: ToolConfig['category']): ToolConfig
 }
 
 export const getFreeTools = (): ToolConfig[] => {
-  return getAllTools().filter(tool => !tool.isPremium)
+  return getAllTools().filter(tool => !tool.isBacker)
 }
 
-export const getPremiumTools = (): ToolConfig[] => {
-  return getAllTools().filter(tool => tool.isPremium)
+export const getBackerTools = (): ToolConfig[] => {
+  return getAllTools().filter(tool => tool.isBacker)
 }
 
 export const searchTools = (query: string): ToolConfig[] => {

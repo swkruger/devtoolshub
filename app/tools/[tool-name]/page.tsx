@@ -27,14 +27,14 @@ export default function ToolPage({ params }: ToolPageProps) {
           </div>
         </div>
         
-        {toolConfig.isPremium && (
+                    {toolConfig.isBacker && (
           <div className="mb-4">
             <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
               <div className="flex items-center space-x-2">
-                <span className="text-primary font-semibold">⭐ Premium Tool</span>
+                <span className="text-primary font-semibold">⭐ Backer Tool</span>
               </div>
               <p className="text-sm text-muted-foreground mt-1">
-                This tool requires a premium subscription to access.
+                This tool requires a backer subscription to access.
               </p>
             </div>
           </div>

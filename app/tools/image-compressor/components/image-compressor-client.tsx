@@ -34,7 +34,7 @@ import { toast } from 'sonner';
 import { imageCompressionDB } from '@/lib/services/image-compression-db';
 
 interface ImageCompressorClientProps {
-  isPremiumUser: boolean;
+  isBackerUser: boolean;
   userId?: string;
 }
 
@@ -64,7 +64,7 @@ interface CompressionSettings {
   maintainAspectRatio: boolean;
 }
 
-export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCompressorClientProps) {
+export default function ImageCompressorClient({ isBackerUser, userId }: ImageCompressorClientProps) {
 
   const [images, setImages] = useState<ImageFile[]>([]);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -307,10 +307,10 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   };
 
   const handleBatchUpload = () => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       // Show upgrade prompt
-      toast.error('Premium Feature Required', {
-        description: 'Batch upload is a premium feature. Please upgrade to access this feature.'
+      toast.error('Backer Feature Required', {
+        description: 'Batch upload is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -318,10 +318,10 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   };
 
   const handleBatchProcessing = async () => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       // Show upgrade prompt
-      toast.error('Premium Feature Required', {
-        description: 'Batch processing is a premium feature. Please upgrade to access this feature.'
+      toast.error('Backer Feature Required', {
+        description: 'Batch processing is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -359,10 +359,10 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   };
 
   const handleBulkDownload = () => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       // Show upgrade prompt
-      toast.error('Premium Feature Required', {
-        description: 'Bulk download is a premium feature. Please upgrade to access this feature.'
+      toast.error('Backer Feature Required', {
+        description: 'Bulk download is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -442,10 +442,10 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   };
 
   const handleAdvancedSettings = () => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       // Show upgrade prompt
-      toast.error('Premium Feature Required', {
-        description: 'Advanced settings are a premium feature. Please upgrade to access this feature.'
+      toast.error('Backer Feature Required', {
+        description: 'Advanced settings are a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -453,10 +453,10 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   };
 
   const handleFormatConversion = () => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       // Show upgrade prompt
-      toast.error('Premium Feature Required', {
-        description: 'Format conversion is a premium feature. Please upgrade to access this feature.'
+      toast.error('Backer Feature Required', {
+        description: 'Format conversion is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -464,9 +464,9 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   };
 
   const handleSaveSettings = () => {
-    if (!isPremiumUser) {
-      toast.error('Premium Feature Required', {
-        description: 'Save settings is a premium feature. Please upgrade to access this feature.'
+    if (!isBackerUser) {
+      toast.error('Backer Feature Required', {
+        description: 'Save settings is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -537,9 +537,9 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   };
 
   const handleLoadSettings = async () => {
-    if (!isPremiumUser) {
-      toast.error('Premium Feature Required', {
-        description: 'Load settings is a premium feature. Please upgrade to access this feature.'
+    if (!isBackerUser) {
+      toast.error('Backer Feature Required', {
+        description: 'Load settings is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -605,10 +605,10 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   };
 
   const handleSaveHistory = async () => {
-    if (!isPremiumUser) {
+    if (!isBackerUser) {
       // Show upgrade prompt
-      toast.error('Premium Feature Required', {
-        description: 'Saving compression history is a premium feature. Please upgrade to access this feature.'
+      toast.error('Backer Feature Required', {
+        description: 'Saving compression history is a backer feature. Please become a backer to access this feature.'
       });
       return;
     }
@@ -632,7 +632,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
   };
 
   const saveCompressionHistory = async (image: ImageFile, compressedSize: number, compressionRatio: number) => {
-    if (!isPremiumUser) return;
+    if (!isBackerUser) return;
     
     try {
       await imageCompressionDB.saveHistory({
@@ -707,11 +707,11 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
 
   // Load saved settings and default settings on component mount
   React.useEffect(() => {
-    if (isPremiumUser) {
+    if (isBackerUser) {
       loadSavedSettings();
       loadDefaultSettings();
     }
-  }, [isPremiumUser]);
+  }, [isBackerUser]);
 
   const loadDefaultSettings = async () => {
     try {
@@ -962,8 +962,8 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
             </div>
           </div>
           
-          {/* Premium resize options */}
-          {isPremiumUser && (
+          {/* Backer resize options */}
+          {isBackerUser && (
             <div className="pt-4 border-t">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
@@ -1030,8 +1030,8 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
             </div>
           )}
 
-          {/* Advanced compression options for premium users */}
-          {isPremiumUser && (
+          {/* Advanced compression options for backer users */}
+          {isBackerUser && (
             <div className="pt-4 border-t">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
@@ -1072,7 +1072,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
           )}
           
           {/* Image count for batch processing */}
-          {isPremiumUser && images.length > 0 && (
+          {isBackerUser && images.length > 0 && (
             <div className="text-sm text-gray-600 dark:text-gray-400 pt-2 border-t">
               {images.filter(img => img.status === 'completed').length} images ready for batch processing
             </div>
@@ -1115,39 +1115,39 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
           </Button>
         </div>
 
-        {/* Premium Features */}
-        <div className="flex gap-2" role="group" aria-label="Premium features">
-          <Tooltip content={isPremiumUser ? "Batch upload multiple images (Ctrl+B)" : "Batch processing - Premium feature"}>
+        {/* Backer Features */}
+        <div className="flex gap-2" role="group" aria-label="Backer features">
+          <Tooltip content={isBackerUser ? "Batch upload multiple images (Ctrl+B)" : "Batch processing - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleBatchUpload}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Batch upload images (Ctrl+B)" : "Batch processing - Premium feature"}
+              aria-label={isBackerUser ? "Batch upload images (Ctrl+B)" : "Batch processing - Backer feature"}
             >
               <FolderOpen className="w-4 h-4" aria-hidden="true" />
               Batch Upload
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Process all images with batch settings" : "Batch processing - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Process all images with batch settings" : "Batch processing - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleBatchProcessing}
-              disabled={!isPremiumUser || images.length === 0 || isBatchProcessing}
+              disabled={!isBackerUser || images.length === 0 || isBatchProcessing}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Process batch" : "Batch processing - Premium feature"}
+              aria-label={isBackerUser ? "Process batch" : "Batch processing - Backer feature"}
             >
               {isBatchProcessing ? (
                 <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
@@ -1155,102 +1155,102 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                 <Settings className="w-4 h-4" aria-hidden="true" />
               )}
               {isBatchProcessing ? 'Processing...' : 'Process Batch'}
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Download all compressed images (Ctrl+D)" : "Bulk download - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Download all compressed images (Ctrl+D)" : "Bulk download - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleBulkDownload}
-              disabled={!isPremiumUser || images.filter(img => img.status === 'completed').length === 0}
+              disabled={!isBackerUser || images.filter(img => img.status === 'completed').length === 0}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Download all images (Ctrl+D)" : "Bulk download - Premium feature"}
+              aria-label={isBackerUser ? "Download all images (Ctrl+D)" : "Bulk download - Backer feature"}
             >
               <Download className="w-4 h-4" aria-hidden="true" />
               Download All
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Advanced compression settings" : "Advanced settings - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Advanced compression settings" : "Advanced settings - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleAdvancedSettings}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Advanced settings" : "Advanced settings - Premium feature"}
+              aria-label={isBackerUser ? "Advanced settings" : "Advanced settings - Backer feature"}
             >
               <Settings className="w-4 h-4" aria-hidden="true" />
               Settings
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Convert image formats" : "Format conversion - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Convert image formats" : "Format conversion - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleFormatConversion}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Convert formats" : "Format conversion - Premium feature"}
+              aria-label={isBackerUser ? "Convert formats" : "Format conversion - Backer feature"}
             >
               <ImageIcon className="w-4 h-4" aria-hidden="true" />
               Convert
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Save current settings as favorite" : "Save settings - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Save current settings as favorite" : "Save settings - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleSaveSettings}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Save settings" : "Save settings - Premium feature"}
+              aria-label={isBackerUser ? "Save settings" : "Save settings - Backer feature"}
             >
               <Star className="w-4 h-4" aria-hidden="true" />
               Save Settings
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
             </Button>
           </Tooltip>
 
-          <Tooltip content={isPremiumUser ? "Save compression history (Ctrl+S)" : "Save history - Premium feature"}>
+          <Tooltip content={isBackerUser ? "Save compression history (Ctrl+S)" : "Save history - Backer feature"}>
             <Button
               size="sm"
               variant="outline"
               onClick={handleSaveHistory}
-              disabled={!isPremiumUser}
+              disabled={!isBackerUser}
               className={`flex items-center gap-2 relative transition-all duration-200 ${
-                !isPremiumUser 
+                !isBackerUser 
                   ? 'opacity-60 hover:opacity-80 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20' 
                   : 'hover:shadow-sm'
               }`}
-              aria-label={isPremiumUser ? "Save history (Ctrl+S)" : "Save history - Premium feature"}
+              aria-label={isBackerUser ? "Save history (Ctrl+S)" : "Save history - Backer feature"}
             >
               <Save className="w-4 h-4" aria-hidden="true" />
               History
-              {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
+              {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 absolute -top-1 -right-1 animate-pulse" aria-hidden="true" />}
             </Button>
           </Tooltip>
         </div>
@@ -1474,7 +1474,7 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
       <HelpPanel 
         isOpen={isHelpOpen} 
         onClose={() => setIsHelpOpen(false)} 
-        isPremiumUser={isPremiumUser} 
+        isBackerUser={isBackerUser} 
       />
 
       {/* Advanced Settings Modal */}
@@ -1519,8 +1519,8 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                   <SelectContent>
                     <SelectItem value="jpeg">JPEG</SelectItem>
                     <SelectItem value="png">PNG</SelectItem>
-                    {isPremiumUser && <SelectItem value="webp">WebP</SelectItem>}
-                    {isPremiumUser && <SelectItem value="avif">AVIF</SelectItem>}
+                    {isBackerUser && <SelectItem value="webp">WebP</SelectItem>}
+                    {isBackerUser && <SelectItem value="avif">AVIF</SelectItem>}
                   </SelectContent>
                 </Select>
               </div>
@@ -1537,8 +1537,8 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                 </Button>
               </div>
 
-              {/* Premium resize options */}
-              {isPremiumUser && (
+              {/* Backer resize options */}
+              {isBackerUser && (
                 <div className="pt-4 border-t">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
@@ -1605,8 +1605,8 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                 </div>
               )}
 
-              {/* Advanced compression options for premium users */}
-              {isPremiumUser && (
+              {/* Advanced compression options for backer users */}
+              {isBackerUser && (
                 <div className="pt-4 border-t">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center space-x-2">
@@ -1660,24 +1660,24 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                   variant="outline"
                   className="flex-1 min-w-[140px]"
                   onClick={handleSaveSettings}
-                  disabled={!isPremiumUser}
-                  aria-label={isPremiumUser ? "Save current settings" : "Save settings - Premium feature"}
+                  disabled={!isBackerUser}
+                  aria-label={isBackerUser ? "Save current settings" : "Save settings - Backer feature"}
                 >
                   <Star className="w-4 h-4 mr-2" aria-hidden="true" />
                   Save Settings
-                  {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 ml-1" aria-hidden="true" />}
+                  {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 ml-1" aria-hidden="true" />}
                 </Button>
                 
                 <Button
                   variant="outline"
                   className="flex-1 min-w-[140px]"
                   onClick={handleLoadSettings}
-                  disabled={!isPremiumUser}
-                  aria-label={isPremiumUser ? "Load saved settings" : "Load settings - Premium feature"}
+                  disabled={!isBackerUser}
+                  aria-label={isBackerUser ? "Load saved settings" : "Load settings - Backer feature"}
                 >
                   <FolderOpen className="w-4 h-4 mr-2" aria-hidden="true" />
                   Load Settings
-                  {!isPremiumUser && <Crown className="w-3 h-3 text-amber-500 ml-1" aria-hidden="true" />}
+                  {!isBackerUser && <Crown className="w-3 h-3 text-amber-500 ml-1" aria-hidden="true" />}
                 </Button>
                 
                 <Button
@@ -1715,8 +1715,8 @@ export default function ImageCompressorClient({ isPremiumUser, userId }: ImageCo
                   <SelectContent>
                     <SelectItem value="jpeg">JPEG</SelectItem>
                     <SelectItem value="png">PNG</SelectItem>
-                    {isPremiumUser && <SelectItem value="webp">WebP</SelectItem>}
-                    {isPremiumUser && <SelectItem value="avif">AVIF</SelectItem>}
+                    {isBackerUser && <SelectItem value="webp">WebP</SelectItem>}
+                    {isBackerUser && <SelectItem value="avif">AVIF</SelectItem>}
                   </SelectContent>
                 </Select>
               </div>

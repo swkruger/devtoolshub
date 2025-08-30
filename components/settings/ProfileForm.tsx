@@ -19,7 +19,7 @@ interface Profile {
   email: string
   name: string
   avatar_url?: string
-  plan: 'free' | 'premium'
+  plan: 'free' | 'backer'
   created_at: string
   updated_at: string
 }
@@ -41,7 +41,7 @@ interface ProfileFormProps {
   user: User
   profile: Profile | null
   preferences: UserPreferences | null
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
 interface FormData {
@@ -60,7 +60,7 @@ interface FormErrors {
   language?: string
 }
 
-export default function ProfileForm({ user, profile, preferences, isPremiumUser }: ProfileFormProps) {
+export default function ProfileForm({ user, profile, preferences, isBackerUser }: ProfileFormProps) {
   const [formData, setFormData] = useState<FormData>({
     name: profile?.name || '',
     bio: preferences?.bio || '',

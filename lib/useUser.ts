@@ -6,7 +6,7 @@ import { createSupabaseClient } from './supabase'
 
 // Define a type for the extended user profile
 interface UserProfile extends User {
-  plan?: 'free' | 'premium';
+  plan?: 'free' | 'backer';
   name?: string;
   avatar_url?: string;
   stripe_customer_id?: string;
@@ -125,5 +125,7 @@ export function useUser() {
     return () => subscription.unsubscribe()
   }, [])
 
-  return { user, loading }
+  const isBackerUser = user?.plan === 'backer'
+  
+  return { user, loading, isBackerUser }
 }

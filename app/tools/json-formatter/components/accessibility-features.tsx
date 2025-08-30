@@ -7,7 +7,7 @@ interface AccessibilityFeaturesProps {
   validationError?: string
   lastAction?: string
   isLoading?: boolean
-  isPremiumUser?: boolean
+  isBackerUser?: boolean
 }
 
 export function AccessibilityFeatures({ 
@@ -15,7 +15,7 @@ export function AccessibilityFeatures({
   validationError, 
   lastAction, 
   isLoading,
-  isPremiumUser 
+  isBackerUser 
 }: AccessibilityFeaturesProps) {
   const announcementRef = useRef<HTMLDivElement>(null)
 
@@ -61,10 +61,10 @@ export function AccessibilityFeatures({
         )}
       </div>
 
-      {/* Premium features announcement */}
-      {!isPremiumUser && (
+      {/* Backer features announcement */}
+      {!isBackerUser && (
         <div className="sr-only">
-          Note: Some features require a premium subscription. Premium features are marked with crown icons.
+          Note: Some features require a backer subscription. Backer features are marked with crown icons.
         </div>
       )}
 

@@ -29,7 +29,7 @@ interface MeetingPlannerProps {
   onDurationChange: (minutes: number) => void
   onFindMeetingTimes: () => void
   isLoading: boolean
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
 export default function MeetingPlanner({
@@ -39,7 +39,7 @@ export default function MeetingPlanner({
   onDurationChange,
   onFindMeetingTimes,
   isLoading,
-  isPremiumUser
+  isBackerUser
 }: MeetingPlannerProps) {
   const [selectedMeeting, setSelectedMeeting] = useState<MeetingTimeSlot | null>(null)
   const [meetingTitle, setMeetingTitle] = useState('Team Meeting')
@@ -72,7 +72,7 @@ export default function MeetingPlanner({
     }
   }
 
-  if (!isPremiumUser) {
+  if (!isBackerUser) {
     return (
       <Card>
         <CardHeader>
@@ -81,7 +81,7 @@ export default function MeetingPlanner({
             Meeting Planner
             <Badge variant="outline">
               <Crown className="w-3 h-3 mr-1" />
-              Premium Feature
+              Backer Feature
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -89,7 +89,7 @@ export default function MeetingPlanner({
           <div className="text-center p-8">
             <Crown className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              Premium Feature
+              Backer Feature
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               Find optimal meeting times across multiple timezones with business hours consideration
@@ -118,9 +118,9 @@ export default function MeetingPlanner({
             </div>
             
             <Button size="lg" asChild>
-              <Link href="/go-premium">
+              <Link href="/go-backer">
                 <Crown className="w-4 h-4 mr-2" />
-                Upgrade to Premium
+                Become a Backer
               </Link>
             </Button>
           </div>

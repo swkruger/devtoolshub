@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
           created: invoice.created,
           invoice_pdf: invoice.invoice_pdf,
           hosted_invoice_url: invoice.hosted_invoice_url,
-          description: invoice.description || `Premium Subscription - ${invoice.currency.toUpperCase()} ${(invoice.amount_paid / 100).toFixed(2)}`,
+          description: invoice.description || `Backer Subscription - ${invoice.currency.toUpperCase()} ${(invoice.amount_paid / 100).toFixed(2)}`,
           period_start: invoice.period_start,
           period_end: invoice.period_end
         }))
@@ -206,7 +206,7 @@ async function createCheckoutSession(user: any, plan: string, supabase: any) {
     }
 
     // Validate configuration
-    const priceId = SUBSCRIPTION_PLANS.premium.priceId
+    const priceId = SUBSCRIPTION_PLANS.backer.priceId
     const appUrl = process.env.NEXT_PUBLIC_APP_URL
 
     if (!priceId || !appUrl) {
@@ -230,12 +230,12 @@ async function createCheckoutSession(user: any, plan: string, supabase: any) {
         cancel_url: `${appUrl}/settings?canceled=true`,
         metadata: {
           user_id: user.id,
-          plan: 'premium'
+          plan: 'backer'
         },
         subscription_data: {
           metadata: {
             user_id: user.id,
-            plan: 'premium'
+            plan: 'backer'
           }
         }
       })
@@ -268,7 +268,7 @@ async function createPortalSession(user: any, supabase: any) {
 
     if (!profile?.stripe_customer_id) {
       return NextResponse.json({
-        error: 'No subscription found. Please upgrade to premium first.'
+        error: 'No subscription found. Please become a backer first.'
       }, { status: 404 })
     }
 
@@ -320,7 +320,7 @@ async function cancelSubscription(user: any, supabase: any) {
     })
 
     return NextResponse.json({
-      message: 'Subscription cancelled successfully. You will remain premium until the end of your current billing period.',
+      message: 'Subscription cancelled successfully. You will remain a backer until the end of your current billing period.',
       cancelAtPeriodEnd: (subscription as any).cancel_at_period_end,
       currentPeriodEnd: (subscription as any).current_period_end
     })

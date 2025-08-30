@@ -46,7 +46,7 @@ interface TestResult {
 }
 
 interface XPathTesterClientProps {
-  isPremiumUser: boolean;
+  isBackerUser: boolean;
   userId?: string;
 }
 
@@ -67,7 +67,7 @@ function useDebounce(value: any, delay: number) {
   return debouncedValue
 }
 
-export default function XPathTesterClient({ isPremiumUser, userId }: XPathTesterClientProps) {
+export default function XPathTesterClient({ isBackerUser, userId }: XPathTesterClientProps) {
 
   const [htmlContent, setHtmlContent] = useState('')
   const [xpathSelector, setXpathSelector] = useState('')
@@ -569,9 +569,9 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
     const file = event.target.files?.[0]
     if (!file) return
 
-    if (!isPremiumUser) {
-      toast.error('Premium Feature', {
-        description: 'File upload is a premium feature. Please upgrade to use this feature.'
+    if (!isBackerUser) {
+      toast.error('Backer Feature', {
+        description: 'File upload is a backer feature. Please become a backer to use this feature.'
       })
       return
     }
@@ -602,9 +602,9 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
       return
     }
 
-    if (!isPremiumUser) {
-      toast.error('Premium Feature', {
-        description: 'URL fetching is a premium feature. Please upgrade to use this feature.'
+    if (!isBackerUser) {
+      toast.error('Backer Feature', {
+        description: 'URL fetching is a backer feature. Please become a backer to use this feature.'
       })
       return
     }
@@ -630,9 +630,9 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
   }
 
   const exportResults = () => {
-    if (!results || !isPremiumUser) {
-      toast.error('Premium Feature', {
-        description: 'Export is a premium feature. Please upgrade to use this feature.'
+    if (!results || !isBackerUser) {
+      toast.error('Backer Feature', {
+        description: 'Export is a backer feature. Please become a backer to use this feature.'
       })
       return
     }
@@ -729,10 +729,10 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
             onClick={() => fileInputRef.current?.click()}
             variant="outline"
             size="sm"
-            disabled={!isPremiumUser}
-            className={!isPremiumUser ? 'opacity-50' : ''}
+            disabled={!isBackerUser}
+            className={!isBackerUser ? 'opacity-50' : ''}
           >
-            {!isPremiumUser && <Crown className="w-4 h-4 mr-2" />}
+            {!isBackerUser && <Crown className="w-4 h-4 mr-2" />}
             <Upload className="w-4 h-4 mr-2" />
             Upload HTML
           </Button>
@@ -740,10 +740,10 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
             onClick={exportResults}
             variant="outline"
             size="sm"
-            disabled={!results || !isPremiumUser}
-            className={!isPremiumUser ? 'opacity-50' : ''}
+            disabled={!results || !isBackerUser}
+            className={!isBackerUser ? 'opacity-50' : ''}
           >
-            {!isPremiumUser && <Crown className="w-4 h-4 mr-2" />}
+            {!isBackerUser && <Crown className="w-4 h-4 mr-2" />}
             <Download className="w-4 h-4 mr-2" />
             Export Results
           </Button>
@@ -754,8 +754,8 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
         </div>
       </div>
 
-      {/* Premium URL Input - Only show for premium users */}
-      {isPremiumUser && (
+      {/* Backer URL Input - Only show for backer users */}
+      {isBackerUser && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -837,10 +837,10 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
                 onClick={() => fileInputRef.current?.click()}
                 variant="outline"
                 size="sm"
-                disabled={!isPremiumUser}
-                className={!isPremiumUser ? 'opacity-50' : ''}
+                disabled={!isBackerUser}
+                className={!isBackerUser ? 'opacity-50' : ''}
               >
-                {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                {!isBackerUser && <Crown className="w-4 h-4 mr-1" />}
                 <Upload className="w-4 h-4" />
                 Upload HTML
               </Button>
@@ -849,10 +849,10 @@ export default function XPathTesterClient({ isPremiumUser, userId }: XPathTester
                 onClick={exportResults}
                 variant="outline"
                 size="sm"
-                disabled={!results || !isPremiumUser}
-                className={!isPremiumUser ? 'opacity-50' : ''}
+                disabled={!results || !isBackerUser}
+                className={!isBackerUser ? 'opacity-50' : ''}
               >
-                {!isPremiumUser && <Crown className="w-4 h-4 mr-1" />}
+                {!isBackerUser && <Crown className="w-4 h-4 mr-1" />}
                 <Download className="w-4 h-4" />
                 Export Results
               </Button>

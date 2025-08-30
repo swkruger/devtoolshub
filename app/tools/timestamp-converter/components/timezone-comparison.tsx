@@ -16,7 +16,7 @@ import { EnhancedTooltip } from "./enhanced-tooltip"
 import { TimezoneSlot } from "@/lib/types/user-timezones"
 
 interface TimezoneComparisonProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   userId: string | null
   timestamp: number
   isAutoUpdate: boolean
@@ -53,7 +53,7 @@ const DEFAULT_TIMEZONES = [
   { id: '4', timezone: 'Asia/Tokyo', label: 'Tokyo' }
 ]
 
-export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpdate }: TimezoneComparisonProps) {
+export function TimezoneComparison({ isBackerUser, userId, timestamp, isAutoUpdate }: TimezoneComparisonProps) {
 
   const [timezones, setTimezones] = useState<TimezoneSlot[]>(DEFAULT_TIMEZONES)
   const [selectedTimezone, setSelectedTimezone] = useState('')
@@ -64,7 +64,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
 
   // Load user's saved timezones from database
   const loadUserTimezones = useCallback(async () => {
-    if (!isPremiumUser || !userId) {
+    if (!isBackerUser || !userId) {
       setTimezones(DEFAULT_TIMEZONES)
       return
     }
@@ -95,11 +95,11 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
     } finally {
       setIsLoading(false)
     }
-  }, [isPremiumUser, userId, toast])
+  }, [isBackerUser, userId, toast])
 
-  // Initialize default timezones for new premium user
+  // Initialize default timezones for new backer user
   const initializeUserTimezones = async () => {
-    if (!isPremiumUser || !userId) return
+    if (!isBackerUser || !userId) return
 
     try {
       const response = await fetch('/api/user-timezones/initialize', {
@@ -130,9 +130,9 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
 
   // Add timezone slot
   const addTimezone = async () => {
-    if (!isPremiumUser) {
-      toast.warning("Premium Required", {
-        description: "Timezone comparison requires a premium plan"
+    if (!isBackerUser) {
+      toast.warning("Backer Required", {
+        description: "Timezone comparison requires a backer plan"
       })
       return
     }
@@ -219,7 +219,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
 
   // Remove timezone slot
   const removeTimezone = async (id: string) => {
-    if (!isPremiumUser) return
+    if (!isBackerUser) return
     
     const timezone = timezones.find(tz => tz.id === id)
     if (!timezone) return
@@ -287,7 +287,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
 
   // Copy all timezones
   const copyAllTimezones = async () => {
-    if (!isPremiumUser) return
+    if (!isBackerUser) return
 
     try {
       const date = new Date(timestamp)
@@ -338,7 +338,7 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
     }
   }
 
-  if (!isPremiumUser) {
+  if (!isBackerUser) {
     return (
       <Card>
         <CardContent className="pt-6">
@@ -346,9 +346,9 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
             <div className="flex items-center justify-center mb-4">
               <Crown className="w-10 h-10 text-amber-500" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Premium Feature</h3>
+            <h3 className="text-lg font-semibold mb-2">Backer Feature</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Timezone comparison is available with a premium plan
+              Timezone comparison is available with a backer plan
             </p>
             <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
               <p>• Compare timestamp across multiple timezones</p>
@@ -357,8 +357,8 @@ export function TimezoneComparison({ isPremiumUser, userId, timestamp, isAutoUpd
               <p>• Copy individual or all timezone results</p>
             </div>
             <Button className="mt-4" asChild>
-              <Link href="/go-premium">
-                Upgrade to Premium
+              <Link href="/go-backer">
+                Become a Backer
               </Link>
             </Button>
           </div>

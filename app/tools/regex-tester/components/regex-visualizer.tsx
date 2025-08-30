@@ -32,10 +32,10 @@ interface RegexVisualizerProps {
   isOpen: boolean
   onClose: () => void
   pattern: string
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
-export function RegexVisualizer({ isOpen, onClose, pattern, isPremiumUser }: RegexVisualizerProps) {
+export function RegexVisualizer({ isOpen, onClose, pattern, isBackerUser }: RegexVisualizerProps) {
 
   const [zoom, setZoom] = useState(1)
   const [showTooltips, setShowTooltips] = useState(true)
@@ -415,7 +415,7 @@ export function RegexVisualizer({ isOpen, onClose, pattern, isPremiumUser }: Reg
               <CardTitle className="flex items-center gap-2">
                 <Workflow className="h-5 w-5 text-blue-600" />
                 Regex Visualization
-                {!isPremiumUser && (
+                {!isBackerUser && (
                   <Badge className="bg-amber-100 text-amber-800 border-amber-200">
                     Premium
                   </Badge>

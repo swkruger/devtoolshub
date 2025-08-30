@@ -10,7 +10,7 @@ export interface AssetTask {
 
 export interface PresetOptions {
   includeMaskable: boolean
-  isPremiumUser: boolean
+  isBackerUser: boolean
   preset: 'minimal' | 'recommended' | 'full'
 }
 
@@ -60,7 +60,7 @@ export function buildPremiumTasks(): AssetTask[] {
 
 export function getPresetTasks(options: PresetOptions): AssetTask[] {
   const base = buildFreeTasks({ includeMaskable: options.includeMaskable })
-  if (!options.isPremiumUser) return base
+  if (!options.isBackerUser) return base
   if (options.preset === 'minimal') return base
   if (options.preset === 'recommended') {
     // Add a subset of premium tasks

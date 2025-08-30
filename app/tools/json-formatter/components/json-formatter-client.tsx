@@ -10,11 +10,11 @@ import { useKeyboardShortcuts, useShortcutToast } from "../hooks/use-keyboard-sh
 import Link from "next/link"
 
 interface JsonFormatterClientProps {
-  isPremiumUser: boolean
+  isBackerUser: boolean
   userId?: string
 }
 
-export function JsonFormatterClient({ isPremiumUser, userId }: JsonFormatterClientProps) {
+export function JsonFormatterClient({ isBackerUser, userId }: JsonFormatterClientProps) {
   const [isHelpOpen, setIsHelpOpen] = useState(false)
 
   // Listen for help panel events from JsonEditor
@@ -118,7 +118,7 @@ export function JsonFormatterClient({ isPremiumUser, userId }: JsonFormatterClie
 
       {/* Main Editor */}
       <JsonEditor 
-        isPremiumUser={isPremiumUser} 
+        isBackerUser={isBackerUser} 
         userId={userId}
       />
 
@@ -126,7 +126,7 @@ export function JsonFormatterClient({ isPremiumUser, userId }: JsonFormatterClie
       <HelpPanel 
         isOpen={isHelpOpen}
         onClose={() => setIsHelpOpen(false)}
-        isPremiumUser={isPremiumUser}
+        isBackerUser={isBackerUser}
       />
 
       {/* Accessibility improvements */}

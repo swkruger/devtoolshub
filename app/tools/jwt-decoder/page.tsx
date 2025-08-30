@@ -11,7 +11,7 @@ import { PremiumOverview } from "@/components/shared/premium-overview";
 export default async function JwtDecoderPage() {
   const tool = getToolById('jwt-decoder');
   const user = await authServer.getUserProfile();
-  const isPremiumUser = user?.plan === 'premium';
+  const isBackerUser = user?.plan === 'backer';
   
   if (!tool) {
     return <div>Tool not found</div>;
@@ -22,15 +22,15 @@ export default async function JwtDecoderPage() {
       <ToolPageHeader icon={tool.icon} title={tool.name} description={tool.description} />
       
       {/* Main tool UI */}
-      <JwtDecoderClient isPremiumUser={isPremiumUser} userId={user?.id} />
-
-      {!isPremiumUser && (
-        <PremiumOverview 
-          features={tool.features.premium ?? []}
-          title="Premium Features"
-          subtitle="Enhance your JWT workflow with powerful premium tools"
-        />
-      )}
+              <JwtDecoderClient isBackerUser={isBackerUser} userId={user?.id} />
+        
+        {!isBackerUser && (
+          <PremiumOverview
+            features={tool.features.backer ?? []}
+            title="Backer Features"
+            subtitle="Enhance your JWT workflow with powerful backer tools"
+          />
+        )}
     </div>
   );
 } 

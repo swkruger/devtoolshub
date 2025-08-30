@@ -85,14 +85,14 @@ async function handleCheckoutSessionCompleted(session: any, supabase: any) {
   
   const { user_id, plan } = session.metadata || {}
 
-  if (plan === 'premium' && user_id) {
-    console.log(`⬆️ Upgrading user ${user_id} to premium plan`)
+  if (plan === 'backer' && user_id) {
+    console.log(`⬆️ Upgrading user ${user_id} to backer plan`)
     
     // Update both plan and customer ID in one operation
     const { error } = await supabase
       .from('users')
       .update({ 
-        plan: 'premium',
+        plan: 'backer',
         stripe_customer_id: session.customer 
       })
       .eq('id', user_id)
@@ -100,7 +100,7 @@ async function handleCheckoutSessionCompleted(session: any, supabase: any) {
     if (error) {
       console.error('❌ Error updating user plan and customer ID:', error)
     } else {
-      console.log(`✅ Successfully upgraded user ${user_id} to premium and updated customer ID`)
+      console.log(`✅ Successfully upgraded user ${user_id} to backer and updated customer ID`)
     }
   } else {
     console.log(`⚠️ No user_id or plan in metadata:`, { user_id, plan })
@@ -114,16 +114,16 @@ async function handleCheckoutSessionCompleted(session: any, supabase: any) {
 
       if (!userError && users && users.length > 0) {
         const user = users[0]
-        console.log(`🔄 Fallback: Upgrading user ${user.id} to premium via customer ID`)
+        console.log(`🔄 Fallback: Upgrading user ${user.id} to backer via customer ID`)
         const { error: updateError } = await supabase
           .from('users')
-          .update({ plan: 'premium' })
+          .update({ plan: 'backer' })
           .eq('id', user.id)
         
         if (updateError) {
           console.error('❌ Error in fallback update:', updateError)
         } else {
-          console.log(`✅ Successfully upgraded user ${user.id} to premium via fallback`)
+          console.log(`✅ Successfully upgraded user ${user.id} to backer via fallback`)
         }
       }
     }
@@ -147,16 +147,16 @@ async function handleSubscriptionCreated(subscription: any, supabase: any) {
 
   if (users && users.length > 0) {
     const user = users[0]
-    console.log(`⬆️ Upgrading user ${user.id} to premium plan`)
+    console.log(`⬆️ Upgrading user ${user.id} to backer plan`)
     const { error } = await supabase
       .from('users')
-      .update({ plan: 'premium' })
+      .update({ plan: 'backer' })
       .eq('id', user.id)
     
     if (error) {
       console.error('❌ Error updating user plan:', error)
     } else {
-      console.log(`✅ Successfully upgraded user ${user.id} to premium`)
+      console.log(`✅ Successfully upgraded user ${user.id} to backer`)
     }
   } else {
     console.log(`⚠️ No user found for customer ID: ${customerId}`)
@@ -194,17 +194,17 @@ async function handleSubscriptionUpdated(subscription: any, supabase: any) {
   if (users && users.length > 0) {
     const user = users[0]
     if (status === 'active') {
-      // If subscription is active, keep user as premium (even if cancelled at period end)
-      console.log(`✅ Keeping user ${user.id} as premium (subscription active)`)
+      // If subscription is active, keep user as backer (even if cancelled at period end)
+      console.log(`✅ Keeping user ${user.id} as backer (subscription active)`)
       const { error } = await supabase
         .from('users')
-        .update({ plan: 'premium' })
+        .update({ plan: 'backer' })
         .eq('id', user.id)
       
       if (error) {
         console.error('❌ Error updating user plan:', error)
       } else {
-        console.log(`✅ Successfully kept user ${user.id} as premium`)
+        console.log(`✅ Successfully kept user ${user.id} as backer`)
       }
     } else if (status === 'canceled' || status === 'unpaid' || status === 'past_due') {
       // Only downgrade to free when subscription is actually cancelled/ended
@@ -275,16 +275,16 @@ async function handleInvoicePaymentSucceeded(invoice: any, supabase: any) {
 
   if (users && users.length > 0) {
     const user = users[0]
-    console.log(`⬆️ Upgrading user ${user.id} to premium plan`)
+    console.log(`⬆️ Upgrading user ${user.id} to backer plan`)
     const { error } = await supabase
       .from('users')
-      .update({ plan: 'premium' })
+      .update({ plan: 'backer' })
       .eq('id', user.id)
     
     if (error) {
       console.error('❌ Error updating user plan:', error)
     } else {
-      console.log(`✅ Successfully upgraded user ${user.id} to premium`)
+      console.log(`✅ Successfully upgraded user ${user.id} to backer`)
     }
   } else {
     console.log(`⚠️ No user found for customer ID: ${customerId}`)

@@ -34,11 +34,11 @@ import {
 interface PatternLibraryProps {
   isOpen: boolean
   onClose: () => void
-  isPremiumUser: boolean
+  isBackerUser: boolean
   onLoadPattern: (pattern: PatternLibraryItem) => void
 }
 
-export function PatternLibrary({ isOpen, onClose, isPremiumUser, onLoadPattern }: PatternLibraryProps) {
+export function PatternLibrary({ isOpen, onClose, isBackerUser, onLoadPattern }: PatternLibraryProps) {
 
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
@@ -76,9 +76,9 @@ export function PatternLibrary({ isOpen, onClose, isPremiumUser, onLoadPattern }
   }, [searchQuery, selectedCategory, selectedSubcategory, selectedDifficulty])
 
   const handleLoadPattern = useCallback((pattern: PatternLibraryItem) => {
-    if (!isPremiumUser) {
-      toast.warning('Premium Feature', {
-        description: 'Pattern library requires a premium plan'
+    if (!isBackerUser) {
+      toast.warning('Backer Feature', {
+        description: 'Pattern library requires a backer plan'
       })
       return
     }
@@ -89,7 +89,7 @@ export function PatternLibrary({ isOpen, onClose, isPremiumUser, onLoadPattern }
     toast.success('Pattern loaded', {
       description: `Loaded "${pattern.name}" pattern`
     })
-  }, [isPremiumUser, onLoadPattern, onClose, toast])
+  }, [isBackerUser, onLoadPattern, onClose, toast])
 
   const copyPatternToClipboard = useCallback((pattern: PatternLibraryItem) => {
     navigator.clipboard.writeText(pattern.pattern).then(() => {
@@ -141,7 +141,7 @@ export function PatternLibrary({ isOpen, onClose, isPremiumUser, onLoadPattern }
               <div>
                 <CardTitle className="flex items-center gap-2">
                   Pattern Library
-                  {!isPremiumUser && <Crown className="h-4 w-4 text-amber-500" />}
+                  {!isBackerUser && <Crown className="h-4 w-4 text-amber-500" />}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
                   {COMPREHENSIVE_PATTERNS.length}+ curated regex patterns organized by category
@@ -358,9 +358,9 @@ export function PatternLibrary({ isOpen, onClose, isPremiumUser, onLoadPattern }
                           <Button 
                             size="sm" 
                             onClick={() => handleLoadPattern(selectedPattern)}
-                            disabled={!isPremiumUser}
+                            disabled={!isBackerUser}
                           >
-                            {!isPremiumUser && <Crown className="h-3 w-3 mr-1" />}
+                                                          {!isBackerUser && <Crown className="h-3 w-3 mr-1" />}
                             <Zap className="h-3 w-3 mr-1" />
                             Load Pattern
                           </Button>

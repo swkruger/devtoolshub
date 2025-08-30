@@ -17,10 +17,10 @@ export async function GET(request: NextRequest) {
       )
     }
     
-    const isPremiumUser = user.plan === 'premium'
-    if (!isPremiumUser) {
+    const isBackerUser = user.plan === 'backer'
+    if (!isBackerUser) {
       return NextResponse.json(
-        { error: 'Weather data is a premium feature' },
+        { error: 'Weather data is a backer feature' },
         { status: 403 }
       )
     }

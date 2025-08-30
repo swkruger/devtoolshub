@@ -18,7 +18,7 @@ interface Profile {
   email: string
   name: string
   avatar_url?: string
-  plan: 'free' | 'premium'
+  plan: 'free' | 'backer'
   created_at: string
   updated_at: string
 }
@@ -39,7 +39,7 @@ interface SettingsLayoutProps {
   user: User
   profile: Profile | null
   preferences: UserPreferences | null
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
 type TabType = 'profile' | 'subscription' | 'security' | 'account'
@@ -75,7 +75,7 @@ export default function SettingsLayout({
   user, 
   profile, 
   preferences, 
-  isPremiumUser 
+  isBackerUser 
 }: SettingsLayoutProps) {
   const [activeTab, setActiveTab] = useState<TabType>('profile')
 
@@ -87,7 +87,7 @@ export default function SettingsLayout({
             user={user}
             profile={profile}
             preferences={preferences}
-            isPremiumUser={isPremiumUser}
+            isBackerUser={isBackerUser}
           />
         )
       case 'subscription':
@@ -95,21 +95,21 @@ export default function SettingsLayout({
           <SubscriptionCard 
             user={user}
             profile={profile}
-            isPremiumUser={isPremiumUser}
+            isBackerUser={isBackerUser}
           />
         )
       case 'security':
         return (
           <SecuritySettings 
             user={user}
-            isPremiumUser={isPremiumUser}
+            isBackerUser={isBackerUser}
           />
         )
       case 'account':
         return (
           <AccountDeletion 
             user={user}
-            isPremiumUser={isPremiumUser}
+            isBackerUser={isBackerUser}
           />
         )
       default:

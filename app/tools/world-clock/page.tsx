@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default async function WorldClockPage() {
   // Require authentication and get user profile
   const user = await authServer.requireAuth()
-  const isPremiumUser = user.plan === 'premium'
+  const isBackerUser = user.plan === 'backer'
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-7xl">
@@ -27,15 +27,15 @@ export default async function WorldClockPage() {
 
       {/* Main tool interface */}
       <WorldClockClient 
-        isPremiumUser={isPremiumUser} 
+        isBackerUser={isBackerUser} 
         userId={user.id}
       />
       
-      {/* Premium feature overview for free users only */}
-      {!isPremiumUser && (
+      {/* Backer feature overview for free users only */}
+      {!isBackerUser && (
         <PremiumOverview 
-          features={toolConfig.features.premium ?? []}
-          title="Premium Features"
+          features={toolConfig.features.backer ?? []}
+          title="Backer Features"
           subtitle="Get unlimited cities, weather data, and advanced meeting planning tools"
         />
       )}

@@ -15,7 +15,7 @@ export default function robots(): MetadataRoute.Robots {
           '/private/',
           '/dashboard/',
           '/settings/',
-          '/go-premium/',
+          '/go-backer/',
         ],
       },
       {
@@ -28,7 +28,7 @@ export default function robots(): MetadataRoute.Robots {
           '/private/',
           '/dashboard/',
           '/settings/',
-          '/go-premium/',
+          '/go-backer/',
         ],
       },
     ],

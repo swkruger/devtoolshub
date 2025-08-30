@@ -10,10 +10,10 @@ import { useKeyboardShortcuts } from "../hooks/use-keyboard-shortcuts"
 
 interface RegexTesterClientProps {
   user: any
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
-export function RegexTesterClient({ user, isPremiumUser }: RegexTesterClientProps) {
+export function RegexTesterClient({ user, isBackerUser }: RegexTesterClientProps) {
   const [isHelpOpen, setIsHelpOpen] = useState(false)
 
   // Listen for help panel events from RegexEditor
@@ -97,7 +97,7 @@ export function RegexTesterClient({ user, isPremiumUser }: RegexTesterClientProp
 
       {/* Main Editor */}
       <RegexEditor 
-        isPremiumUser={isPremiumUser} 
+        isBackerUser={isBackerUser} 
         userId={user?.id}
       />
 
@@ -105,7 +105,7 @@ export function RegexTesterClient({ user, isPremiumUser }: RegexTesterClientProp
       <HelpPanel 
         isOpen={isHelpOpen}
         onClose={() => setIsHelpOpen(false)}
-        isPremiumUser={isPremiumUser}
+        isBackerUser={isBackerUser}
       />
 
       {/* Accessibility improvements */}

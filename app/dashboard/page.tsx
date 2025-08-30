@@ -36,7 +36,7 @@ export default async function DashboardPage() {
     .eq('id', user?.id)
     .single()
   
-  const isPremiumUser = profile?.plan === 'premium'
+  const isBackerUser = profile?.plan === 'backer'
   
   const [featuredBlogs, popularBlogs] = await Promise.all([
     listFeaturedBlogs(6),
@@ -60,7 +60,7 @@ export default async function DashboardPage() {
           name: t.name,
           description: t.description,
           emoji: t.emoji,
-          isPremium: t.isPremium,
+          isPremium: t.isBacker,
           category: t.category,
           tags: t.tags,
           path: t.path,
@@ -148,19 +148,19 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {!isPremiumUser && (
+      {!isBackerUser && (
         <div className="mt-12 text-center">
           <Card className="max-w-md mx-auto">
             <CardHeader>
-              <CardTitle>🚀 Go Premium</CardTitle>
+              <CardTitle>🚀 Become a Backer</CardTitle>
               <CardDescription>
-                Unlock unlimited saved items, advanced features & algorithms, and early access to new tools
+                Support the project and unlock unlimited saved items, advanced features & algorithms, and early access to new tools
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button className="w-full" asChild>
-                <Link href="/go-premium">
-                  Upgrade Now
+                <Link href="/go-backer">
+                  Become a Backer
                 </Link>
               </Button>
             </CardContent>

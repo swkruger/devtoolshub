@@ -77,11 +77,11 @@
     @apply bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow;
   }
   
-  .tool-card-premium {
+  .tool-card-backer {
     @apply relative bg-gradient-to-br from-card to-secondary/50 border-2 border-primary/20;
   }
   
-  .premium-badge {
+  .backer-badge {
     @apply absolute top-2 right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full font-semibold;
   }
 
@@ -289,6 +289,19 @@
     .blog-content td {
       @apply p-2;
     }
+  }
+
+  /* Blog image with caption */
+  .blog-content .figure {
+    @apply w-1/2 float-right ml-6 my-6;
+  }
+
+  .blog-content .figure img {
+    @apply w-full h-auto rounded-lg shadow-md;
+  }
+
+  .blog-content .figure .figcaption {
+    @apply mt-2 text-center text-sm text-gray-500 dark:text-gray-400 italic;
   }
 
   /* TipTap Editor Styles */

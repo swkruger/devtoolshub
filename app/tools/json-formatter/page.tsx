@@ -10,7 +10,7 @@ import { PremiumOverview } from "@/components/shared/premium-overview"
 export default async function JsonFormatterPage() {
   const tool = getToolById('json-formatter')
   const user = await authServer.getUserProfile()
-  const isPremiumUser = user?.plan === 'premium'
+  const isBackerUser = user?.plan === 'backer'
   
   if (!tool) {
     return <div>Tool not found</div>
@@ -21,15 +21,15 @@ export default async function JsonFormatterPage() {
       <ToolPageHeader icon={tool.icon} title={tool.name} description={tool.description} />
 
       {/* Main Editor Area */}
-      <JsonFormatterClient isPremiumUser={isPremiumUser} userId={user?.id} />
-
-      {!isPremiumUser && (
-        <PremiumOverview 
-          features={tool.features.premium ?? []}
-          title="Premium Features"
-          subtitle="Enhance your JSON workflow with powerful premium tools"
-        />
-      )}
+              <JsonFormatterClient isBackerUser={isBackerUser} userId={user?.id} />
+        
+        {!isBackerUser && (
+          <PremiumOverview
+            features={tool.features.backer ?? []}
+            title="Backer Features"
+            subtitle="Enhance your JSON workflow with powerful backer tools"
+          />
+        )}
     </div>
   )
 } 

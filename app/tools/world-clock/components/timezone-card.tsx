@@ -15,7 +15,7 @@ interface TimezoneCardProps {
   onUpdateLabel?: (cityId: string, label: string) => Promise<boolean>
   onMoveUp?: (cityId: string) => Promise<boolean>
   onMoveDown?: (cityId: string) => Promise<boolean>
-  isPremiumUser: boolean
+  isBackerUser: boolean
   showWeather?: boolean
   className?: string
   canMoveUp?: boolean
@@ -29,7 +29,7 @@ export default function TimezoneCard({
   onUpdateLabel,
   onMoveUp,
   onMoveDown,
-  isPremiumUser,
+  isBackerUser,
   showWeather = false,
   className = '',
   canMoveUp = false,
@@ -254,7 +254,7 @@ export default function TimezoneCard({
         </div>
 
         {/* Weather Widget (Premium Feature) */}
-        {showWeather && isPremiumUser && (
+        {showWeather && isBackerUser && (
           <div className="mb-4 p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg border border-gray-200/50 dark:border-gray-700/50">
             {cityTimezone.isLoadingWeather ? (
               <div className="flex items-center justify-center py-4">
@@ -298,7 +298,7 @@ export default function TimezoneCard({
         )}
 
         {/* Weather Teaser (Free Users) */}
-        {showWeather && !isPremiumUser && (
+        {showWeather && !isBackerUser && (
           <div className="mb-4 p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 rounded-lg border border-blue-200/50 dark:border-blue-800/50 opacity-75">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">

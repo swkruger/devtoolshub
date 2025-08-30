@@ -71,7 +71,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getSession()
 
   // Define protected routes
-  const protectedRoutes = ['/dashboard', '/tools', '/settings', '/go-premium']
+  const protectedRoutes = ['/dashboard', '/tools', '/settings', '/go-backer']
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
 
   // Check if user is authenticated

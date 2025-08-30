@@ -9,7 +9,7 @@ import UuidGeneratorClient from './components/uuid-generator-client';
 export default async function UuidGeneratorPage() {
   const tool = getToolById('uuid-generator');
   const userProfile = await authServer.getUserProfile();
-  const isPremiumUser = userProfile?.plan === 'premium';
+  const isBackerUser = userProfile?.plan === 'backer';
   const userId = userProfile?.id;
 
   if (!tool) {
@@ -21,12 +21,12 @@ export default async function UuidGeneratorPage() {
       <ToolPageHeader icon={tool.icon} title={tool.name} description={tool.description} />
 
       {/* Main tool component */}
-      <UuidGeneratorClient isPremiumUser={isPremiumUser} userId={userId} />
+      <UuidGeneratorClient isBackerUser={isBackerUser} userId={userId} />
 
-      {!isPremiumUser && (
+      {!isBackerUser && (
         <PremiumOverview 
-          features={tool.features.premium ?? []}
-          title="Premium Features"
+          features={tool.features.backer ?? []}
+          title="Backer Features"
           subtitle="Unlock advanced UUID generation capabilities"
         />
       )}

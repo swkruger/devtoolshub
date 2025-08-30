@@ -8,7 +8,7 @@ interface PremiumOverviewProps {
   subtitle?: string
 }
 
-export function PremiumOverview({ features, title = 'Premium Features', subtitle = 'Upgrade to unlock these capabilities' }: PremiumOverviewProps) {
+export function PremiumOverview({ features, title = 'Backer Features', subtitle = 'Become a backer to unlock these capabilities' }: PremiumOverviewProps) {
   return (
     <Card className="mt-6">
       <CardContent className="p-6">

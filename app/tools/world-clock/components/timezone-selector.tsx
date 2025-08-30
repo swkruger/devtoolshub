@@ -18,7 +18,7 @@ interface TimezoneSelectorProps {
   onClearSearch: () => void
   selectedCitiesCount: number
   maxCities: number
-  isPremiumUser: boolean
+  isBackerUser: boolean
   disabled?: boolean
 }
 
@@ -31,7 +31,7 @@ export default function TimezoneSelector({
   onClearSearch,
   selectedCitiesCount,
   maxCities,
-  isPremiumUser,
+  isBackerUser,
   disabled = false
 }: TimezoneSelectorProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -147,7 +147,7 @@ export default function TimezoneSelector({
           type="text"
           placeholder={
             isAtLimit 
-              ? isPremiumUser 
+              ? isBackerUser 
                 ? "Search cities..." 
                 : `City limit reached (${maxCities})`
               : "Search cities..."
@@ -159,9 +159,9 @@ export default function TimezoneSelector({
               setIsDropdownOpen(true)
             }
           }}
-          disabled={disabled || (isAtLimit && !isPremiumUser)}
+          disabled={disabled || (isAtLimit && !isBackerUser)}
           className={`pl-10 pr-10 ${
-            isAtLimit && !isPremiumUser 
+                          isAtLimit && !isBackerUser 
               ? 'bg-gray-50 dark:bg-gray-900 text-gray-400 cursor-not-allowed' 
               : ''
           }`}
@@ -185,7 +185,7 @@ export default function TimezoneSelector({
       </div>
 
       {/* City Limit Warning */}
-      {isAtLimit && !isPremiumUser && (
+              {isAtLimit && !isBackerUser && (
         <div className="mt-2 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
           <div className="flex items-center gap-2">
             <Crown className="w-4 h-4 text-orange-600 dark:text-orange-400" />
@@ -292,9 +292,9 @@ export default function TimezoneSelector({
       {/* City Counter */}
       <div className="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
         <span>
-          {selectedCitiesCount} of {isPremiumUser ? '∞' : maxCities} cities
+          {selectedCitiesCount} of {isBackerUser ? '∞' : maxCities} cities
         </span>
-        {!isPremiumUser && selectedCitiesCount >= Math.floor(maxCities * 0.8) && (
+                  {!isBackerUser && selectedCitiesCount >= Math.floor(maxCities * 0.8) && (
           <Badge variant="outline" className="text-xs">
             <Crown className="w-3 h-3 mr-1" />
             Upgrade for unlimited

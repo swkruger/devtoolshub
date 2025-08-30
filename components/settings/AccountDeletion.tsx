@@ -15,7 +15,7 @@ import { toast } from 'sonner'
 
 interface AccountDeletionProps {
   user: User
-  isPremiumUser: boolean
+  isBackerUser: boolean
 }
 
 interface DeletionForm {
@@ -34,7 +34,7 @@ interface DeletionErrors {
 
 
 
-export default function AccountDeletion({ user, isPremiumUser }: AccountDeletionProps) {
+export default function AccountDeletion({ user, isBackerUser }: AccountDeletionProps) {
   const [deletionForm, setDeletionForm] = useState<DeletionForm>({
     confirmEmail: '',
     deletionReason: '',

@@ -17,19 +17,19 @@ export const metadata: Metadata = {
 
 export default async function Base64EncoderPage() {
   const userProfile = await authServer.getUserProfile()
-  const isPremiumUser = userProfile?.plan === 'premium'
+  const isBackerUser = userProfile?.plan === 'backer'
   const userId = userProfile?.id || null
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-7xl">
       <ToolPageHeader icon={tool.icon} title={tool.name} description={tool.description} />
 
-      <Base64EncoderClient isPremiumUser={isPremiumUser} userId={userId} />
+      <Base64EncoderClient isBackerUser={isBackerUser} userId={userId} />
 
-      {!isPremiumUser && (
+      {!isBackerUser && (
         <PremiumOverview 
-          features={tool.features.premium ?? []}
-          title="Premium Features"
+          features={tool.features.backer ?? []}
+          title="Backer Features"
           subtitle="Unlock batch processing, history, and advanced encoding options"
         />
       )}
