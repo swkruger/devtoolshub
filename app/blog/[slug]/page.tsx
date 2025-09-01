@@ -18,6 +18,7 @@ import {
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
+import { getMetadataApplicationName } from '@/lib/app-config'
 
 export const revalidate = 0
 
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   
   if (!blog) {
     return {
-      title: 'Blog Post Not Found - DevToolsHub',
+      title: 'Blog Post Not Found - ' + getMetadataApplicationName(),
       description: 'The requested blog post could not be found.',
     }
   }
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     blog.content_html.replace(/<[^>]*>/g, '').substring(0, 160) + '...'
   
   const metaKeywords = blog.meta_keywords || 
-    'DevToolsHub, developer tools, ' + blog.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ', ')
+    getMetadataApplicationName() + ', developer tools, ' + blog.title.toLowerCase().replace(/[^>]*>/g, '').replace(/\s+/g, ', ')
 
   const ogTitle = blog.og_title || blog.title
   const ogDescription = blog.og_description || metaDescription
@@ -66,7 +67,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       ],
       publishedTime: blog.published_at || undefined,
       modifiedTime: blog.updated_at,
-      authors: ['DevToolsHub'],
+      authors: [getMetadataApplicationName()],
     },
     twitter: {
       card: 'summary_large_image',
@@ -101,8 +102,7 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
   const metaDescription = blog.meta_description || 
     (textForCount || '').replace(/<[^>]*>/g, '').substring(0, 160) + '...'
   
-  const metaKeywords = blog.meta_keywords || 
-    'DevToolsHub, developer tools, ' + blog.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ', ')
+  const metaKeywords = getMetadataApplicationName() + ', developer tools, ' + blog.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ', ')
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -113,10 +113,18 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
     dateModified: blog.updated_at,
     author: {
       '@type': 'Person',
-      name: 'DevToolsHub',
+      name: getMetadataApplicationName(),
     },
     image: blog.og_image || blog.image_url,
     keywords: metaKeywords,
+    publisher: {
+      '@type': 'Organization',
+      name: getMetadataApplicationName(),
+      logo: {
+        '@type': 'ImageObject',
+        url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'}/icons/icon-192x192.png`,
+      },
+    },
   }
 
   return (
@@ -146,14 +154,14 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
             <div className="flex items-center gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src="/icons/icon-48x48.png" alt="DevToolsHub" />
+                  <AvatarImage src="/icons/icon-48x48.png" alt={getMetadataApplicationName()} />
                   <AvatarFallback className="bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300">
                     DH
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex items-center gap-3">
                   <span className="font-medium text-gray-900 dark:text-gray-100">
-                    DevToolsHub
+                    {getMetadataApplicationName()}
                   </span>
                   <Button 
                     variant="outline" 

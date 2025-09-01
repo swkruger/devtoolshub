@@ -1,14 +1,15 @@
 import { redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { Metadata } from 'next'
+import { getMetadataApplicationName } from '@/lib/app-config'
 import SettingsLayout from '@/components/settings/SettingsLayout'
 
 export const metadata: Metadata = {
-  title: 'Settings - DevToolsHub',
-  description: 'Manage your profile, subscription, security settings, and account preferences.',
+  title: `Settings - ${getMetadataApplicationName()}`,
+  description: `Manage your ${getMetadataApplicationName()} account settings, preferences, and subscription.`,
   openGraph: {
-    title: 'Settings - DevToolsHub',
-    description: 'Manage your profile, subscription, security settings, and account preferences.',
+    title: `Settings - ${getMetadataApplicationName()}`,
+    description: `Manage your ${getMetadataApplicationName()} account settings, preferences, and subscription.`,
   },
 }
 

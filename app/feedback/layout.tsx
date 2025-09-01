@@ -1,10 +1,9 @@
-import type { Metadata } from 'next'
+import { Metadata } from 'next'
+import { getMetadataApplicationName } from '@/lib/app-config'
 
 export const metadata: Metadata = {
-  title: 'Feedback – DevToolsHub',
-  description: 'Share feedback and suggestions to improve DevToolsHub. Help us make our tools better.',
-  robots: { index: true, follow: true },
-  alternates: { canonical: '/feedback' },
+  title: `Feedback – ${getMetadataApplicationName()}`,
+  description: `Share feedback and suggestions to improve ${getMetadataApplicationName()}. Help us make our tools better.`,
 }
 
 export default function FeedbackLayout({

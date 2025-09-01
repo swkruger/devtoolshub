@@ -24,6 +24,7 @@ import {
   AlertTriangle
 } from 'lucide-react'
 import Link from 'next/link'
+import { getClientApplicationName } from '@/lib/app-config'
 
 interface Blog {
   id: string
@@ -274,11 +275,13 @@ export default function BlogPreviewPage() {
             <div className="flex items-center gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src="/icons/icon-192x192.png" alt="DevToolsHub" />
-                  <AvatarFallback>DT</AvatarFallback>
+                  <AvatarImage src="/icons/icon-192x192.png" alt={getClientApplicationName()} />
+                  <AvatarFallback className="bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300">
+                    DH
+                  </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="font-medium text-gray-900 dark:text-gray-100">DevToolsHub</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">{getClientApplicationName()}</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
                     {timeAgo} • {readTime} min read
                   </div>

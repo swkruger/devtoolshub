@@ -10,6 +10,7 @@ import {
   Hr,
   Img,
 } from '@react-email/components'
+import { getEmailApplicationName } from '@/lib/app-config'
 
 interface NewDeviceAlertEmailProps {
   userData: {
@@ -73,7 +74,7 @@ export default function NewDeviceAlertEmail({
             </Text>
 
             <Text style={contentText}>
-              We detected a login to your DevToolsHub account from a new device. This could be you logging in from a different computer, browser, or location.
+              We detected a login to your {getEmailApplicationName()} account from a new device. This could be you logging in from a different computer, browser, or location.
             </Text>
 
             <Text style={contentText}>
@@ -191,10 +192,7 @@ export default function NewDeviceAlertEmail({
           {/* Footer */}
           <Section style={footer}>
             <Text style={footerText}>
-              This is an automated security alert from{' '}
-              <Link href={process.env.NEXT_PUBLIC_APP_URL} style={footerLink}>
-                DevToolsHub
-              </Link>
+              This security alert was sent from {getEmailApplicationName()}.
             </Text>
             
             <Text style={footerText}>
@@ -203,7 +201,7 @@ export default function NewDeviceAlertEmail({
 
             <Text style={footerText}>
               Your security is our top priority! 🔒<br />
-              - The DevToolsHub Security Team
+              - The {getEmailApplicationName()} Security Team
             </Text>
           </Section>
         </Container>

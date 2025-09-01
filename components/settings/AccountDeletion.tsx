@@ -103,7 +103,7 @@ export default function AccountDeletion({ user, isBackerUser }: AccountDeletionP
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `devtoolshub-data-${user.id}-${new Date().toISOString().split('T')[0]}.json`
+      a.download = `devtoolskithub-data-${user.id}-${new Date().toISOString().split('T')[0]}.json`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)

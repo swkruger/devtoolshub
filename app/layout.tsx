@@ -5,15 +5,15 @@ import './globals.css'
 import SessionTracker from '@/components/SessionTracker'
 import { SignInModalProvider } from '@/lib/use-sign-in-modal'
 import { SignInModalWrapper } from '@/components/auth/sign-in-modal-wrapper'
-
+import { getMetadataApplicationName } from '@/lib/app-config'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'),
   title: {
-    default: 'DevToolsHub - Essential Developer Tools Collection',
-    template: '%s | DevToolsHub'
+    default: `${getMetadataApplicationName()} - Essential Developer Tools Collection`,
+    template: `%s | ${getMetadataApplicationName()}`
   },
   description: 'Your all-in-one developer toolkit. Format JSON, test regex patterns, decode JWTs, compress images, and more. Free developer tools with premium features.',
   keywords: [
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
     'code tools',
     'dev toolkit'
   ],
-  authors: [{ name: 'DevToolsHub Team' }],
-  creator: 'DevToolsHub',
-  publisher: 'DevToolsHub',
+  authors: [{ name: `${getMetadataApplicationName()} Team` }],
+  creator: getMetadataApplicationName(),
+  publisher: getMetadataApplicationName(),
   robots: {
     index: true,
     follow: true,
@@ -51,15 +51,15 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    siteName: 'DevToolsHub',
-    title: 'DevToolsHub - Essential Developer Tools Collection',
+    siteName: getMetadataApplicationName(),
+    title: `${getMetadataApplicationName()} - Essential Developer Tools Collection`,
     description: 'Your all-in-one developer toolkit. Format JSON, test regex patterns, decode JWTs, and more. All tools are free forever, no ads. Support the project to unlock advanced features.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'DevToolsHub - Developer Tools Collection',
+        alt: `${getMetadataApplicationName()} - Developer Tools Collection`,
       }
     ],
   },
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
   // Twitter
   twitter: {
     card: 'summary_large_image',
-    title: 'DevToolsHub - Essential Developer Tools Collection',
+    title: `${getMetadataApplicationName()} - Essential Developer Tools Collection`,
     description: 'Your all-in-one developer toolkit. Format JSON, test regex patterns, decode JWTs, and more.',
     images: ['/twitter-image.png'],
     creator: '@devtoolshub',
@@ -75,14 +75,14 @@ export const metadata: Metadata = {
   },
   
   // App-specific
-  applicationName: 'DevToolsHub',
+  applicationName: getMetadataApplicationName(),
   category: 'Developer Tools',
   
   // Additional meta tags
   other: {
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'default',
-    'apple-mobile-web-app-title': 'DevToolsHub',
+    'apple-mobile-web-app-title': getMetadataApplicationName(),
     'mobile-web-app-capable': 'yes',
     'msapplication-TileColor': '#000000',
     'theme-color': '#000000',
@@ -105,7 +105,7 @@ export default function RootLayout({
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'DevToolsHub',
+    name: getMetadataApplicationName(),
     description:
       'DevToolsHub is a professional suite of web developer tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 utilities, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password/key generator, and PWA asset generator.',
     url: siteUrl,
@@ -119,7 +119,7 @@ export default function RootLayout({
     },
     author: {
       '@type': 'Organization',
-      name: 'DevToolsHub',
+      name: getMetadataApplicationName(),
     },
     datePublished: '2024-01-01',
     dateModified: new Date().toISOString(),

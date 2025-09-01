@@ -1,17 +1,12 @@
-/*
-  DevToolsHub Docs Generator
-  - Reads tool metadata from lib/tools.ts
-  - Emits static HTML docs under docs/<slug>/index.html
-  - Creates docs/index.html, docs/sitemap.xml, and docs/feed.xml
+/**
+ * DevToolsKitHub Docs Generator
+ * Generates static documentation pages for each tool
+ */
 
-  # Reason: Provide portable, SEO-optimized static documentation per DOCS_PROMPT.md
-*/
-
-import fs from 'node:fs'
-import path from 'node:path'
-
-// Use relative import to avoid path alias issues in Node/tsx
+import { writeFileSync, mkdirSync, existsSync, readFileSync, cpSync } from 'fs'
+import { join } from 'path'
 import { getAllTools, type ToolConfig } from '../lib/tools'
+import { getDocsApplicationName } from '../lib/app-config'
 
 type BuildContext = {
   appHost: string
@@ -22,18 +17,18 @@ type BuildContext = {
 }
 
 const APP_ASSET_HOST_DEFAULT = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-const DOCS_ROOT_HOST_DEFAULT = 'https://devtoolshub.dev'
+const DOCS_ROOT_HOST_DEFAULT = 'https://devtoolskithub.dev'
 
 function ensureDir(dirPath: string) {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true })
+  if (!existsSync(dirPath)) {
+    mkdirSync(dirPath, { recursive: true })
   }
 }
 
 function readFileIfExists(filePath: string): string | null {
   try {
-    if (fs.existsSync(filePath)) {
-      return fs.readFileSync(filePath, 'utf8')
+    if (existsSync(filePath)) {
+      return readFileSync(filePath, 'utf8')
     }
     return null
   } catch {
@@ -46,8 +41,8 @@ function toolSlug(tool: ToolConfig): string {
   return tool.id
 }
 
+// Per-tool docs host is <slug>.devtoolskithub.dev
 function toolCanonical(tool: ToolConfig, ctx: BuildContext): string {
-  // Per-tool docs host is <slug>.devtoolshub.dev
   return `https://${toolSlug(tool)}.${new URL(ctx.docsRootHost).host}/`
 }
 
@@ -72,7 +67,7 @@ function getAssetUrl(pathname: string, ctx: BuildContext): string {
 }
 
 function buildHead(tool: ToolConfig, ctx: BuildContext): string {
-  const title = `${tool.name} – DevToolsHub`
+  const title = `${tool.name} – ${getDocsApplicationName()}`
   const description = tool.shortDescription || tool.description
   const canonical = toolCanonical(tool, ctx)
   const ogImg = ogImageUrl(ctx)
@@ -88,7 +83,7 @@ function buildHead(tool: ToolConfig, ctx: BuildContext): string {
     <meta name="keywords" content="${htmlEscape(keywords)}" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="DevToolsHub" />
+    <meta property="og:site_name" content="${getDocsApplicationName()}" />
     <meta property="og:title" content="${htmlEscape(title)}" />
     <meta property="og:description" content="${htmlEscape(description)}" />
     <meta property="og:url" content="${canonical}" />
@@ -98,9 +93,12 @@ function buildHead(tool: ToolConfig, ctx: BuildContext): string {
     <meta name="twitter:title" content="${htmlEscape(title)}" />
     <meta name="twitter:description" content="${htmlEscape(description)}" />
     <meta name="twitter:image" content="${ogImg}" />
-
-    <link rel="icon" href="${getAssetUrl('/icons/favicon-32x32.png', ctx)}" />
-    <link rel="apple-touch-icon" href="${getAssetUrl('/icons/icon-192x192.png', ctx)}" />
+    <meta name="twitter:creator" content="@devtoolshub" />
+    <meta name="twitter:site" content="@devtoolshub" />
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="icon" href="${getAssetUrl('/favicon.ico', ctx)}" sizes="any" />
+    <link rel="apple-touch-icon" href="${getAssetUrl('/apple-touch-icon.png', ctx)}" />
+    <link rel="manifest" href="${getAssetUrl('/manifest.json', ctx)}" />
   `
 }
 
@@ -114,7 +112,7 @@ function buildSoftwareApplicationJsonLd(tool: ToolConfig, ctx: BuildContext): st
     description: tool.description,
     url: toolCanonical(tool, ctx),
     image: ogImageUrl(ctx),
-    author: { '@type': 'Organization', name: 'DevToolsHub' },
+    author: { '@type': 'Organization', name: getDocsApplicationName() },
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     keywords: tool.tags || [],
     dateModified: ctx.nowISO,
@@ -137,15 +135,15 @@ function buildFaqJsonLd(tool: ToolConfig): string {
       name: `Is ${tool.name} free to use?`,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, core features are free. Some advanced features are available with a premium plan in the DevToolsHub app.',
+        text: `Yes, core features are free. Some advanced features are available with a premium plan in the ${getDocsApplicationName()} app.`,
       },
     },
     {
       '@type': 'Question',
-      name: `How do I open this tool in DevToolsHub?`,
+      name: `How do I open this tool in ${getDocsApplicationName()}?`,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Use the “Open this tool in DevToolsHub” button which links directly to the app interface.',
+        text: `Use the "Open this tool in ${getDocsApplicationName()}" button which links directly to the app interface.`,
       },
     },
   ]
@@ -171,16 +169,16 @@ function buildRelatedToolsGrid(current: ToolConfig, allTools: ToolConfig[], ctx:
 
 // --- Content helpers to reach 1000–1400 words with meaningful guidance ---
 function generateIntro(tool: ToolConfig, ctx: BuildContext): string {
-  const override = readFileIfExists(path.join(ctx.contentDir, toolSlug(tool), 'intro.html'))
+  const override = readFileIfExists(join(ctx.contentDir, toolSlug(tool), 'intro.html'))
   if (override) return override
   const p1 = `The ${tool.name} is a focused, browser‑based utility that helps developers complete real‑world tasks quickly without context switching. It is designed to be fast, predictable, and easy to use in day‑to‑day workflows, whether you are debugging data, preparing API payloads, verifying credentials, or experimenting with formats.`
-  const p2 = `Inside DevToolsHub, this tool follows the same ergonomics as the rest of the suite: a compact header, clear controls, responsive layout, keyboard shortcuts, and accessible labels. The interface prioritizes clarity over novelty so you can reach a correct result on the first try and repeat it reliably.`
+  const p2 = `Inside ${getDocsApplicationName()}, this tool follows the same ergonomics as the rest of the suite: a compact header, clear controls, responsive layout, keyboard shortcuts, and accessible labels. The interface prioritizes clarity over novelty so you can reach a correct result on the first try and repeat it reliably.`
   const p3 = `Use ${tool.name} when you need a trustworthy implementation that behaves like production environments. This page explains how the tool works at a high level, provides concrete steps, and includes examples that mirror what developers do in IDEs, CI scripts, and API clients.`
   return `<p>${p1}</p><p>${p2}</p><p>${p3}</p>`
 }
 
 function generateHowItWorks(tool: ToolConfig, ctx: BuildContext): string {
-  const override = readFileIfExists(path.join(ctx.contentDir, toolSlug(tool), 'how-it-works.html'))
+  const override = readFileIfExists(join(ctx.contentDir, toolSlug(tool), 'how-it-works.html'))
   if (override) return override
   const a = `At a high level, ${tool.name} takes your input, applies a well‑defined transformation or analysis, and renders the result in a readable format. Wherever possible, processing happens locally in the browser using modern Web APIs, which keeps the experience fast and private.`
   const b = `The interface is split into an input area, a concise control panel, and an output area. Controls are explicit and conservative by default; riskier actions use confirmation prompts. Each action exposes a deterministic result, which makes it suitable for reproducible workflows and documentation.`
@@ -189,19 +187,16 @@ function generateHowItWorks(tool: ToolConfig, ctx: BuildContext): string {
 }
 
 function generateSteps(tool: ToolConfig, ctx: BuildContext): string {
-  const override = readFileIfExists(path.join(ctx.contentDir, toolSlug(tool), 'steps.html'))
+  const override = readFileIfExists(join(ctx.contentDir, toolSlug(tool), 'steps.html'))
   if (override) return override
   const steps = [
-    `Open the tool from this documentation or the DevToolsHub dashboard.`,
+    `Open the tool from this documentation or the ${getDocsApplicationName()} dashboard.`,
     `Read the short description to confirm the tool fits your task.`,
     `Paste or type input into the main editor. Use sample data if you are exploring.`,
-    `Adjust options in the control panel. Defaults are safe; change one thing at a time.`,
-    `Run the primary action and review the output area and any highlighted notes.`,
-    `Use copy buttons to extract values or download the full result if needed.`,
-    `Iterate on inputs or options until the result matches expectations.`,
-    `Open the Help panel (F1 in the app) to review examples and keyboard shortcuts.`,
-    `If a feature is premium‑gated, decide if the upgrade saves recurring effort.`,
-    `Bookmark the tool path so teammates can reproduce the workflow.`,
+    `Adjust any settings or options (e.g., indentation, algorithm, format) to customize the behavior.`,
+    `Observe the real‑time output or click "Process" if an explicit action is required.`,
+    `Copy the result to your clipboard or download it as a file.`,
+    `Consult the built‑in help panel (often accessible via F1 or a help icon) for examples, shortcuts, and tips.`,
   ]
     .map((s, i) => `<li><strong>Step ${i + 1}.</strong> ${htmlEscape(s)}</li>`) 
     .join('\n')
@@ -211,7 +206,7 @@ function generateSteps(tool: ToolConfig, ctx: BuildContext): string {
 type Example = { title: string; description: string; code: string }
 
 function getExamplesForTool(tool: ToolConfig, ctx: BuildContext): Example[] {
-  const override = readFileIfExists(path.join(ctx.contentDir, toolSlug(tool), 'examples.html'))
+  const override = readFileIfExists(join(ctx.contentDir, toolSlug(tool), 'examples.html'))
   if (override) {
     // If a full HTML block is provided, wrap it as a single example preserving authoring
     return [{ title: 'Examples', description: '', code: override }]
@@ -305,95 +300,69 @@ function renderExamples(tool: ToolConfig, ctx: BuildContext): string {
 function buildBody(tool: ToolConfig, allTools: ToolConfig[], ctx: BuildContext): string {
   const appUrl = `${ctx.appHost}${tool.path}`
   const related = buildRelatedToolsGrid(tool, allTools, ctx)
-  const resources = [
-    { href: 'https://developer.mozilla.org/', text: 'MDN Web Docs' },
-    { href: 'https://whatwg.org/', text: 'WHATWG Standards' },
-    { href: 'https://schema.org/SoftwareApplication', text: 'Schema.org: SoftwareApplication' },
-    { href: 'https://www.w3.org/TR/WCAG21/', text: 'W3C WCAG 2.1' },
-    { href: 'https://web.dev/learn/', text: 'web.dev: Best Practices' },
-    { href: 'https://www.rfc-editor.org/rfc/', text: 'RFC Editor' },
-  ]
-    .map(r => `<li><a href="${r.href}">${r.text}</a></li>`) 
-    .join('\n')
-
+  const resources = ([] as any[]).map((r: any) => `<li><a href="${r.url}" target="_blank" rel="noopener noreferrer">${htmlEscape(r.name)}</a></li>`).join('\n')
   return `
   <header style="display:flex;align-items:center;gap:12px;padding:12px 16px;">
-    <img src="${getAssetUrl('/icons/icon-48x48.png', ctx)}" width="24" height="24" alt="DevToolsHub icon"/>
+    <img src="${getAssetUrl('/icons/icon-48x48.png', ctx)}" width="24" height="24" alt="${getDocsApplicationName()} icon"/>
     <nav style="margin-left:auto;display:flex;gap:16px;">
       <a href="${ctx.appHost}">Main App</a>
-      <a href="${ctx.appHost}/#tools">All Tools</a>
-      <a href="${ctx.appHost}/sign-in">Sign in</a>
+      <a href="${ctx.docsRootHost}">All Docs</a>
     </nav>
   </header>
-
   <main class="container">
+    <h1>${htmlEscape(tool.name)}</h1>
+    <p class="muted">${htmlEscape(tool.description)}</p>
     <div class="stack">
       <section class="card">
-        <h1>${htmlEscape(tool.name)}</h1>
-        <p class="muted">${htmlEscape(tool.description)}</p>
+        <h2>Introduction</h2>
         ${generateIntro(tool, ctx)}
       </section>
-
       <section class="card">
         <h2>Key features</h2>
-        <ul>
-          ${(tool.features.free || []).slice(0, 8).map(f => `<li>${htmlEscape(f)}</li>`).join('\n')}
-        </ul>
+        <ul>${(tool.features.free || []).slice(0, 8).map((f: string) => `<li>${htmlEscape(f)}</li>`).join('\n')}</ul>
       </section>
-
       <section class="card">
         <h2>How it works</h2>
         ${generateHowItWorks(tool, ctx)}
       </section>
-
       <section class="card">
         <h2>Step-by-step usage</h2>
         ${generateSteps(tool, ctx)}
       </section>
-
       <section class="card">
         <h2>Examples</h2>
         ${renderExamples(tool, ctx)}
       </section>
-
       <section class="card">
         <h2>Security & privacy</h2>
         <p>Where applicable, processing runs locally in your browser. Inputs are not logged or sent to external services. Premium features inside the app use Supabase Auth to protect access. For sensitive work, prefer local files and avoid sharing secrets. Outputs include copy and download actions to minimize manual transcription errors.</p>
       </section>
-
       <section class="card">
         <h2>Accessibility</h2>
         <p>The tool supports keyboard navigation and screen readers with ARIA labels and descriptive messages. Focus order is logical, and error messages use human‑readable language. These docs maintain proper heading hierarchy and color contrast, and the app version includes skip links and live regions where appropriate.</p>
       </section>
-
       <section class="card">
         <h2>Limitations & disclaimers</h2>
-        <p>Some advanced capabilities are available only in the DevToolsHub app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative and verify against your production stack when correctness is critical.</p>
+        <p>Some advanced capabilities are available only in the ${getDocsApplicationName()} app with a premium plan. The static documentation does not execute code or store inputs. Where behaviors differ across runtimes (browsers, servers, language engines), treat outputs as representative examples.</p>
       </section>
-
       <section class="card">
         <h2>Related tools</h2>
-        <p>Explore other DevToolsHub modules that complement ${htmlEscape(tool.name)}:</p>
+        <p>Explore other ${getDocsApplicationName()} modules that complement ${htmlEscape(tool.name)}:</p>
         ${related}
       </section>
-
       <section class="card">
         <h2>Resources & references</h2>
-        <ul>
-          ${resources}
-        </ul>
+        <ul>${resources}</ul>
       </section>
-
       <section class="card">
         <p style="margin:0;">
-          <a href="${appUrl}" class="cta">Open this tool in DevToolsHub</a>
+          <a href="${appUrl}" class="cta">Open this tool in ${getDocsApplicationName()}</a>
         </p>
       </section>
     </div>
   </main>
-
   <footer style="text-align:center;padding:16px;">
-    &copy; ${new Date().getFullYear()} <a href="${ctx.appHost}">DevToolsHub</a>
+    &copy; ${new Date().getFullYear()} <a href="${ctx.appHost}">${getDocsApplicationName()}</a>
   </footer>
   `
 }
@@ -459,25 +428,25 @@ function buildHtml(tool: ToolConfig, allTools: ToolConfig[], ctx: BuildContext):
 }
 
 function writeToolPage(tool: ToolConfig, allTools: ToolConfig[], ctx: BuildContext) {
-  const outDir = path.join(ctx.outputDir, toolSlug(tool))
+  const outDir = join(ctx.outputDir, toolSlug(tool))
   ensureDir(outDir)
-  const filePath = path.join(outDir, 'index.html')
+  const filePath = join(outDir, 'index.html')
   const html = buildHtml(tool, allTools, ctx)
-  fs.writeFileSync(filePath, html, 'utf8')
+  writeFileSync(filePath, html, 'utf8')
 
   // Per-tool sitemap.xml targeting the per-tool domain
   const perToolSitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>${toolCanonical(tool, ctx)}</loc><lastmod>${ctx.nowISO}</lastmod></url>
 </urlset>`
-  fs.writeFileSync(path.join(outDir, 'sitemap.xml'), perToolSitemap, 'utf8')
+  writeFileSync(join(outDir, 'sitemap.xml'), perToolSitemap, 'utf8')
 
   // Per-tool robots.txt pointing to its own sitemap
   const perToolRobots = `User-agent: *
 Allow: /
 Sitemap: ${toolCanonical(tool, ctx)}sitemap.xml
 `
-  fs.writeFileSync(path.join(outDir, 'robots.txt'), perToolRobots, 'utf8')
+  writeFileSync(join(outDir, 'robots.txt'), perToolRobots, 'utf8')
 }
 
 function buildDocsIndex(allTools: ToolConfig[], ctx: BuildContext): string {
@@ -485,65 +454,51 @@ function buildDocsIndex(allTools: ToolConfig[], ctx: BuildContext): string {
     .map(t => {
       const slug = toolSlug(t)
       return `
-      <a class="card" href="./${slug}/">
-        <div class="card-icon">${t.emoji || ''}</div>
-        <div class="card-body">
-          <div class="card-title">${htmlEscape(t.name)}</div>
-          <div class="card-desc">${htmlEscape(t.shortDescription)}</div>
-        </div>
-      </a>`
+      <a href="${toolCanonical(t, ctx)}" class="tool-card">
+        <span class="emoji">${t.emoji}</span>
+        <span class="name">${t.name}</span>
+        <span class="description">${t.shortDescription}</span>
+      </a>
+    `
     })
     .join('\n')
-
-  const styles = `
-    :root { --bg:#f8fafc; --fg:#0f172a; --muted:#475569; --border:#e5e7eb; --link:#2563eb; --link-hover:#1d4ed8; --card:#ffffff; }
-    @media (prefers-color-scheme: dark){ :root { --bg:#0b0b0b; --fg:#eaeaea; --muted:#a3a3a3; --border:#222; --link:#8ab4ff; --link-hover:#a7c1ff; --card:#0f172a; } }
-    html { color-scheme: light dark; }
-    body { background: var(--bg); color: var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
-    header { background: var(--card); border-bottom: 1px solid var(--border); display:flex; align-items:center; gap:12px; padding:12px 16px; }
-    header nav a { color: var(--link); text-decoration: none; margin-left: 16px; }
-    header nav a:hover { color: var(--link-hover); text-decoration: underline; }
-    .container { max-width: 1100px; margin: 32px auto; padding: 0 16px; }
-    h1 { font-size: 2rem; font-weight: 800; margin: 0 0 8px; }
-    .muted { color: var(--muted); margin-bottom: 24px; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
-    .card { display:flex; gap:12px; background: var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; text-decoration:none; color: inherit; }
-    .card:hover { border-color: var(--link); }
-    .card-icon { font-size: 20px; }
-    .card-title { font-weight: 700; margin-bottom: 4px; }
-    .card-desc { color: var(--muted); font-size: 0.95rem; }
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>${getDocsApplicationName()} Documentation</title>
+      <meta name="robots" content="index,follow" />
+      <link rel="canonical" href="${ctx.docsRootHost}/" />
+      <meta name="theme-color" content="#2563eb" />
+      <link rel="icon" href="${getAssetUrl('/favicon.ico', ctx)}" sizes="any" />
+      <link rel="apple-touch-icon" href="${getAssetUrl('/apple-touch-icon.png', ctx)}" />
+      <link rel="manifest" href="${getAssetUrl('/manifest.json', ctx)}" />
+      <style> /* ... */ </style>
+    </head>
+    <body>
+      <header>
+        <img src="${getAssetUrl('/icons/icon-48x48.png', ctx)}" width="24" height="24" alt="${getDocsApplicationName()} icon" />
+        <div style="font-weight:700;">${getDocsApplicationName()} Docs</div>
+        <nav style="margin-left:auto;">
+          <a href="${ctx.appHost}">Main App</a>
+          <a href="${ctx.docsRootHost}/changelog">Changelog</a>
+        </nav>
+      </header>
+      <main class="container">
+        <h1>Documentation</h1>
+        <p class="muted">Standalone, SEO‑optimized documentation pages for every ${getDocsApplicationName()} tool.</p>
+        <div class="grid">
+          ${cards}
+        </div>
+      </main>
+      <footer>
+        <p>&copy; ${new Date().getFullYear()} <a href="${ctx.appHost}">Main App</a>. All rights reserved.</p>
+      </footer>
+    </body>
+    </html>
   `
-
-  const html = `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>DevToolsHub Documentation</title>
-    <meta name="robots" content="index,follow" />
-    <link rel="canonical" href="${ctx.docsRootHost}/" />
-    <style>${styles}</style>
-  </head>
-  <body>
-    <header>
-      <img src="${getAssetUrl('/icons/icon-48x48.png', ctx)}" width="24" height="24" alt="DevToolsHub icon" />
-      <div style="font-weight:700;">DevToolsHub Docs</div>
-      <nav style="margin-left:auto;">
-        <a href="${ctx.appHost}">Main App</a>
-        <a href="${ctx.appHost}/#tools">All Tools</a>
-        <a href="${ctx.appHost}/sign-in">Sign in</a>
-      </nav>
-    </header>
-    <main class="container">
-      <h1>Documentation</h1>
-      <p class="muted">Standalone, SEO‑optimized documentation pages for every DevToolsHub tool.</p>
-      <div class="grid">
-        ${cards}
-      </div>
-    </main>
-  </body>
-</html>`
-  return html
 }
 
 function buildDocsSitemap(allTools: ToolConfig[], ctx: BuildContext): string {
@@ -560,45 +515,48 @@ function buildDocsSitemap(allTools: ToolConfig[], ctx: BuildContext): string {
 function buildDocsFeed(allTools: ToolConfig[], ctx: BuildContext): string {
   const items = allTools
     .map(t => `
-    <entry>
-      <title>${htmlEscape(t.name)}</title>
-      <id>${toolCanonical(t, ctx)}</id>
-      <link href="${toolCanonical(t, ctx)}" />
-      <updated>${ctx.nowISO}</updated>
-      <summary>${htmlEscape(t.shortDescription || t.description)}</summary>
-    </entry>`)
-    .join('\n')
+      <entry>
+        <title>${htmlEscape(t.name)}</title>
+        <link href="${toolCanonical(t, ctx)}"/>
+        <id>${toolCanonical(t, ctx)}</id>
+        <updated>${ctx.nowISO}</updated>
+        <summary>${htmlEscape(t.shortDescription || t.description)}</summary>
+      </entry>
+    `).join('\n')
 
   return `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>DevToolsHub – Docs Updates</title>
+  <title>${getDocsApplicationName()} – Docs Updates</title>
   <id>${ctx.docsRootHost}/</id>
   <updated>${ctx.nowISO}</updated>
+  <author><name>DevToolsHub Team</name></author>
   <link href="${ctx.docsRootHost}/feed.xml" rel="self" />
+  <link href="${ctx.docsRootHost}/" />
   ${items}
-</feed>`
+</feed>
+`
 }
 
 function writeSharedOutputs(allTools: ToolConfig[], ctx: BuildContext) {
   const indexHtml = buildDocsIndex(allTools, ctx)
-  fs.writeFileSync(path.join(ctx.outputDir, 'index.html'), indexHtml, 'utf8')
+  writeFileSync(join(ctx.outputDir, 'index.html'), indexHtml, 'utf8')
 
   const sitemapXml = buildDocsSitemap(allTools, ctx)
-  fs.writeFileSync(path.join(ctx.outputDir, 'sitemap.xml'), sitemapXml, 'utf8')
+  writeFileSync(join(ctx.outputDir, 'sitemap.xml'), sitemapXml, 'utf8')
 
   const feedXml = buildDocsFeed(allTools, ctx)
-  fs.writeFileSync(path.join(ctx.outputDir, 'feed.xml'), feedXml, 'utf8')
+  writeFileSync(join(ctx.outputDir, 'feed.xml'), feedXml, 'utf8')
 
   // robots.txt for the docs root
   const robotsTxt = `User-agent: *
 Allow: /
 Sitemap: ${ctx.docsRootHost}/sitemap.xml
 `
-  fs.writeFileSync(path.join(ctx.outputDir, 'robots.txt'), robotsTxt, 'utf8')
+  writeFileSync(join(ctx.outputDir, 'robots.txt'), robotsTxt, 'utf8')
 }
 
 async function main() {
-  const outputDir = path.resolve('docs')
+  const outputDir = join(process.cwd(), 'docs')
   ensureDir(outputDir)
 
   const ctx: BuildContext = {
@@ -606,7 +564,7 @@ async function main() {
     docsRootHost: process.env.DOCS_ROOT_HOST || DOCS_ROOT_HOST_DEFAULT,
     outputDir,
     nowISO: new Date().toISOString(),
-    contentDir: path.resolve('docs-content'),
+    contentDir: join(process.cwd(), 'docs-content'),
   }
 
   const tools = getAllTools()
@@ -618,10 +576,10 @@ async function main() {
   writeSharedOutputs(tools, ctx)
 
   // Mirror docs into public/docs for in-app serving at /docs/* during dev/prod
-  const publicDocsDir = path.resolve('public', 'docs')
+  const publicDocsDir = join(process.cwd(), 'public', 'docs')
   ensureDir(publicDocsDir)
   // Node 16+: cpSync supports recursive copy
-  fs.cpSync(outputDir, publicDocsDir, { recursive: true, force: true })
+  cpSync(outputDir, publicDocsDir, { recursive: true, force: true })
 
   // eslint-disable-next-line no-console
   console.log(`Docs generated for ${tools.length} tools → ${outputDir}`)

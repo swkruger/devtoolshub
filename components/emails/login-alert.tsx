@@ -10,6 +10,7 @@ import {
   Hr,
   Img,
 } from '@react-email/components'
+import { getEmailApplicationName } from '@/lib/app-config'
 
 interface LoginAlertEmailProps {
   userData: {
@@ -53,7 +54,7 @@ export default function LoginAlertEmail({
         <Container style={container}>
           {/* Header */}
           <Section style={header}>
-            <Heading style={headerTitle}>🔐 Welcome Back to DevToolsHub!</Heading>
+            <Heading style={headerTitle}>🔐 Welcome Back to {getEmailApplicationName()}!</Heading>
             <Text style={headerSubtitle}>Your account was accessed successfully</Text>
           </Section>
 
@@ -66,7 +67,7 @@ export default function LoginAlertEmail({
             </Text>
 
             <Text style={contentText}>
-              Welcome back! We&apos;re glad to see you again at DevToolsHub. Your account was accessed successfully.
+              Welcome back! We&apos;re glad to see you again at {getEmailApplicationName()}. Your account was accessed successfully.
             </Text>
 
             <Text style={contentText}>
@@ -110,7 +111,7 @@ export default function LoginAlertEmail({
               <Heading style={securityTitle}>🔒 Security Notice</Heading>
               
               <Text style={securityText}>
-                <strong>If this was you:</strong> You can safely ignore this email. Your account is secure and you&apos;re all set to continue using DevToolsHub.
+                <strong>If this was you:</strong> You can safely ignore this email. Your account is secure and you&apos;re all set to continue using {getEmailApplicationName()}.
               </Text>
 
               <Text style={securityText}>
@@ -150,7 +151,7 @@ export default function LoginAlertEmail({
             <Text style={footerText}>
               This is an automated security notification from{' '}
               <Link href={process.env.NEXT_PUBLIC_APP_URL} style={footerLink}>
-                DevToolsHub
+                {getEmailApplicationName()}
               </Link>
             </Text>
             
@@ -160,7 +161,7 @@ export default function LoginAlertEmail({
 
             <Text style={footerText}>
               Stay safe and happy coding! 🛡️<br />
-              - The DevToolsHub Security Team
+              - The {getEmailApplicationName()} Security Team
             </Text>
           </Section>
         </Container>

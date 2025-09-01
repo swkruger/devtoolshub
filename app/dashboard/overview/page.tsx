@@ -1,22 +1,26 @@
-import type { Metadata } from 'next'
+import { Metadata } from 'next'
+import { getMetadataApplicationName } from '@/lib/app-config'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Dashboard Overview – DevToolsHub',
-  description:
-    'Overview of the DevToolsHub dashboard: browse tools, quick access to JSON, RegEx, JWT, Base64, UUID, timestamps, XPath/CSS, images, and more.',
+  title: `Dashboard Overview – ${getMetadataApplicationName()}`,
+  description: `Overview of the ${getMetadataApplicationName()} dashboard: browse tools, quick access to JSON, RegEx, JWT, Base64, UUID, timestamps, XPath/CSS, images, and more.`,
   robots: { index: true, follow: true },
   alternates: { canonical: '/dashboard/overview' },
 }
 
 export default function DashboardOverviewPage() {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-4">Dashboard Overview</h1>
-      <p className="text-muted-foreground mb-6">
-        The DevToolsHub dashboard is your home base for launching essential developer tools. It provides a
-        simple, organized grid of available tools with quick access to key actions and descriptions.
-      </p>
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          Dashboard Overview
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400">
+          The {getMetadataApplicationName()} dashboard is your home base for launching essential developer tools. It provides a
+          centralized location to access all the utilities you need for web development, testing, and debugging.
+        </p>
+      </div>
 
       <h2 className="text-xl font-semibold mb-2">What you can do</h2>
       <ul className="list-disc pl-6 space-y-1 mb-6">

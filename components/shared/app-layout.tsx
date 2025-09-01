@@ -6,6 +6,7 @@ import { Sidebar } from "./sidebar"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { getClientApplicationName } from '@/lib/app-config'
 
 interface AppLayoutProps {
   children: React.ReactNode
@@ -42,7 +43,7 @@ export function AppLayout({ children, user }: AppLayoutProps) {
       )}>
         {/* Sidebar header with toggle */}
         <div className="flex h-16 items-center justify-between px-4 border-b border-border flex-shrink-0">
-          <span className="text-lg font-semibold">DevToolsHub</span>
+          <span className="text-lg font-semibold">{getClientApplicationName()}</span>
           
           {/* Remove desktop collapse button since we're preventing collapsing */}
 

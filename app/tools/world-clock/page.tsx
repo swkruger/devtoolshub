@@ -1,40 +1,43 @@
 import { Metadata } from 'next'
-import { authServer } from '@/lib/auth'
-import { toolConfig } from './tool.config'
+import { getToolById } from '@/lib/tools'
 import WorldClockClient from './components/world-clock-client'
+import { getMetadataApplicationName } from '@/lib/app-config'
+import { authServer } from '@/lib/auth'
 import { ToolPageHeader } from '@/components/shared/tool-page-header'
 import { PremiumOverview } from '@/components/shared/premium-overview'
 
 export const metadata: Metadata = {
-  title: `${toolConfig.name} - DevToolsHub`,
-  description: toolConfig.description,
-  keywords: toolConfig.tags.join(', '),
+  title: `World Clock & Time Zones - ${getMetadataApplicationName()}`,
+  description: 'Compare time zones across cities worldwide with meeting planner, weather data, and business hours visualization',
   openGraph: {
-    title: `${toolConfig.name} - DevToolsHub`,
-    description: toolConfig.description,
-    type: 'website',
+    title: `World Clock & Time Zones - ${getMetadataApplicationName()}`,
+    description: 'Compare time zones across cities worldwide with meeting planner, weather data, and business hours visualization',
   },
 }
 
 export default async function WorldClockPage() {
-  // Require authentication and get user profile
-  const user = await authServer.requireAuth()
-  const isBackerUser = user.plan === 'backer'
+  const tool = getToolById('world-clock')
+  const user = await authServer.getUserProfile()
+  const isBackerUser = user?.plan === 'backer'
+  
+  if (!tool) {
+    return <div>Tool not found</div>
+  }
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-7xl">
-      <ToolPageHeader icon={toolConfig.icon} title={toolConfig.name} description={toolConfig.description} />
+      <ToolPageHeader icon={tool.icon} title={tool.name} description={tool.description} />
 
       {/* Main tool interface */}
       <WorldClockClient 
         isBackerUser={isBackerUser} 
-        userId={user.id}
+        userId={user?.id || ''}
       />
       
       {/* Backer feature overview for free users only */}
       {!isBackerUser && (
         <PremiumOverview 
-          features={toolConfig.features.backer ?? []}
+          features={tool.features.backer ?? []}
           title="Backer Features"
           subtitle="Get unlimited cities, weather data, and advanced meeting planning tools"
         />

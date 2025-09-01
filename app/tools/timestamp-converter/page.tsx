@@ -1,39 +1,25 @@
-import { Metadata } from "next"
-import { Clock } from "lucide-react"
-
-import { authServer } from "@/lib/auth"
-import { toolsConfig } from "@/lib/tools"
-import { TimestampConverterClient } from "./components/timestamp-converter-client"
-import { ToolPageHeader } from "@/components/shared/tool-page-header"
-import { PremiumOverview } from "@/components/shared/premium-overview"
+import { Metadata } from 'next'
+import { toolsConfig } from '@/lib/tools'
+import { TimestampConverterClient } from './components/timestamp-converter-client'
+import { getMetadataApplicationName } from '@/lib/app-config'
+import { authServer } from '@/lib/auth'
+import { ToolPageHeader } from '@/components/shared/tool-page-header'
+import { PremiumOverview } from '@/components/shared/premium-overview'
 
 const tool = toolsConfig['timestamp-converter']
 
 export const metadata: Metadata = {
-  title: `${tool.name} - DevToolsHub`,
+  title: `${tool.name} - ${getMetadataApplicationName()}`,
   description: tool.description,
-  keywords: [
-    'timestamp converter',
-    'unix timestamp',
-    'epoch converter',
-    'date converter',
-    'timezone converter',
-    'timestamp to date',
-    'epoch time',
-    'unix time converter',
-    'timestamp format',
-    'date format converter',
-    'timestamp tools',
-    'developer tools'
-  ],
+  keywords: tool.tags.join(', '),
   openGraph: {
-    title: `${tool.name} - DevToolsHub`,
+    title: `${tool.name} - ${getMetadataApplicationName()}`,
     description: tool.description,
     type: 'website',
   },
   twitter: {
-    card: 'summary',
-    title: `${tool.name} - DevToolsHub`,
+    card: 'summary_large_image',
+    title: `${tool.name} - ${getMetadataApplicationName()}`,
     description: tool.description,
   },
 }

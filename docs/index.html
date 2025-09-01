@@ -1,133 +1,113 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>DevToolsHub Documentation</title>
-    <meta name="robots" content="index,follow" />
-    <link rel="canonical" href="./" />
-    <style>
-    :root { --bg:#f8fafc; --fg:#0f172a; --muted:#475569; --border:#e5e7eb; --link:#2563eb; --link-hover:#1d4ed8; --card:#ffffff; }
-    @media (prefers-color-scheme: dark){ :root { --bg:#0b0b0b; --fg:#eaeaea; --muted:#a3a3a3; --border:#222; --link:#8ab4ff; --link-hover:#a7c1ff; --card:#0f172a; } }
-    html { color-scheme: light dark; }
-    body { background: var(--bg); color: var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
-    header { background: var(--card); border-bottom: 1px solid var(--border); display:flex; align-items:center; gap:12px; padding:12px 16px; }
-    header nav a { color: var(--link); text-decoration: none; margin-left: 16px; }
-    header nav a:hover { color: var(--link-hover); text-decoration: underline; }
-    .container { max-width: 1100px; margin: 32px auto; padding: 0 16px; }
-    h1 { font-size: 2rem; font-weight: 800; margin: 0 0 8px; }
-    .muted { color: var(--muted); margin-bottom: 24px; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
-    .card { display:flex; gap:12px; background: var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; text-decoration:none; color: inherit; }
-    .card:hover { border-color: var(--link); }
-    .card-icon { font-size: 20px; }
-    .card-title { font-weight: 700; margin-bottom: 4px; }
-    .card-desc { color: var(--muted); font-size: 0.95rem; }
-  </style>
-  </head>
-  <body>
-    <header>
-      <img src="/icons/icon-48x48.png" width="24" height="24" alt="DevToolsHub icon" />
-      <div style="font-weight:700;">DevToolsHub Docs</div>
-      <nav style="margin-left:auto;">
-        <a href="/">Main App</a>
-        <a href="/#tools">All Tools</a>
-        <a href="/sign-in">Sign in</a>
-      </nav>
-    </header>
-    <main class="container">
-      <h1>Documentation</h1>
-      <p class="muted">Standalone, SEO‑optimized documentation pages for every DevToolsHub tool.</p>
-      <div class="grid">
-        
-      <a class="card" href="./world-clock/">
-        <div class="card-icon">🌍</div>
-        <div class="card-body">
-          <div class="card-title">World Clock &amp; Time Zones</div>
-          <div class="card-desc">World clock with meeting planner &amp; weather integration</div>
-        </div>
-      </a>
 
-      <a class="card" href="./json-formatter/">
-        <div class="card-icon">📄</div>
-        <div class="card-body">
-          <div class="card-title">JSON Formatter</div>
-          <div class="card-desc">Format and validate JSON data</div>
-        </div>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>DevToolsKitHub Documentation</title>
+      <meta name="robots" content="index,follow" />
+      <link rel="canonical" href="https://devtoolskithub.dev/" />
+      <meta name="theme-color" content="#2563eb" />
+      <link rel="icon" href="http://localhost:3000/favicon.ico" sizes="any" />
+      <link rel="apple-touch-icon" href="http://localhost:3000/apple-touch-icon.png" />
+      <link rel="manifest" href="http://localhost:3000/manifest.json" />
+      <style> /* ... */ </style>
+    </head>
+    <body>
+      <header>
+        <img src="http://localhost:3000/icons/icon-48x48.png" width="24" height="24" alt="DevToolsKitHub icon" />
+        <div style="font-weight:700;">DevToolsKitHub Docs</div>
+        <nav style="margin-left:auto;">
+          <a href="http://localhost:3000">Main App</a>
+          <a href="https://devtoolskithub.dev/changelog">Changelog</a>
+        </nav>
+      </header>
+      <main class="container">
+        <h1>Documentation</h1>
+        <p class="muted">Standalone, SEO‑optimized documentation pages for every DevToolsKitHub tool.</p>
+        <div class="grid">
+          
+      <a href="https://world-clock.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">🌍</span>
+        <span class="name">World Clock & Time Zones</span>
+        <span class="description">World clock with meeting planner & weather integration</span>
       </a>
+    
 
-      <a class="card" href="./regex-tester/">
-        <div class="card-icon">🔍</div>
-        <div class="card-body">
-          <div class="card-title">Regex Tester</div>
-          <div class="card-desc">Test regex patterns with live matching</div>
-        </div>
+      <a href="https://json-formatter.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">📄</span>
+        <span class="name">JSON Formatter</span>
+        <span class="description">Format and validate JSON data</span>
       </a>
+    
 
-      <a class="card" href="./jwt-decoder/">
-        <div class="card-icon">🔐</div>
-        <div class="card-body">
-          <div class="card-title">JWT Decoder/Encoder</div>
-          <div class="card-desc">JWT decode, encode, verify</div>
-        </div>
+      <a href="https://regex-tester.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">🔍</span>
+        <span class="name">Regex Tester</span>
+        <span class="description">Test regex patterns with live matching</span>
       </a>
+    
 
-      <a class="card" href="./image-compressor/">
-        <div class="card-icon">📸</div>
-        <div class="card-body">
-          <div class="card-title">Image Compressor</div>
-          <div class="card-desc">Compress and optimize images</div>
-        </div>
+      <a href="https://jwt-decoder.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">🔐</span>
+        <span class="name">JWT Decoder/Encoder</span>
+        <span class="description">JWT decode, encode, verify</span>
       </a>
+    
 
-      <a class="card" href="./uuid-generator/">
-        <div class="card-icon">🧬</div>
-        <div class="card-body">
-          <div class="card-title">UUID Generator</div>
-          <div class="card-desc">Generate unique identifiers</div>
-        </div>
+      <a href="https://image-compressor.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">📸</span>
+        <span class="name">Image Compressor</span>
+        <span class="description">Compress and optimize images</span>
       </a>
+    
 
-      <a class="card" href="./xpath-tester/">
-        <div class="card-icon">🧪</div>
-        <div class="card-body">
-          <div class="card-title">XPath/CSS Selector Tester</div>
-          <div class="card-desc">Test XPath and CSS selectors against HTML</div>
-        </div>
+      <a href="https://uuid-generator.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">🧬</span>
+        <span class="name">UUID Generator</span>
+        <span class="description">Generate unique identifiers</span>
       </a>
+    
 
-      <a class="card" href="./timestamp-converter/">
-        <div class="card-icon">⏰</div>
-        <div class="card-body">
-          <div class="card-title">Timestamp Converter</div>
-          <div class="card-desc">Convert timestamps and dates with timezone support</div>
-        </div>
+      <a href="https://xpath-tester.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">🧪</span>
+        <span class="name">XPath/CSS Selector Tester</span>
+        <span class="description">Test XPath and CSS selectors against HTML</span>
       </a>
+    
 
-      <a class="card" href="./base64-encoder/">
-        <div class="card-icon">🔄</div>
-        <div class="card-body">
-          <div class="card-title">Base64 Encoder/Decoder</div>
-          <div class="card-desc">Base64 encoding/decoding with file support &amp; premium features</div>
-        </div>
+      <a href="https://timestamp-converter.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">⏰</span>
+        <span class="name">Timestamp Converter</span>
+        <span class="description">Convert timestamps and dates with timezone support</span>
       </a>
+    
 
-      <a class="card" href="./password-generator/">
-        <div class="card-icon">🔑</div>
-        <div class="card-body">
-          <div class="card-title">Password &amp; Key-like Generator</div>
-          <div class="card-desc">Generate passwords, passphrases, and key-like strings</div>
-        </div>
+      <a href="https://base64-encoder.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">🔄</span>
+        <span class="name">Base64 Encoder/Decoder</span>
+        <span class="description">Base64 encoding/decoding with file support & backer features</span>
       </a>
+    
 
-      <a class="card" href="./pwa-assets/">
-        <div class="card-icon">📱</div>
-        <div class="card-body">
-          <div class="card-title">PWA Assets &amp; Manifest Generator</div>
-          <div class="card-desc">Generate PWA icons and manifest.json</div>
-        </div>
+      <a href="https://password-generator.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">🔑</span>
+        <span class="name">Password & Key-like Generator</span>
+        <span class="description">Generate passwords, passphrases, and key-like strings</span>
       </a>
-      </div>
-    </main>
-  </body>
-</html>
+    
+
+      <a href="https://pwa-assets.devtoolskithub.dev/" class="tool-card">
+        <span class="emoji">📱</span>
+        <span class="name">PWA Assets & Manifest Generator</span>
+        <span class="description">Generate PWA icons and manifest.json</span>
+      </a>
+    
+        </div>
+      </main>
+      <footer>
+        <p>&copy; 2025 <a href="http://localhost:3000">Main App</a>. All rights reserved.</p>
+      </footer>
+    </body>
+    </html>
+  

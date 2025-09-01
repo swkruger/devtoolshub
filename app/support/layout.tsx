@@ -1,8 +1,9 @@
-import type { Metadata } from 'next'
+import { Metadata } from 'next'
+import { getMetadataApplicationName } from '@/lib/app-config'
 
 export const metadata: Metadata = {
-  title: 'Support – DevToolsHub',
-  description: 'Get help and support for DevToolsHub. Submit support requests and get assistance.',
+  title: `Support – ${getMetadataApplicationName()}`,
+  description: `Get help and support for ${getMetadataApplicationName()}. Submit support requests and get assistance.`,
   robots: { index: true, follow: true },
   alternates: { canonical: '/support' },
 }

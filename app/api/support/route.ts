@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { getEmailApplicationName } from '@/lib/app-config'
 
 // Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -230,7 +231,7 @@ export async function POST(request: NextRequest) {
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center;">
             <p style="color: #6b7280; font-size: 14px;">
-              This support request was submitted through the DevToolsHub contact form.
+              This support request was submitted through the {getEmailApplicationName()} contact form.
             </p>
             <p style="color: #6b7280; font-size: 12px;">
               Rate limit: ${rateLimit.remaining} submissions remaining for this IP.

@@ -11,6 +11,7 @@ import {
   Img,
 } from '@react-email/components'
 import { UserData } from '@/lib/email'
+import { getEmailApplicationName } from '@/lib/app-config'
 
 interface NewUserNotificationEmailProps {
   userData: UserData
@@ -51,18 +52,18 @@ export default function NewUserNotificationEmail({
         <Body style={main}>
           <Container style={container}>
             <Section style={welcomeSection}>
-              <Heading style={welcomeTitle}>Welcome to DevToolsHub! 🚀</Heading>
+              <Heading style={welcomeTitle}>Welcome to {getEmailApplicationName()}! 🚀</Heading>
               
               <Text style={welcomeText}>
                 Hi {name || 'there'},
               </Text>
 
               <Text style={welcomeText}>
-                Thank you for signing up! We&apos;re excited to have you on board at DevToolsHub.
+                Thank you for signing up! We&apos;re excited to have you on board at {getEmailApplicationName()}.
               </Text>
 
               <Text style={welcomeText}>
-                DevToolsHub provides essential developer tools including:
+                {getEmailApplicationName()} provides essential developer tools including:
               </Text>
 
               <Section style={toolsList}>
@@ -93,7 +94,7 @@ export default function NewUserNotificationEmail({
 
               <Text style={welcomeFooterText}>
                 Happy coding! 🎉<br />
-                - The DevToolsHub Team
+                - The {getEmailApplicationName()} Team
               </Text>
             </Section>
           </Container>
@@ -111,7 +112,7 @@ export default function NewUserNotificationEmail({
           {/* Header */}
           <Section style={header}>
             <Heading style={headerTitle}>🎉 New User Signup!</Heading>
-            <Text style={headerSubtitle}>Someone just joined DevToolsHub</Text>
+            <Text style={headerSubtitle}>Someone just joined {getEmailApplicationName()}</Text>
           </Section>
 
           <Hr style={hr} />
@@ -184,7 +185,7 @@ export default function NewUserNotificationEmail({
             <Text style={footerText}>
               This notification was sent from{' '}
               <Link href={process.env.NEXT_PUBLIC_APP_URL} style={footerLink}>
-                DevToolsHub
+                {getEmailApplicationName()}
               </Link>
             </Text>
             <Text style={footerText}>

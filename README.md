@@ -1,8 +1,8 @@
-# DevToolsHub 🔧
+# DevToolsKitHub 🔧
 
 **A comprehensive collection of developer tools in one platform**
 
-DevToolsHub is designed for:
+DevToolsKitHub is designed for:
 - Application developers
 - QA engineers  
 - Web scrapers
@@ -23,11 +23,11 @@ It simplifies workflows by combining popular developer web tools into one extend
 | Storage      | Supabase Storage (for images/files) |
 | Deployment   | Vercel (Recommended)             |
 
-## 🚀 **DevToolsHub: Production-Ready Developer Tools Platform**
+## 🚀 **DevToolsKitHub: Production-Ready Developer Tools Platform**
 
 **9 Production-Ready Tools Available Now** • **Complete User Management System** • **Real-time Processing** • **Premium Features** • **Mobile-First Design**
 
-### ✨ What Makes DevToolsHub Special
+### ✨ What Makes DevToolsKitHub Special
 
 - **🎯 Professional Grade**: Each tool rivals the best standalone versions available online
 - **⚡ Real-time Processing**: Live testing with debounced inputs and visual feedback
@@ -49,7 +49,7 @@ It simplifies workflows by combining popular developer web tools into one extend
 
 ```bash
 git clone <your-repo-url>
-cd devtools-hub
+cd devtools-kit-hub
 npm install
 ```
 

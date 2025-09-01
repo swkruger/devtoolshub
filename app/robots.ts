@@ -1,37 +1,22 @@
-import { MetadataRoute } from 'next'
+import { getMetadataApplicationName } from '@/lib/app-config'
 
-export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'
-  
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'
+
+export default function robots() {
   return {
     rules: [
       {
         userAgent: '*',
         allow: '/',
-        disallow: [
-          '/api/',
-          '/auth/',
-          '/_next/',
-          '/private/',
-          '/dashboard/',
-          '/settings/',
-          '/go-backer/',
-        ],
+        disallow: ['/dashboard', '/settings', '/api'],
       },
       {
         userAgent: 'Googlebot',
         allow: '/',
-        disallow: [
-          '/api/',
-          '/auth/',
-          '/_next/',
-          '/private/',
-          '/dashboard/',
-          '/settings/',
-          '/go-backer/',
-        ],
+        disallow: ['/dashboard', '/settings', '/api'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   }
 } 

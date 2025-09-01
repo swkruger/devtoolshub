@@ -1,11 +1,14 @@
-import { toolsConfig } from "@/lib/tools"
+import { getMetadataApplicationName } from '@/lib/app-config'
 
-export const tool = toolsConfig['base64-encoder']
-
-export const metadata = {
-  title: `${tool.name} - DevToolsHub`,
-  description: tool.description,
-  keywords: tool.tags.join(', '),
+export const base64EncoderConfig = {
+  name: 'Base64 Encoder/Decoder',
+  description: 'Encode and decode Base64 strings with support for various input formats',
+  title: `${getMetadataApplicationName()} - Base64 Encoder/Decoder`,
+  keywords: ['base64', 'encode', 'decode', 'converter', 'utility'],
+  features: {
+    free: ['Encode text to Base64', 'Decode Base64 to text', 'File upload support', 'Copy to clipboard'],
+    backer: ['Batch processing', 'Advanced encoding options', 'History tracking']
+  }
 }
 
 // Tool-specific configuration

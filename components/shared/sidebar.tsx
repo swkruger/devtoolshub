@@ -17,6 +17,7 @@ import {
 import * as React from 'react'
 import { loadLocalFavorites, loadServerFavorites, saveLocalFavorites, toggleServerFavorite } from "@/lib/services/user-favorites"
 import { useUser } from '@/lib/useUser'
+import { getClientApplicationName } from '@/lib/app-config'
 
 // Client-only wrapper to prevent hydration issues
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -167,7 +168,7 @@ export function Sidebar({ className }: SidebarProps) {
         {/* Navigation */}
         <div className="px-3 py-2">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            DevToolsHub
+            {getClientApplicationName()}
           </h2>
           <div className="space-y-1">
             {navigation.map((item) => (

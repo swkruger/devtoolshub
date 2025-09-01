@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -13,6 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { authClient } from "@/lib/auth"
+import { getAllTools } from '@/lib/tools'
+import { useUser } from '@/lib/useUser'
+import { getClientApplicationName } from '@/lib/app-config'
 
 interface HeaderProps {
   user?: {
@@ -112,7 +115,7 @@ export function Header({ user }: HeaderProps) {
         <div className="flex items-center space-x-6">
           <Link href="/" className="flex items-center space-x-2">
             <span className="text-2xl">🔧</span>
-            <span className="font-bold text-xl">DevToolsHub</span>
+            <span className="font-bold text-xl">{getClientApplicationName()}</span>
           </Link>
           
           {user && (

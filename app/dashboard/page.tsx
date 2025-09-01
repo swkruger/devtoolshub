@@ -11,12 +11,12 @@ import ToolsBrowser from "./ToolsBrowser"
 import { getChangelog } from "@/lib/changelog"
 import { authServer } from '@/lib/auth'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { getMetadataApplicationName } from '@/lib/app-config'
 
 export const metadata: Metadata = {
-  title: 'Dashboard – DevToolsHub',
-  description: 'Browse and launch DevToolsHub tools from your dashboard. JSON, RegEx, JWT, Base64, UUID, timestamps, XPath/CSS, images, and more.',
-  robots: { index: true, follow: true },
-  alternates: { canonical: '/dashboard' },
+  title: `Dashboard – ${getMetadataApplicationName()}`,
+  description: `Browse and launch ${getMetadataApplicationName()} tools from your dashboard. JSON, RegEx, JWT, Base64, UUID, timestamps, XPath/CSS, images, and more.`,
+  robots: { index: false, follow: false },
 }
 
 // Force dynamic rendering to avoid build-time database calls

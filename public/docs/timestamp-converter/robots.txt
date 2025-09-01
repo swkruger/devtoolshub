@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://timestamp-converter.devtoolshub.dev/sitemap.xml
+Sitemap: https://timestamp-converter.devtoolskithub.dev/sitemap.xml

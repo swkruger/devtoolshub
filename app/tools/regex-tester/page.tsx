@@ -1,21 +1,30 @@
 import { Metadata } from 'next'
-import { getToolById } from '@/lib/tools'
-import { authServer } from '@/lib/auth'
-import { Search, Crown, CheckCircle } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ToolPageHeader } from "@/components/shared/tool-page-header"
-import { PremiumOverview } from "@/components/shared/premium-overview"
+import { toolsConfig } from '@/lib/tools'
 import { RegexTesterClient } from './components/regex-tester-client'
+import { getMetadataApplicationName } from '@/lib/app-config'
+import { authServer } from '@/lib/auth'
+import { ToolPageHeader } from '@/components/shared/tool-page-header'
+import { PremiumOverview } from '@/components/shared/premium-overview'
+
+const tool = toolsConfig['regex-tester']
 
 export const metadata: Metadata = {
-  title: 'Regex Tester | DevToolsHub',
-  description: 'Test regular expressions with live pattern matching, multi-language support, and advanced debugging features. The best regex testing tool for developers.',
-  keywords: 'regex, regular expression, pattern matching, javascript, python, java, test, validator',
+  title: `Regex Tester | ${getMetadataApplicationName()}`,
+  description: tool.description,
+  keywords: tool.tags.join(', '),
+  openGraph: {
+    title: `Regex Tester | ${getMetadataApplicationName()}`,
+    description: tool.description,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Regex Tester | ${getMetadataApplicationName()}`,
+    description: tool.description,
+  },
 }
 
 export default async function RegexTesterPage() {
-  const tool = getToolById('regex-tester')
   const user = await authServer.getUserProfile()
   const isBackerUser = user?.plan === 'backer'
   

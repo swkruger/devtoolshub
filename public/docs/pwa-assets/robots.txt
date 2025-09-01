@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://pwa-assets.devtoolshub.dev/sitemap.xml
+Sitemap: https://pwa-assets.devtoolskithub.dev/sitemap.xml

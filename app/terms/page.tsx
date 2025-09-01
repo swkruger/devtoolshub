@@ -247,7 +247,8 @@ export default function TermsPage() {
               If you have any questions about these Terms of Service, please contact us:
             </p>
             <ul className="content-list">
-              <li><strong>Email:</strong> contactme@devtoolshub.com</li>
+              <li><strong>Email:</strong> contactme@devtoolskithub.com</li>
+              <li><strong>Website:</strong> <a href="/">devtoolskithub.com</a></li>
               <li><strong>Support:</strong> <a href="/support" className="docs-nav">Contact Support</a></li>
             </ul>
           </section>

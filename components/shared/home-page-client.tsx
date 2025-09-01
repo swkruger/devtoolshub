@@ -12,6 +12,7 @@ import { PricingSection } from './pricing-section'
 import { RotatingScreenshots } from './rotating-screenshots'
 import { marked } from 'marked'
 import { useSignInModal } from '@/lib/use-sign-in-modal'
+import { getClientApplicationName } from '@/lib/app-config'
 
 
 // Configure marked for consistent output
@@ -70,7 +71,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'WebSite',
-            name: 'DevToolsHub',
+            name: getClientApplicationName(),
             description: 'All-in-one developer toolkit with essential web development tools',
             url: process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app',
             potentialAction: {
@@ -83,7 +84,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
             },
             publisher: {
               '@type': 'Organization',
-              name: 'DevToolsHub',
+              name: getClientApplicationName(),
               url: process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'
             },
             inLanguage: 'en-US',
@@ -138,7 +139,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Organization',
-            name: 'DevToolsHub',
+            name: getClientApplicationName(),
             url: process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app',
             logo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://devtoolshub.vercel.app'}/icons/icon-192x192.png`,
             description: 'All-in-one developer toolkit with essential web development tools',
@@ -164,12 +165,12 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
             <div className="flex items-center space-x-3">
               <Image
                 src="/icons/icon-192x192.png"
-                alt="DevToolsHub icon"
+                alt={`${getClientApplicationName()} icon`}
                 className="w-10 h-10 rounded-lg object-contain bg-white"
                 width={40}
                 height={40}
               />
-              <h1 className="text-2xl font-bold text-gray-900">DevToolsHub</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{getClientApplicationName()}</h1>
             </div>
             <nav className="flex items-center space-x-6">
               <Link 
@@ -305,7 +306,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                 Featured Article
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300">
-                Latest insights and updates from DevToolsHub
+                Latest insights and updates from {getClientApplicationName()}
               </p>
             </div>
             
@@ -477,7 +478,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
             Ready to Supercharge Your Development?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Join thousands of developers who trust DevToolsHub for their daily development needs.
+            Join thousands of developers who trust {getClientApplicationName()} for their daily development needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button 
@@ -498,12 +499,12 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
               <div className="flex items-center space-x-3 mb-4">
                 <Image
                   src="/icons/icon-192x192.png"
-                  alt="DevToolsHub icon"
+                  alt={`${getClientApplicationName()} icon`}
                   className="w-8 h-8 rounded-lg object-contain bg-white"
                   width={32}
                   height={32}
                 />
-                <span className="text-xl font-bold">DevToolsHub</span>
+                <span className="text-xl font-bold">{getClientApplicationName()}</span>
               </div>
               <p className="text-gray-400">
                 Essential developer tools for modern web development.
@@ -541,7 +542,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
           </div>
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 DevToolsHub. All rights reserved.</p>
+            <p>&copy; 2025 {getClientApplicationName()}. All rights reserved.</p>
           </div>
         </div>
       </footer>

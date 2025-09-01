@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Check, Crown, Star, Zap, Shield, Users, Clock, ArrowRight } from 'lucide-react'
 import { useSignInModal } from '@/lib/use-sign-in-modal'
+import { getClientApplicationName } from '@/lib/app-config'
 
 
 interface PricingSectionProps {
@@ -150,7 +151,7 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
               <Users className="w-6 h-6 text-purple-600" />
             </div>
             <h4 className="text-lg font-semibold text-gray-900 mb-2">Trusted by Developers</h4>
-            <p className="text-gray-600">Join thousands of developers who trust DevToolsHub daily</p>
+            <p className="text-gray-600">Join thousands of developers who trust {getClientApplicationName()} daily</p>
           </div>
         </div>
 

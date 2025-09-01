@@ -1,95 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>DevToolsHub – Docs Updates</title>
-  <id>./</id>
-  <updated>2025-08-12T23:58:17.095Z</updated>
-  <link href="./feed.xml" rel="self" />
+  <title>DevToolsKitHub – Docs Updates</title>
+  <id>https://devtoolskithub.dev/</id>
+  <updated>2025-09-01T17:27:29.836Z</updated>
+  <author><name>DevToolsHub Team</name></author>
+  <link href="https://devtoolskithub.dev/feed.xml" rel="self" />
+  <link href="https://devtoolskithub.dev/" />
   
-    <entry>
-      <title>World Clock &amp; Time Zones</title>
-      <id>./world-clock/</id>
-      <link href="./world-clock/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>World clock with meeting planner &amp; weather integration</summary>
-    </entry>
+      <entry>
+        <title>World Clock &amp; Time Zones</title>
+        <link href="https://world-clock.devtoolskithub.dev/"/>
+        <id>https://world-clock.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>World clock with meeting planner &amp; weather integration</summary>
+      </entry>
+    
 
-    <entry>
-      <title>JSON Formatter</title>
-      <id>./json-formatter/</id>
-      <link href="./json-formatter/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>Format and validate JSON data</summary>
-    </entry>
+      <entry>
+        <title>JSON Formatter</title>
+        <link href="https://json-formatter.devtoolskithub.dev/"/>
+        <id>https://json-formatter.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>Format and validate JSON data</summary>
+      </entry>
+    
 
-    <entry>
-      <title>Regex Tester</title>
-      <id>./regex-tester/</id>
-      <link href="./regex-tester/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>Test regex patterns with live matching</summary>
-    </entry>
+      <entry>
+        <title>Regex Tester</title>
+        <link href="https://regex-tester.devtoolskithub.dev/"/>
+        <id>https://regex-tester.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>Test regex patterns with live matching</summary>
+      </entry>
+    
 
-    <entry>
-      <title>JWT Decoder/Encoder</title>
-      <id>./jwt-decoder/</id>
-      <link href="./jwt-decoder/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>JWT decode, encode, verify</summary>
-    </entry>
+      <entry>
+        <title>JWT Decoder/Encoder</title>
+        <link href="https://jwt-decoder.devtoolskithub.dev/"/>
+        <id>https://jwt-decoder.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>JWT decode, encode, verify</summary>
+      </entry>
+    
 
-    <entry>
-      <title>Image Compressor</title>
-      <id>./image-compressor/</id>
-      <link href="./image-compressor/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>Compress and optimize images</summary>
-    </entry>
+      <entry>
+        <title>Image Compressor</title>
+        <link href="https://image-compressor.devtoolskithub.dev/"/>
+        <id>https://image-compressor.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>Compress and optimize images</summary>
+      </entry>
+    
 
-    <entry>
-      <title>UUID Generator</title>
-      <id>./uuid-generator/</id>
-      <link href="./uuid-generator/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>Generate unique identifiers</summary>
-    </entry>
+      <entry>
+        <title>UUID Generator</title>
+        <link href="https://uuid-generator.devtoolskithub.dev/"/>
+        <id>https://uuid-generator.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>Generate unique identifiers</summary>
+      </entry>
+    
 
-    <entry>
-      <title>XPath/CSS Selector Tester</title>
-      <id>./xpath-tester/</id>
-      <link href="./xpath-tester/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>Test XPath and CSS selectors against HTML</summary>
-    </entry>
+      <entry>
+        <title>XPath/CSS Selector Tester</title>
+        <link href="https://xpath-tester.devtoolskithub.dev/"/>
+        <id>https://xpath-tester.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>Test XPath and CSS selectors against HTML</summary>
+      </entry>
+    
 
-    <entry>
-      <title>Timestamp Converter</title>
-      <id>./timestamp-converter/</id>
-      <link href="./timestamp-converter/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>Convert timestamps and dates with timezone support</summary>
-    </entry>
+      <entry>
+        <title>Timestamp Converter</title>
+        <link href="https://timestamp-converter.devtoolskithub.dev/"/>
+        <id>https://timestamp-converter.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>Convert timestamps and dates with timezone support</summary>
+      </entry>
+    
 
-    <entry>
-      <title>Base64 Encoder/Decoder</title>
-      <id>./base64-encoder/</id>
-      <link href="./base64-encoder/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>Base64 encoding/decoding with file support &amp; premium features</summary>
-    </entry>
+      <entry>
+        <title>Base64 Encoder/Decoder</title>
+        <link href="https://base64-encoder.devtoolskithub.dev/"/>
+        <id>https://base64-encoder.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>Base64 encoding/decoding with file support &amp; backer features</summary>
+      </entry>
+    
 
-    <entry>
-      <title>Password &amp; Key-like Generator</title>
-      <id>./password-generator/</id>
-      <link href="./password-generator/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>Generate passwords, passphrases, and key-like strings</summary>
-    </entry>
+      <entry>
+        <title>Password &amp; Key-like Generator</title>
+        <link href="https://password-generator.devtoolskithub.dev/"/>
+        <id>https://password-generator.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>Generate passwords, passphrases, and key-like strings</summary>
+      </entry>
+    
 
-    <entry>
-      <title>PWA Assets &amp; Manifest Generator</title>
-      <id>./pwa-assets/</id>
-      <link href="./pwa-assets/" />
-      <updated>2025-08-12T23:58:17.095Z</updated>
-      <summary>Generate PWA icons and manifest.json</summary>
-    </entry>
+      <entry>
+        <title>PWA Assets &amp; Manifest Generator</title>
+        <link href="https://pwa-assets.devtoolskithub.dev/"/>
+        <id>https://pwa-assets.devtoolskithub.dev/</id>
+        <updated>2025-09-01T17:27:29.836Z</updated>
+        <summary>Generate PWA icons and manifest.json</summary>
+      </entry>
+    
 </feed>

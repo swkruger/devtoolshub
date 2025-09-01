@@ -6,9 +6,10 @@ import { listFeaturedBlogs, listPopularBlogs } from '@/lib/services/blogs'
 import { HomePageClient } from '@/components/shared/home-page-client'
 import { headers } from 'next/headers'
 import { isSearchEngineCrawler, getUserAgent } from '@/lib/utils'
+import { getMetadataApplicationName } from '@/lib/app-config'
 
 export const metadata: Metadata = {
-  title: 'DevToolsHub – Essential Developer Tools',
+  title: `${getMetadataApplicationName()} – Essential Developer Tools`,
   description:
     'All-in-one developer toolkit with 11 powerful tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 encoder/decoder, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password generator, and PWA assets generator. All tools are free forever, no ads. Support the project to unlock advanced features.',
   keywords: [
@@ -76,23 +77,23 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: '/' },
       openGraph: {
-      title: 'DevToolsHub – Essential Developer Tools',
+      title: `${getMetadataApplicationName()} – Essential Developer Tools`,
       description: 'All-in-one developer toolkit with 11 powerful tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 encoder/decoder, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password generator, and PWA assets generator. All tools are free forever, no ads. Support the project to unlock advanced features.',
     url: '/',
-    siteName: 'DevToolsHub',
+    siteName: getMetadataApplicationName(),
     type: 'website',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'DevToolsHub - Developer Tools Collection',
+        alt: `${getMetadataApplicationName()} - Developer Tools Collection`,
       }
     ],
   },
       twitter: {
       card: 'summary_large_image',
-      title: 'DevToolsHub – Essential Developer Tools',
+      title: `${getMetadataApplicationName()} – Essential Developer Tools`,
       description: 'All-in-one developer toolkit with 11 powerful tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 encoder/decoder, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password generator, and PWA assets generator. All tools are free forever, no ads. Support the project to unlock advanced features.',
     images: ['/og-image.png'],
   },

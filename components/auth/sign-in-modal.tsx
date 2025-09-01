@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { CheckCircle, Shield, Zap } from "lucide-react"
 import { authClient } from "@/lib/auth"
+import { useSignInModal } from '@/lib/use-sign-in-modal'
+import { getClientApplicationName } from '@/lib/app-config'
 
 interface SignInModalProps {
   open: boolean
@@ -87,7 +89,7 @@ export function SignInModal({ open, onOpenChange, redirectTo = '/dashboard' }: S
         <DialogContent className="max-w-md p-0 overflow-hidden">
           <DialogHeader className="px-8 pt-8 pb-6">
             <DialogTitle className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">
-              Welcome to DevToolsHub
+              Welcome to {getClientApplicationName()}
             </DialogTitle>
           </DialogHeader>
           <div className="flex items-center justify-center py-12 px-8">
@@ -106,7 +108,7 @@ export function SignInModal({ open, onOpenChange, redirectTo = '/dashboard' }: S
       <DialogContent className="max-w-md p-0 overflow-hidden">
         <DialogHeader className="px-8 pt-8 pb-6 mb-4">
           <DialogTitle className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">
-            Welcome to DevToolsHub
+            Welcome to {getClientApplicationName()}
           </DialogTitle>
           <div className="text-base text-center text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
             Sign in to access your developer toolkit

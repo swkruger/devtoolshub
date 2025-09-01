@@ -38,19 +38,18 @@ export async function GET(request: NextRequest) {
       }
     } else {
       // Test basic email
-      const result = await sendTestEmail(userEmail)
-      
-      if (result.success) {
+      try {
+        await sendTestEmail(userEmail, testType)
         return NextResponse.json({ 
           success: true, 
           message: `Test email sent successfully to ${userEmail}!`,
           type: 'test',
           sentTo: userEmail
         })
-      } else {
+      } catch (error) {
         return NextResponse.json({ 
           success: false, 
-          error: result.error,
+          error: error instanceof Error ? error.message : 'Failed to send test email',
           type: 'test'
         }, { status: 400 })
       }

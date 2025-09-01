@@ -2,6 +2,7 @@ import { Resend } from 'resend'
 import NewUserNotification from '@/components/emails/new-user-notification'
 import LoginAlertEmail from '@/components/emails/login-alert'
 import NewDeviceAlertEmail from '@/components/emails/new-device-alert'
+import { getEmailApplicationName } from '@/lib/app-config'
 
 // Initialize Resend with API key (conditional)
 const RESEND_API_KEY = process.env.RESEND_API_KEY
@@ -46,7 +47,7 @@ export const sendNewUserNotification = async (userData: UserData): Promise<{ suc
     const { data, error } = await resend!.emails.send({
       from: FROM_EMAIL,
       to: [ADMIN_EMAIL],
-      subject: '🎉 New User Signup - DevToolsHub',
+              subject: `🎉 New User Signup - ${getEmailApplicationName()}`,
       react: NewUserNotification({ userData }),
     })
 
@@ -75,7 +76,7 @@ export const sendWelcomeEmail = async (userData: UserData): Promise<{ success: b
     const { data, error } = await resend!.emails.send({
       from: FROM_EMAIL,
       to: [userData.email],
-      subject: 'Welcome to DevToolsHub! 🚀',
+              subject: `Welcome to ${getEmailApplicationName()}! 🚀`,
       react: NewUserNotification({ userData, isWelcomeEmail: true }),
     })
 
@@ -93,52 +94,31 @@ export const sendWelcomeEmail = async (userData: UserData): Promise<{ success: b
 }
 
 // Test email function for verification
-export const sendTestEmail = async (testUserEmail?: string): Promise<{ success: boolean; error?: string }> => {
-  try {
-    // Check if email service is available
-    if (!isEmailServiceAvailable()) {
-      console.warn('Email service not available - missing RESEND_API_KEY. Skipping test email.')
-      return { success: false, error: 'Email service not configured' }
-    }
-
-    // Use provided email or default to admin email
-    const toEmail = testUserEmail || ADMIN_EMAIL
-
-    const { data, error } = await resend!.emails.send({
-      from: FROM_EMAIL,
-      to: [toEmail],
-      subject: '🧪 DevToolsHub Email Test',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h1 style="color: #4f46e5;">🧪 Email Test Successful!</h1>
-          <p>This is a test email from DevToolsHub to verify your email configuration.</p>
-          <p><strong>Configuration Details:</strong></p>
-          <ul>
-            <li>From: ${FROM_EMAIL}</li>
-            <li>To: ${toEmail}</li>
-            <li>Environment: ${process.env.NODE_ENV || 'development'}</li>
-            <li>Timestamp: ${new Date().toISOString()}</li>
-          </ul>
-          <p>If you&apos;re seeing this email, your Resend integration is working correctly! 🎉</p>
-          <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e7eb;">
-          <p style="font-size: 12px; color: #6b7280;">
-            This email was sent from DevToolsHub for testing purposes.
-          </p>
-        </div>
-      `,
-    })
-
-    if (error) {
-      console.error('Failed to send test email:', error)
-      return { success: false, error: error.message }
-    }
-
-    console.log('Test email sent successfully:', data?.id)
-    return { success: true }
-  } catch (error) {
-    console.error('Error sending test email:', error)
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
-  }
+export async function sendTestEmail(toEmail: string, testType: string) {
+  if (!resend || !FROM_EMAIL) return
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: [toEmail],
+    subject: `🧪 ${getEmailApplicationName()} Email Test`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #4f46e5;">🧪 Email Test Successful!</h1>
+        <p>This is a test email from ${getEmailApplicationName()} to verify your email configuration.</p>
+        <p><strong>Configuration Details:</strong></p>
+        <ul>
+          <li>From: ${FROM_EMAIL}</li>
+          <li>To: ${toEmail}</li>
+          <li>Environment: ${process.env.NODE_ENV || 'development'}</li>
+          <li>Timestamp: ${new Date().toISOString()}</li>
+        </ul>
+        <p>If you received this email, your email configuration is working correctly!</p>
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e7eb;">
+        <p style="font-size: 12px; color: #6b7280;">
+          This email was sent from ${getEmailApplicationName()} for testing purposes.
+        </p>
+      </div>
+    `,
+  })
 }
 
 // Security notification functions
@@ -163,7 +143,7 @@ export const sendLoginAlert = async (
     const { data, error } = await resend!.emails.send({
       from: FROM_EMAIL,
       to: [userData.email],
-      subject: '🔐 Welcome Back to DevToolsHub!',
+              subject: `🔐 Welcome Back to ${getEmailApplicationName()}!`,
       react: LoginAlertEmail({ userData: emailUserData, loginData }),
     })
 
@@ -202,7 +182,7 @@ export const sendNewDeviceAlert = async (
     const { data, error } = await resend!.emails.send({
       from: FROM_EMAIL,
       to: [userData.email],
-      subject: '⚠️ New Device Login Alert - DevToolsHub',
+              subject: `⚠️ New Device Login Alert - ${getEmailApplicationName()}`,
       react: NewDeviceAlertEmail({ userData: emailUserData, loginData, previousLoginData }),
     })
 

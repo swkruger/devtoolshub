@@ -1,10 +1,8 @@
----
-alwaysApply: true
----
-DevToolsHub is designed for:
+# DevToolsKitHub Development Rules
 
+DevToolsKitHub is designed for:
 - Application developers
-- QA engineers
+- QA engineers  
 - Web scrapers
 - API testers
 - Frontend/UI/UX developers
@@ -102,6 +100,9 @@ export default function MyToolPage() {
     <div className="p-4">
       <h1 className="text-2xl font-bold">My Awesome Tool</h1>
       {/* Tool UI here */}
+    </div>
+  );
+}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { format, addHours, addDays, isWeekend } from 'date-fns'
 import { toZonedTime, fromZonedTime, format as formatTz } from 'date-fns-tz'
 import { City } from './cities-data'
+import { getClientApplicationName } from '@/lib/app-config'
 
 import { WeatherData } from './weather-utils'
 
@@ -280,14 +281,14 @@ export const generateICalEvent = (
   
   return `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//DevToolsHub//World Clock//EN
+PRODID:-//DevToolsKitHub//World Clock//EN
 BEGIN:VEVENT
-UID:${Date.now()}@devtoolshub.com
+UID:${Date.now()}@devtoolskithub.com
 DTSTAMP:${formatICalDate(new Date())}
 DTSTART:${formatICalDate(startTime)}
 DTEND:${formatICalDate(endTime)}
 SUMMARY:${title}
-DESCRIPTION:Meeting scheduled across multiple timezones using DevToolsHub World Clock
+DESCRIPTION:Meeting scheduled across multiple timezones using ${getClientApplicationName()} World Clock
 END:VEVENT
 END:VCALENDAR`
 }
