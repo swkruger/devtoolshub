@@ -77,6 +77,18 @@ export async function middleware(request: NextRequest) {
   // Check if user is authenticated
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Debug logging for authentication issues
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Middleware Debug:', {
+      pathname,
+      isProtectedRoute,
+      hasSession: !!session,
+      hasUser: !!user,
+      userId: user?.id,
+      userEmail: user?.email
+    })
+  }
+
   // Redirect logic
   if (isProtectedRoute && !user) {
     // User is not authenticated and trying to access protected route

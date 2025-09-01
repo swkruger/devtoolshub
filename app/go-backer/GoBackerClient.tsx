@@ -321,9 +321,9 @@ export default function GoBackerClient({ user, profile, isBackerUser }: GoBacker
       )}
 
       {/* Hero Section */}
-      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
+      <Card className="bg-gradient-to-br from-muted to-secondary/20 border-border">
         <CardHeader className="text-center">
-          <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
+          <div className="mx-auto w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
             <Crown className="w-8 h-8 text-white" />
           </div>
           <CardTitle className="text-3xl font-bold text-gray-900 dark:text-gray-100">
@@ -340,12 +340,12 @@ export default function GoBackerClient({ user, profile, isBackerUser }: GoBacker
             </span>
             <span className="text-lg text-gray-600 dark:text-gray-300">/month</span>
           </div>
-          <Button 
-            onClick={handleUpgrade} 
-            disabled={isUpgrading}
-            size="lg"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3"
-          >
+                     <Button 
+             onClick={handleUpgrade} 
+             disabled={isUpgrading}
+             size="lg"
+             className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
+           >
             {isUpgrading ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -373,8 +373,8 @@ export default function GoBackerClient({ user, profile, isBackerUser }: GoBacker
           <div className="grid md:grid-cols-2 gap-6">
             {BACKER_BENEFITS.map((benefit, index) => (
               <div key={index} className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                  <benefit.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="flex-shrink-0 w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                  <benefit.icon className="w-6 h-6 text-foreground" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-lg mb-2 text-gray-900 dark:text-gray-100">{benefit.title}</h4>
@@ -400,7 +400,7 @@ export default function GoBackerClient({ user, profile, isBackerUser }: GoBacker
               <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 {currentPlan === 'backer' ? (
                   <>
-                    <Crown className="h-5 w-5 text-blue-600" />
+                    <Crown className="h-5 w-5 text-amber-500" />
                     Backer Plan
                   </>
                 ) : (
@@ -447,7 +447,7 @@ export default function GoBackerClient({ user, profile, isBackerUser }: GoBacker
 
           <div className="flex gap-2">
             {currentPlan === 'free' ? (
-              <Button onClick={handleUpgrade} disabled={isUpgrading} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleUpgrade} disabled={isUpgrading} className="flex items-center gap-2 bg-primary hover:bg-primary/90">
                 {isUpgrading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -498,13 +498,13 @@ export default function GoBackerClient({ user, profile, isBackerUser }: GoBacker
                 key={planKey}
                 className={`p-4 rounded-lg border ${
                   planKey === currentPlan
-                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/20'
+                    ? 'border-primary bg-primary/5'
                     : 'border-gray-200 dark:border-gray-700'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                    {planKey === 'backer' && <Crown className="h-4 w-4 text-blue-600" />}
+                    {planKey === 'backer' && <Crown className="h-4 w-4 text-amber-500" />}
                     {plan.name}
                   </h4>
                   <div className="text-right">

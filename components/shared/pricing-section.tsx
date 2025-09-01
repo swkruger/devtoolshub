@@ -99,28 +99,28 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
           </div>
 
           {/* Premium Plan */}
-          <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl shadow-xl border border-blue-500 p-8 relative">
+          <div className="bg-card border border-border rounded-2xl shadow-xl p-8 relative">
 
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-white mb-2">Backer</h3>
-              <div className="text-4xl font-bold text-white mb-2">
+              <h3 className="text-2xl font-bold text-foreground mb-2">Backer</h3>
+              <div className="text-4xl font-bold text-foreground mb-2">
                 {isLoading ? (
-                  <div className="animate-pulse bg-white/20 h-12 w-24 mx-auto rounded"></div>
+                  <div className="animate-pulse bg-muted h-12 w-24 mx-auto rounded"></div>
                 ) : (
                   <>
                     ${backerPrice}
-                    <span className="text-lg font-normal text-blue-100">/month</span>
+                    <span className="text-lg font-normal text-muted-foreground">/month</span>
                   </>
                 )}
               </div>
-              <p className="text-blue-100">Support the project & unlock advanced features</p>
+              <p className="text-muted-foreground">Support the project & unlock advanced features</p>
             </div>
 
             <div className="space-y-4 mb-8">
               {premiumFeatures.map((feature, index) => (
                 <div key={index} className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span className="text-white">{feature}</span>
+                  <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-foreground">{feature}</span>
                 </div>
               ))}
             </div>
@@ -190,7 +190,7 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button
                 onClick={() => openModal()}
-                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                className="bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
               >
                 Become a Backer
                 <ArrowRight className="w-4 h-4" />

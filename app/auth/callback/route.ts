@@ -39,6 +39,45 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(signInUrl)
     }
 
+    // Ensure user profile exists (in case trigger didn't work)
+    if (data.session?.user) {
+      try {
+        const { data: existingProfile } = await supabase
+          .from('users')
+          .select('id')
+          .eq('id', data.session.user.id)
+          .single()
+
+        if (!existingProfile) {
+          // Profile doesn't exist, create it manually
+          const userData = {
+            id: data.session.user.id,
+            email: data.session.user.email!,
+            name: data.session.user.user_metadata?.name || 
+                  data.session.user.user_metadata?.full_name || 
+                  data.session.user.user_metadata?.preferred_username ||
+                  data.session.user.email!.split('@')[0],
+            avatar_url: data.session.user.user_metadata?.avatar_url || 
+                       data.session.user.user_metadata?.picture ||
+                       data.session.user.user_metadata?.image,
+            plan: 'free',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }
+
+          const { error: insertError } = await supabase
+            .from('users')
+            .insert(userData)
+
+          if (insertError) {
+            console.error('Failed to create user profile:', insertError)
+          }
+        }
+      } catch (profileError) {
+        console.error('Error checking/creating user profile:', profileError)
+      }
+    }
+
     // Determine redirect URL
     const getRedirectUrl = (origin: string) => {
       if (origin && origin.startsWith('https://')) {

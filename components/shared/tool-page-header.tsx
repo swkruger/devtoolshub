@@ -10,8 +10,8 @@ interface ToolPageHeaderProps {
 export function ToolPageHeader({ icon: Icon, title, description }: ToolPageHeaderProps) {
   return (
     <div className="flex items-center gap-3 mb-4">
-      <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
-        <Icon className="w-4 h-4 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+      <div className="p-2 bg-muted rounded-lg">
+        <Icon className="w-4 h-4 text-foreground" aria-hidden="true" />
       </div>
       <div>
         <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">

@@ -59,6 +59,42 @@ export function useUser() {
 
           if (profileError) {
             console.error('useUser - Error fetching profile:', profileError)
+            
+            // If profile doesn't exist, try to create it
+            if (profileError.code === 'PGRST116') {
+              console.log('useUser - Profile not found, attempting to create...')
+              try {
+                const userData = {
+                  id: session.user.id,
+                  email: session.user.email!,
+                  name: session.user.user_metadata?.name || 
+                        session.user.user_metadata?.full_name || 
+                        session.user.user_metadata?.preferred_username ||
+                        session.user.email!.split('@')[0],
+                  avatar_url: session.user.user_metadata?.avatar_url || 
+                             session.user.user_metadata?.picture ||
+                             session.user.user_metadata?.image,
+                  plan: 'free'
+                }
+
+                const { data: newProfile, error: createError } = await supabase
+                  .from('users')
+                  .insert(userData)
+                  .select()
+                  .single()
+
+                if (createError) {
+                  console.error('useUser - Failed to create profile:', createError)
+                } else if (newProfile) {
+                  console.log('useUser - Created new profile:', newProfile)
+                  const combinedUser = { ...session.user, ...newProfile } as UserProfile
+                  setUser(combinedUser)
+                }
+              } catch (createError) {
+                console.error('useUser - Profile creation exception:', createError)
+              }
+            }
+            
             // Keep the basic user data if profile fetch fails
           } else if (profile) {
             // Update user with profile data
