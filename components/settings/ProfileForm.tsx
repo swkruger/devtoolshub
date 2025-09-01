@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { User } from '@supabase/supabase-js'
+import { useTheme } from 'next-themes'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -61,11 +62,13 @@ interface FormErrors {
 }
 
 export default function ProfileForm({ user, profile, preferences, isBackerUser }: ProfileFormProps) {
+  const { theme, setTheme } = useTheme()
+  
   const [formData, setFormData] = useState<FormData>({
     name: profile?.name || '',
     bio: preferences?.bio || '',
     timezone: preferences?.timezone || 'UTC',
-    theme: preferences?.theme || 'system',
+    theme: preferences?.theme || 'dark',
     language: preferences?.language || 'en'
   })
 
@@ -82,10 +85,20 @@ export default function ProfileForm({ user, profile, preferences, isBackerUser }
       name: profile?.name || '',
       bio: preferences?.bio || '',
       timezone: preferences?.timezone || 'UTC',
-      theme: preferences?.theme || 'system',
+      theme: preferences?.theme || 'dark',
       language: preferences?.language || 'en'
     })
   }, [profile, preferences])
+
+  // Sync form theme with theme provider
+  useEffect(() => {
+    if (theme && formData.theme !== theme) {
+      setFormData(prev => ({
+        ...prev,
+        theme: theme as 'light' | 'dark' | 'system'
+      }))
+    }
+  }, [theme, formData.theme])
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -191,6 +204,11 @@ export default function ProfileForm({ user, profile, preferences, isBackerUser }
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }))
+    }
+
+    // Immediately apply theme changes to the UI
+    if (field === 'theme') {
+      setTheme(value as 'light' | 'dark' | 'system')
     }
   }
 

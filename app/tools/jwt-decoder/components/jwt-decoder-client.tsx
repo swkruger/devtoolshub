@@ -14,6 +14,7 @@ import { JwtSnippetsManager } from "./jwt-snippets-manager";
 import { HelpCircle } from "lucide-react";
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { useTheme } from "next-themes";
 
 interface JwtDecoderClientProps {
   isBackerUser: boolean;
@@ -40,6 +41,7 @@ const SAMPLE_JWT =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
 export default function JwtDecoderClient({ isBackerUser, userId }: JwtDecoderClientProps) {
+  const { theme } = useTheme();
   const [jwt, setJwt] = useState("");
   const [touched, setTouched] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -50,6 +52,9 @@ export default function JwtDecoderClient({ isBackerUser, userId }: JwtDecoderCli
   const [isJwtSnippetsManagerOpen, setIsJwtSnippetsManagerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { header, payload, signature, error } = decodeJWT(jwt.trim());
+  
+  // Determine if we're in dark mode
+  const isDarkMode = theme === 'dark' || (theme === 'system' && typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const handleLoadSample = () => {
     setJwt(SAMPLE_JWT);
@@ -438,12 +443,12 @@ export default function JwtDecoderClient({ isBackerUser, userId }: JwtDecoderCli
       </div>
 
       <div role="region" aria-label="JWT input editor" className="space-y-2">
-        <div className="text-sm font-medium text-gray-700 dark:text-gray-300">JWT</div>
+        <div className="text-sm font-medium text-foreground">JWT</div>
         <JwtEditor
           value={jwt}
           onChange={(val) => { setJwt(val); setTouched(true); }}
           placeholder="Paste your JWT here..."
-          isDarkMode={false}
+          isDarkMode={isDarkMode}
         />
       </div>
 
@@ -459,14 +464,14 @@ export default function JwtDecoderClient({ isBackerUser, userId }: JwtDecoderCli
       {header && payload && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4" role="region" aria-label="Decoded JWT sections">
           <div role="region" aria-label="JWT header">
-            <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Header</div>
+            <div className="text-sm font-medium text-foreground mb-1">Header</div>
             <pre className="bg-muted rounded p-2 text-xs overflow-x-auto" tabIndex={0}>
               {JSON.stringify(header, null, 2)}
             </pre>
           </div>
           <div role="region" aria-label="JWT payload">
             <div className="flex items-center mb-1">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Payload</span>
+              <span className="text-sm font-medium text-foreground">Payload</span>
               <Button 
                 size="sm" 
                 variant="ghost" 
@@ -484,7 +489,7 @@ export default function JwtDecoderClient({ isBackerUser, userId }: JwtDecoderCli
             </pre>
           </div>
           <div role="region" aria-label="JWT signature">
-            <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Signature</div>
+            <div className="text-sm font-medium text-foreground mb-1">Signature</div>
             <pre className="bg-muted rounded p-2 text-xs overflow-x-auto break-all" tabIndex={0}>
               {signature}
             </pre>

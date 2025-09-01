@@ -242,7 +242,7 @@ ${results.results.map(r => `${r.index}. ${r.isValid ? '✓' : '✗'} ${r.payload
                 value={jwts.join('\n')}
                 onChange={handlePaste}
                 placeholder="Paste your JWTs here, one per line..."
-                className="w-full h-32 p-3 border rounded-lg font-mono text-sm resize-none"
+                className="w-full h-32 p-3 border border-border rounded-lg font-mono text-sm resize-none bg-background text-foreground placeholder:text-muted-foreground"
               />
             </div>
 

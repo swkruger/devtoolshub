@@ -225,13 +225,13 @@ export function TokenInspector({ jwt, isOpen, onClose }: TokenInspectorProps) {
                 placeholder="Search claims..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full p-2 border rounded-lg"
+                className="w-full p-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="p-2 border rounded-lg"
+              className="p-2 border border-border rounded-lg bg-background text-foreground"
             >
               {categories.map(category => (
                 <option key={category} value={category}>

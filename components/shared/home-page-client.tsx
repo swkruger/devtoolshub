@@ -13,6 +13,7 @@ import { RotatingScreenshots } from './rotating-screenshots'
 import { marked } from 'marked'
 import { useSignInModal } from '@/lib/use-sign-in-modal'
 import { getClientApplicationName } from '@/lib/app-config'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 
 // Configure marked for consistent output
@@ -155,39 +156,39 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
         }}
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         
 
         {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
               <Image
                 src="/icons/icon-192x192.png"
                 alt={`${getClientApplicationName()} icon`}
-                className="w-10 h-10 rounded-lg object-contain bg-white"
+                className="w-10 h-10 rounded-lg object-contain bg-background"
                 width={40}
                 height={40}
               />
-              <h1 className="text-2xl font-bold text-gray-900">{getClientApplicationName()}</h1>
+              <h1 className="text-2xl font-bold text-foreground">{getClientApplicationName()}</h1>
             </div>
             <nav className="flex items-center space-x-6">
               <Link 
                 href="/blog" 
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Blog
               </Link>
               <Link 
                 href="#pricing" 
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Support the Project
               </Link>
               <Link 
                 href="https://github.com/swkruger/devtoolshub" 
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -199,22 +200,23 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
               >
                 Get Started
               </button>
+              <ThemeToggle />
             </nav>
           </div>
         </div>
       </header>
 
              {/* Hero Section */}
-       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-blue-50">
+       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900/20">
          <div className="max-w-7xl mx-auto">
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
              {/* Left Column - Text Content */}
              <div className="text-left">
-               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-gray-100 mb-6">
                  Essential Developer Tools
-                 <span className="block text-blue-600">All in One Place</span>
+                 <span className="block text-blue-600 dark:text-blue-400">All in One Place</span>
                </h1>
-               <p className="text-xl text-gray-600 mb-8">
+               <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
                  Streamline your development workflow with our comprehensive suite of essential tools. 
                  {availableCount} powerful tools available now, all completely free forever with no ads. Support the project to unlock advanced features and help us build more tools.
                </p>
@@ -227,7 +229,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                  </button>
                  <Link 
                    href="#tools" 
-                   className="border border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors text-center"
+                   className="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-center"
                  >
                    Explore Tools
                  </Link>
@@ -243,13 +245,13 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
        </section>
 
       {/* Tools Showcase */}
-      <section id="tools" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="tools" className="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 id="tools" className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 id="tools" className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               Professional Developer Tools
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Everything you need for modern web development, API testing, and data manipulation.
             </p>
           </div>
@@ -258,22 +260,22 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
             {tools.map(tool => (
               <div key={tool.id} className="relative">
                 <Link href={tool.path} className="group block">
-                  <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-blue-300">
+                  <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-lg transition-all hover:border-blue-300 dark:hover:border-blue-500">
                     <div className="flex items-center mb-4">
                       <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
                         <tool.icon className="w-6 h-6 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-gray-900">{tool.name}</h3>
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{tool.name}</h3>
                         <div className="flex items-center gap-2">
                           <span className="text-sm text-green-600 font-medium">✅ Available</span>
                         </div>
                       </div>
                     </div>
-                    <p className="text-gray-600 mb-4">{tool.shortDescription}</p>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">{tool.shortDescription}</p>
                     <div className="flex flex-wrap gap-2 text-xs text-gray-500">
                       {tool.tags.slice(0,4).map(tag => (
-                        <span key={tag} className="px-2 py-1 rounded bg-gray-100">{tag}</span>
+                        <span key={tag} className="px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">{tag}</span>
                       ))}
                     </div>
                   </div>
@@ -281,7 +283,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
                 <Link
                   href={`/docs/${tool.id}`}
                   aria-label={`Open ${tool.name} docs`}
-                  className="absolute top-3 right-3 text-gray-500 hover:text-blue-600 transition-colors"
+                  className="absolute top-3 right-3 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   title="Open docs"
                 >
                   <BookOpen className="w-5 h-5" />
@@ -477,13 +479,13 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
           <h2 className="text-4xl font-bold text-white mb-6">
             Ready to Supercharge Your Development?
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-blue-100 dark:text-blue-200 mb-8">
             Join thousands of developers who trust {getClientApplicationName()} for their daily development needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button 
               onClick={() => openModal()}
-              className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors"
+              className="bg-white dark:bg-gray-100 text-blue-600 dark:text-blue-700 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-200 transition-colors shadow-lg hover:shadow-xl"
             >
               Get Started
             </button>            

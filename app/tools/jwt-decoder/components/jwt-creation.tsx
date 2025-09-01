@@ -217,7 +217,7 @@ export function JwtCreation({ isOpen, onClose }: JwtCreationProps) {
                   id="header"
                   value={headerJson}
                   onChange={(e) => setHeaderJson(e.target.value)}
-                  className="w-full h-32 p-3 border rounded-lg font-mono text-sm resize-none"
+                  className="w-full h-32 p-3 border border-border rounded-lg font-mono text-sm resize-none bg-background text-foreground placeholder:text-muted-foreground"
                   placeholder="Enter JWT header as JSON"
                 />
                 {!validateJson(headerJson) && headerJson && (
@@ -232,7 +232,7 @@ export function JwtCreation({ isOpen, onClose }: JwtCreationProps) {
                   id="payload"
                   value={payloadJson}
                   onChange={(e) => setPayloadJson(e.target.value)}
-                  className="w-full h-32 p-3 border rounded-lg font-mono text-sm resize-none"
+                  className="w-full h-32 p-3 border border-border rounded-lg font-mono text-sm resize-none bg-background text-foreground placeholder:text-muted-foreground"
                   placeholder="Enter JWT payload as JSON"
                 />
                 {!validateJson(payloadJson) && payloadJson && (

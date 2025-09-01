@@ -36,25 +36,26 @@
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    /* Light Charcoal Theme - Easy on the eyes */
+    --background: 0 0% 16%; /* #2a2a2a - Light charcoal background */
+    --foreground: 0 0% 95%; /* #f2f2f2 - Very light gray text */
+    --card: 0 0% 18%; /* #2e2e2e - Slightly lighter charcoal for cards */
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 18%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 0 0% 95%;
+    --primary-foreground: 0 0% 16%;
+    --secondary: 0 0% 22%; /* #383838 - Medium charcoal for secondary elements */
+    --secondary-foreground: 0 0% 95%;
+    --muted: 0 0% 22%;
+    --muted-foreground: 0 0% 70%; /* #b3b3b3 - Medium gray for muted text */
+    --accent: 0 0% 22%;
+    --accent-foreground: 0 0% 95%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --destructive-foreground: 0 0% 95%;
+    --border: 0 0% 25%; /* #404040 - Slightly lighter charcoal for borders */
+    --input: 0 0% 22%;
+    --ring: 0 0% 80%; /* #cccccc - Light gray for focus rings */
   }
 }
 

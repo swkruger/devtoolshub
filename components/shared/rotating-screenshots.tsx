@@ -83,7 +83,7 @@ export function RotatingScreenshots() {
   return (
     <div className="relative w-full h-[400px] lg:h-[450px]">
       {/* Main Screenshot Display */}
-      <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-gray-50">
+      <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
         {screenshots.map((screenshot, index) => (
           <div
             key={screenshot.id}
@@ -145,7 +145,7 @@ export function RotatingScreenshots() {
       </button>
 
       {/* Floating Badge */}
-      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium text-gray-700">
+      <div className="absolute top-4 right-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300">
         {currentIndex + 1} of {screenshots.length}
       </div>
     </div>

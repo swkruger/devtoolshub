@@ -10,6 +10,7 @@ const AceEditor = dynamic(
       await import('ace-builds/src-noconflict/mode-text');
       await import('ace-builds/src-noconflict/theme-github');
       await import('ace-builds/src-noconflict/theme-monokai');
+      await import('ace-builds/src-noconflict/theme-tomorrow_night');
       await import('ace-builds/src-noconflict/ext-language_tools');
     }
     return ace;
@@ -33,11 +34,11 @@ const JwtEditor: React.FC<JwtEditorProps> = ({ value, onChange, placeholder, isD
 
   return (
     <div className="mt-4">
-      <label className="text-sm font-medium mb-2 block">JWT Input</label>
-      <div className="border rounded-lg overflow-hidden">
+      <label className="text-sm font-medium mb-2 block text-foreground">JWT Input</label>
+      <div className="border border-border rounded-lg overflow-hidden">
         <AceEditor
           mode="text"
-          theme={isDarkMode ? 'monokai' : 'github'}
+          theme={isDarkMode ? 'tomorrow_night' : 'github'}
           value={value}
           onChange={onChange}
           name="jwt-editor"

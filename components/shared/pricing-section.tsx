@@ -51,7 +51,7 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
   ]
 
   return (
-    <section id={id} className={`py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50 ${className}`}>
+    <section id={id} className={`py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900/20 ${className}`}>
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -59,10 +59,10 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
             <Star className="w-4 h-4" />
             Support the Project
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             Support the Project
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             All tools are completely free forever with no ads. Become a backer to unlock advanced features and help us build more tools for the developer community.
           </p>
         </div>
@@ -70,21 +70,21 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
         {/* Support Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Free Plan */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 relative">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 relative">
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Free</h3>
-              <div className="text-4xl font-bold text-gray-900 mb-2">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Free</h3>
+              <div className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                 $0
-                <span className="text-lg font-normal text-gray-600">/month</span>
+                <span className="text-lg font-normal text-gray-600 dark:text-gray-400">/month</span>
               </div>
-              <p className="text-gray-600">All tools free forever</p>
+              <p className="text-gray-600 dark:text-gray-400">All tools free forever</p>
             </div>
 
             <div className="space-y-4 mb-8">
               {freeFeatures.map((feature, index) => (
                 <div key={index} className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">{feature}</span>
+                  <span className="text-gray-700 dark:text-gray-300">{feature}</span>
                 </div>
               ))}
             </div>
@@ -134,57 +134,57 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <Zap className="w-6 h-6 text-blue-600" />
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">Lightning Fast</h4>
-            <p className="text-gray-600">Optimized for speed with real-time processing and instant results</p>
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Lightning Fast</h4>
+            <p className="text-gray-600 dark:text-gray-300">Optimized for speed with real-time processing and instant results</p>
           </div>
           
           <div className="text-center">
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <Shield className="w-6 h-6 text-green-600" />
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">Secure & Private</h4>
-            <p className="text-gray-600">Your data stays private with enterprise-grade security</p>
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Secure & Private</h4>
+            <p className="text-gray-600 dark:text-gray-300">Your data stays private with enterprise-grade security</p>
           </div>
           
           <div className="text-center">
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <Users className="w-6 h-6 text-purple-600" />
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">Trusted by Developers</h4>
-            <p className="text-gray-600">Join thousands of developers who trust {getClientApplicationName()} daily</p>
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Trusted by Developers</h4>
+            <p className="text-gray-600 dark:text-gray-300">Join thousands of developers who trust {getClientApplicationName()} daily</p>
           </div>
         </div>
 
         {/* FAQ Section */}
         <div className="mt-16 text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h3>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Frequently Asked Questions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Why should I support the project?</h4>
-              <p className="text-gray-600">Your support helps us develop new tools, improve existing ones, and maintain the platform. Every backer directly contributes to making {getClientApplicationName()} better for the entire developer community.</p>
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Why should I support the project?</h4>
+              <p className="text-gray-600 dark:text-gray-300">Your support helps us develop new tools, improve existing ones, and maintain the platform. Every backer directly contributes to making {getClientApplicationName()} better for the entire developer community.</p>
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">What do I get as a backer?</h4>
-              <p className="text-gray-600">Backers get unlimited saved items, advanced features, early access to new tools, and priority support. Plus, you&apos;ll help shape the future of developer tools!</p>
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">What do I get as a backer?</h4>
+              <p className="text-gray-600 dark:text-gray-300">Backers get unlimited saved items, advanced features, early access to new tools, and priority support. Plus, you&apos;ll help shape the future of developer tools!</p>
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Can I cancel anytime?</h4>
-              <p className="text-gray-600">Yes, you can cancel your subscription at any time. You&apos;ll keep access until the end of your billing period, and we&apos;ll be grateful for your support!</p>
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Can I cancel anytime?</h4>
+              <p className="text-gray-600 dark:text-gray-300">Yes, you can cancel your subscription at any time. You&apos;ll keep access until the end of your billing period, and we&apos;ll be grateful for your support!</p>
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">How does my support help the community?</h4>
-              <p className="text-gray-600">Your contribution funds new tool development, server costs, and helps us keep all tools free for everyone. You&apos;re helping build a better developer ecosystem!</p>
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">How does my support help the community?</h4>
+              <p className="text-gray-600 dark:text-gray-300">Your contribution funds new tool development, server costs, and helps us keep all tools free for everyone. You&apos;re helping build a better developer ecosystem!</p>
             </div>
           </div>
         </div>
 
         {/* CTA Section */}
         <div className="mt-16 text-center">
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               Ready to Support the Project?
             </h3>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
               Join thousands of developers who have become backers and are helping us build more tools for the community. Every contribution makes a difference!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -195,7 +195,7 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
                 Become a Backer
                 <ArrowRight className="w-4 h-4" />
               </button>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 💝 Your support keeps {getClientApplicationName()} free for everyone
               </p>
             </div>

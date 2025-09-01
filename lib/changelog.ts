@@ -8,6 +8,23 @@ export type ChangelogEntry = {
 // Update this list after each major tool development or release
 export const getChangelog = (): ChangelogEntry[] => [
   {
+    date: '2025-01-27',
+    title: 'Dark Mode Implementation – Complete',
+    tags: ['dark-mode', 'theme', 'ui', 'accessibility'],
+    items: [
+      'Implemented comprehensive dark mode with beautiful light charcoal theme (#2a2a2a background)',
+      'Dark mode is now the default theme for all users, providing easy-on-the-eyes experience',
+      'Added theme toggle dropdown in both authenticated and public headers for quick switching',
+      'Integrated next-themes for robust theme management, persistence, and system preference detection',
+      'Updated all major components: home page, JWT Decoder, settings, and OAuth sign-in forms',
+      'Enhanced OAuth sign-in buttons with dark styling for better visual consistency',
+      'Connected user profile settings theme selection to theme provider for immediate UI updates',
+      'Implemented theme-aware styling across all tools, forms, and navigation elements',
+      'Ensured proper color contrast ratios and accessibility compliance throughout',
+      'Theme preferences are saved to database and persist across sessions and devices',
+    ],
+  },
+  {
     date: '2025-08-20',
     title: 'User Settings & Account Management – Complete',
     tags: ['settings', 'profile', 'subscription', 'security', 'stripe'],

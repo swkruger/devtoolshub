@@ -6,6 +6,7 @@ import SessionTracker from '@/components/SessionTracker'
 import { SignInModalProvider } from '@/lib/use-sign-in-modal'
 import { SignInModalWrapper } from '@/components/auth/sign-in-modal-wrapper'
 import { getMetadataApplicationName } from '@/lib/app-config'
+import { ThemeProvider } from '@/components/ui/theme-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -165,14 +166,21 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-             <body className={inter.className}>
-         <SignInModalProvider>
-           {children}
-           <SignInModalWrapper />
-           <SessionTracker />
-           <Toaster position="top-right" richColors />
-         </SignInModalProvider>
-       </body>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SignInModalProvider>
+            {children}
+            <SignInModalWrapper />
+            <SessionTracker />
+            <Toaster position="top-right" richColors />
+          </SignInModalProvider>
+        </ThemeProvider>
+      </body>
     </html>
   )
 } 

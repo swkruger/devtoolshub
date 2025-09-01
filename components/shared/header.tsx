@@ -16,6 +16,7 @@ import { authClient } from "@/lib/auth"
 import { getAllTools } from '@/lib/tools'
 import { useUser } from '@/lib/useUser'
 import { getClientApplicationName } from '@/lib/app-config'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 interface HeaderProps {
   user?: {
@@ -171,6 +172,7 @@ export function Header({ user }: HeaderProps) {
               <Link href="/sign-in">Sign In</Link>
             </Button>
           )}
+          <ThemeToggle />
         </div>
       </div>
     </header>
