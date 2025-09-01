@@ -160,20 +160,20 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
             <div>
+              <h4 className="font-semibold text-gray-900 mb-2">Why should I support the project?</h4>
+              <p className="text-gray-600">Your support helps us develop new tools, improve existing ones, and maintain the platform. Every backer directly contributes to making {getClientApplicationName()} better for the entire developer community.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-2">What do I get as a backer?</h4>
+              <p className="text-gray-600">Backers get unlimited saved items, advanced features, early access to new tools, and priority support. Plus, you&apos;ll help shape the future of developer tools!</p>
+            </div>
+            <div>
               <h4 className="font-semibold text-gray-900 mb-2">Can I cancel anytime?</h4>
-              <p className="text-gray-600">Yes, you can cancel your subscription at any time. You&apos;ll keep access until the end of your billing period.</p>
+              <p className="text-gray-600">Yes, you can cancel your subscription at any time. You&apos;ll keep access until the end of your billing period, and we&apos;ll be grateful for your support!</p>
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">What payment methods do you accept?</h4>
-              <p className="text-gray-600">We accept all major credit cards through our secure Stripe payment processing.</p>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Is there a free trial?</h4>
-              <p className="text-gray-600">Yes! Start with our free plan and upgrade to Premium whenever you need more features.</p>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Do you offer refunds?</h4>
-              <p className="text-gray-600">We offer a 30-day money-back guarantee if you&apos;re not satisfied with Premium features.</p>
+              <h4 className="font-semibold text-gray-900 mb-2">How does my support help the community?</h4>
+              <p className="text-gray-600">Your contribution funds new tool development, server costs, and helps us keep all tools free for everyone. You&apos;re helping build a better developer ecosystem!</p>
             </div>
           </div>
         </div>
@@ -185,17 +185,20 @@ export function PricingSection({ className = "", id }: PricingSectionProps) {
               Ready to Support the Project?
             </h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Join thousands of developers who have become backers and are helping us build more tools for the community.
+              Join thousands of developers who have become backers and are helping us build more tools for the community. Every contribution makes a difference!
             </p>
-                         <div className="flex justify-center">
-               <button
-                 onClick={() => openModal()}
-                 className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-               >
-                 Get Started
-                 <ArrowRight className="w-4 h-4" />
-               </button>
-             </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <button
+                onClick={() => openModal()}
+                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+              >
+                Become a Backer
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <p className="text-sm text-gray-500">
+                💝 Your support keeps {getClientApplicationName()} free for everyone
+              </p>
+            </div>
           </div>
         </div>
       </div>
