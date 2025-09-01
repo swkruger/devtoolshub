@@ -300,7 +300,7 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
         <PricingSection id="pricing" />
 
       {/* Featured Blog Section */}
-      {featuredBlogs.length > 0 && (
+      {(featuredBlogs.length > 0 || true) && (
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
@@ -312,67 +312,118 @@ export function HomePageClient({ featuredBlogs, popularBlogs, availableCount }: 
               </p>
             </div>
             
-                         <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
-               {/* Featured Blog Image */}
-               <div className="order-1 lg:order-1">
-                                   <div className="aspect-video rounded-l-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
-                   {featuredBlogs[0].image_url ? (
-                     <Image
-                       src={featuredBlogs[0].image_url}
-                       alt={featuredBlogs[0].title}
-                       width={800}
-                       height={400}
-                       className="w-full h-full object-cover"
-                     />
-                   ) : (
-                     <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
-                       <span className="text-blue-400 dark:text-blue-300 text-6xl">⭐</span>
-                     </div>
-                   )}
-                 </div>
-               </div>
-               
-               {/* Featured Blog Content */}
-               <div className="order-2 lg:order-2">
-                                   <div className="bg-white dark:bg-gray-800 rounded-r-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
-                   <div className="mb-4">
-                     <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
-                       ⭐ Featured Article
-                     </span>
-                   </div>
-                   
-                   <Link href={`/blog/${featuredBlogs[0].slug}`} className="block group">
-                     <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-3">
-                       {featuredBlogs[0].title}
-                     </h3>
-                   </Link>
-                   
-                   <div className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3">
-                     <FeaturedBlogPreviewRenderer
-                       content={featuredBlogs[0].content_html || featuredBlogs[0].content_markdown || ''}
-                       isMarkdown={Boolean(featuredBlogs[0].content_markdown)}
-                     />
-                   </div>
-                   
-                   <div className="flex items-center justify-between">
-                     <time className="text-sm text-gray-500 dark:text-gray-400">
-                       {featuredBlogs[0].published_at ? new Date(featuredBlogs[0].published_at).toLocaleDateString('en-US', { 
-                         month: 'long', 
-                         day: 'numeric',
-                         year: 'numeric'
-                       }) : 'Draft'}
-                     </time>
-                     <Link 
-                       href={`/blog/${featuredBlogs[0].slug}`}
-                       className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                     >
-                       Read Article
-                       <ArrowRight className="h-4 w-4" />
-                     </Link>
-                   </div>
-                 </div>
-               </div>
-             </div>
+
+            
+            {/* Use featured blog if available, otherwise show fallback */}
+            {featuredBlogs.length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch overflow-hidden rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+                {/* Featured Blog Image */}
+                <div className="order-1 lg:order-1">
+                  <div className="aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800">
+                    {featuredBlogs[0].image_url ? (
+                      <Image
+                        src={featuredBlogs[0].image_url}
+                        alt={featuredBlogs[0].title}
+                        width={800}
+                        height={400}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
+                        <span className="text-blue-400 dark:text-blue-300 text-6xl">⭐</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Featured Blog Content */}
+                <div className="order-2 lg:order-2">
+                  <div className="bg-white dark:bg-gray-800 p-8 h-full flex flex-col justify-between">
+                    <div className="mb-4">
+                      <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+                        ⭐ Featured Article
+                      </span>
+                    </div>
+                    
+                    <Link href={`/blog/${featuredBlogs[0].slug}`} className="block group">
+                      <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-3">
+                        {featuredBlogs[0].title}
+                      </h3>
+                    </Link>
+                    
+                    <div className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3 flex-grow">
+                      <FeaturedBlogPreviewRenderer
+                        content={featuredBlogs[0].content_html || featuredBlogs[0].content_markdown || ''}
+                        isMarkdown={Boolean(featuredBlogs[0].content_markdown)}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between mt-auto">
+                      <time className="text-sm text-gray-500 dark:text-gray-400">
+                        {featuredBlogs[0].published_at ? new Date(featuredBlogs[0].published_at).toLocaleDateString('en-US', { 
+                          month: 'long', 
+                          day: 'numeric',
+                          year: 'numeric'
+                        }) : 'Draft'}
+                      </time>
+                      <Link 
+                        href={`/blog/${featuredBlogs[0].slug}`}
+                        className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                      >
+                        Read Article
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Fallback Featured Blog */
+              <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch overflow-hidden rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+                {/* Featured Blog Image */}
+                <div className="order-1 lg:order-1">
+                  <div className="aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800">
+                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 flex items-center justify-center">
+                      <span className="text-blue-400 dark:text-blue-300 text-6xl">💻</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Featured Blog Content */}
+                <div className="order-2 lg:order-2">
+                  <div className="bg-white dark:bg-gray-800 p-8 h-full flex flex-col justify-between">
+                    <div className="mb-4">
+                      <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+                        ⭐ Featured Article
+                      </span>
+                    </div>
+                    
+                    <Link href="/blog/base64-encoder-decoder-files-history" className="block group">
+                      <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-3">
+                        Base64 Encoder/Decoder: Files & History
+                      </h3>
+                    </Link>
+                    
+                    <div className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3 flex-grow">
+                      <p>Looking for a fast way to convert text or files to Base64? Our <strong>Base64 Encoder/Decoder</strong> makes it easy. Encode and decode instantly with <strong>URL-safe options</strong> that ensure compatibility across browsers, APIs, and applications.</p>
+                    </div>
+                    
+                    <div className="flex items-center justify-between mt-auto">
+                      <time className="text-sm text-gray-500 dark:text-gray-400">
+                        August 29, 2025
+                      </time>
+                      <Link 
+                        href="/blog/base64-encoder-decoder-files-history"
+                        className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                      >
+                        Read Article
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             
             <div className="text-center mt-8">
               <Link 

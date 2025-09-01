@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { NextRequest, NextResponse } from 'next/server'
+import { sendNewUserNotification, sendWelcomeEmail } from '@/lib/email'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
       try {
         const { data: existingProfile } = await supabase
           .from('users')
-          .select('id')
+          .select('id, created_at, email, name, avatar_url')
           .eq('id', data.session.user.id)
           .single()
 
@@ -71,6 +72,87 @@ export async function GET(request: NextRequest) {
 
           if (insertError) {
             console.error('Failed to create user profile:', insertError)
+          } else {
+            // Profile created successfully, send welcome emails
+            console.log('New user profile created, sending welcome emails...')
+            
+            // Determine signup method from auth provider
+            const signupMethod = data.session.user.app_metadata?.provider === 'google' ? 'google' : 'github'
+            
+            const emailUserData = {
+              id: data.session.user.id,
+              email: data.session.user.email!,
+              name: userData.name,
+              avatar_url: userData.avatar_url,
+              signup_method: signupMethod as 'google' | 'github',
+              created_at: userData.created_at
+            }
+
+            // Send notification to admin (don't await to avoid slowing down signup)
+            sendNewUserNotification(emailUserData).then(result => {
+              if (result.success) {
+                console.log('Admin notification sent successfully')
+              } else {
+                console.error('Failed to send admin notification:', result.error)
+              }
+            }).catch(error => {
+              console.error('Error sending admin notification:', error)
+            })
+
+            // Send welcome email to user (don't await to avoid slowing down signup)
+            sendWelcomeEmail(emailUserData).then(result => {
+              if (result.success) {
+                console.log('Welcome email sent successfully to:', emailUserData.email)
+              } else {
+                console.error('Failed to send welcome email:', result.error)
+              }
+            }).catch(error => {
+              console.error('Error sending welcome email:', error)
+            })
+          }
+        } else {
+          // Profile exists, check if this is a very recent signup (within last 5 minutes)
+          // This handles the case where the database trigger created the profile
+          const profileCreatedAt = new Date(existingProfile.created_at)
+          const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
+          
+          if (profileCreatedAt > fiveMinutesAgo) {
+            // This is likely a new user, send welcome emails
+            console.log('Existing profile found for recent signup, sending welcome emails...')
+            
+            // Determine signup method from auth provider
+            const signupMethod = data.session.user.app_metadata?.provider === 'google' ? 'google' : 'github'
+            
+            const emailUserData = {
+              id: data.session.user.id,
+              email: existingProfile.email || data.session.user.email!,
+              name: existingProfile.name,
+              avatar_url: existingProfile.avatar_url,
+              signup_method: signupMethod as 'google' | 'github',
+              created_at: existingProfile.created_at
+            }
+
+            // Send notification to admin (don't await to avoid slowing down signup)
+            sendNewUserNotification(emailUserData).then(result => {
+              if (result.success) {
+                console.log('Admin notification sent successfully')
+              } else {
+                console.error('Failed to send admin notification:', result.error)
+              }
+            }).catch(error => {
+              console.error('Error sending admin notification:', error)
+            })
+
+            // Send welcome email to user (don't await to avoid slowing down signup)
+            sendWelcomeEmail(emailUserData).then(result => {
+              if (result.success) {
+                console.log('Welcome email sent successfully to:', emailUserData.email)
+              } else {
+                console.error('Failed to send welcome email:', result.error)
+              }
+            }).catch(error => {
+              console.error('Error sending welcome email:', error)
+            })
           }
         }
       } catch (profileError) {
