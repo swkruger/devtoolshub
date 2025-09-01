@@ -415,3 +415,26 @@ The application is now ready for production use with the new "DevToolsKitHub" br
 - ✅ **Removed debugging scripts**: Deleted check-json-integrity.js, test-welcome-email.js, and run-migration-029.js
 - ✅ **Updated TASK.md**: Marked all sprints as completed with comprehensive documentation
 - ✅ **Codebase tidy**: Removed temporary testing and debugging artifacts
+
+## 🎯 **New Sprint: Subreddit Creation & Community Guide** (2025-01-27)
+
+### 🎯 **Phase 1: Environment Variable Setup** - COMPLETED ✅
+- [x] **Add SUBREDDIT_NAME environment variable** - Added SUBREDDIT_NAME to env.example and created utility function
+- [x] **Create subreddit name utility** - Created lib/subreddit-config.ts to centralize subreddit configuration
+
+### 🎯 **Phase 2: Core Application Files** - COMPLETED ✅
+- [x] **Update package.json** - Changed name from "devtools-hub" to "devtools-kit-hub"
+- [x] **Update app layout metadata** - Updated root layout.tsx with dynamic app name
+- [x] **Update home page** - Replaced hardcoded DevToolsHub with dynamic app name
+
+### 🎯 **Phase 3: Component Updates** - COMPLETED ✅
+- [x] **Update auth components** - Replaced hardcoded app names in sign-in forms and modals
+- [x] **Update email templates** - Replaced hardcoded app names in all email components
+- [x] **Update shared components** - Updated sidebar, pricing section, home page client, header, and app layout
+
+### 🎯 **Phase 4: Content Strategy & Initial Posts** - PENDING ⏳
+- [ ] **Create welcome post** - Introduce the community and its purpose
+- [ ] **Post community guidelines** - Share detailed rules and expectations
+- [ ] **Create community guide** - Comprehensive guide for new members
+- [ ] **Create pinned posts** - Set up essential information and resources
+- [ ] **Seed initial content** - Post tool showcases, tutorials, and helpful resources

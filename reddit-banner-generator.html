@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevToolsKitHub Reddit Banner Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .banner-container {
+            position: relative;
+            width: 1920px;
+            height: 256px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 25%, #312e81 50%, #1e1b4b 75%, #0f172a 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .banner-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(147, 51, 234, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+        }
+        
+        .glow-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+        
+        .glow-particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float-glow 8s ease-in-out infinite;
+        }
+        
+        .glow-particle:nth-child(1) {
+            width: 120px;
+            height: 120px;
+            top: 20px;
+            left: 300px;
+            animation-delay: 0s;
+        }
+        
+        .glow-particle:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            top: 60px;
+            left: 800px;
+            animation-delay: 2s;
+        }
+        
+        .glow-particle:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 30px;
+            left: 1200px;
+            animation-delay: 4s;
+        }
+        
+        .glow-particle:nth-child(4) {
+            width: 60px;
+            height: 60px;
+            top: 180px;
+            left: 200px;
+            animation-delay: 1s;
+        }
+        
+        .glow-particle:nth-child(5) {
+            width: 90px;
+            height: 90px;
+            top: 150px;
+            left: 1000px;
+            animation-delay: 3s;
+        }
+        
+        @keyframes float-glow {
+            0%, 100% { 
+                transform: translateY(0px) scale(1);
+                opacity: 0.3;
+            }
+            50% { 
+                transform: translateY(-15px) scale(1.1);
+                opacity: 0.6;
+            }
+        }
+        
+        .left-section {
+            position: absolute;
+            left: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            z-index: 2;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .logo-circle {
+            width: 88px;
+            height: 88px;
+            background: linear-gradient(135deg, #9333EA 0%, #7C3AED 50%, #6A5ACD 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 0 30px rgba(147, 51, 234, 0.5),
+                0 8px 32px rgba(147, 51, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+            animation: shine 4s ease-in-out infinite;
+        }
+        
+        @keyframes shine {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            color: #f8fafc;
+            z-index: 1;
+        }
+        
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .app-name {
+            color: white;
+            font-size: 52px;
+            font-weight: 900;
+            text-shadow: 
+                0 0 20px rgba(147, 51, 234, 0.5),
+                0 4px 8px rgba(0, 0, 0, 0.5);
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+        
+        .tagline {
+            color: #cbd5e1;
+            font-size: 20px;
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            line-height: 1.2;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #9333EA, #7C3AED);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 8px 25px rgba(147, 51, 234, 0.4),
+                0 0 20px rgba(147, 51, 234, 0.2);
+            align-self: flex-start;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 35px rgba(147, 51, 234, 0.5),
+                0 0 30px rgba(147, 51, 234, 0.3);
+        }
+        
+        .tools-section {
+            position: absolute;
+            right: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 600px;
+            z-index: 2;
+        }
+        
+        .tool-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: rgba(147, 51, 234, 0.6);
+            box-shadow: 
+                0 12px 30px rgba(147, 51, 234, 0.3),
+                0 0 20px rgba(147, 51, 234, 0.2);
+        }
+        
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+        
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            display: block;
+            color: #f8fafc;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+        
+        .tool-name {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            line-height: 1.2;
+        }
+        
+        .download-section {
+            background: #1e293b;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 800px;
+            border: 1px solid rgba(147, 51, 234, 0.2);
+        }
+        
+        .download-section h3 {
+            color: white;
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #9333EA, #7C3AED);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 8px;
+            box-shadow: 0 8px 25px rgba(147, 51, 234, 0.3);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(147, 51, 234, 0.4);
+        }
+        
+        .instructions {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+        
+        .mobile-banner {
+            width: 1600px;
+            height: 480px;
+            margin-top: 20px;
+        }
+        
+        .mobile-banner .left-section {
+            left: 40px;
+        }
+        
+        .mobile-banner .app-name {
+            font-size: 40px;
+        }
+        
+        .mobile-banner .tagline {
+            font-size: 18px;
+        }
+        
+        .mobile-banner .tools-section {
+            right: 40px;
+            width: 500px;
+            gap: 16px;
+        }
+        
+        .mobile-banner .tool-card {
+            padding: 16px;
+        }
+        
+        .mobile-banner .tool-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 12px;
+        }
+        
+        .mobile-banner .tool-name {
+            font-size: 12px;
+        }
+        
+        .status {
+            color: #10b981;
+            font-size: 16px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        
+        .error {
+            color: #ef4444;
+            font-size: 16px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 700;">DevToolsKitHub Reddit Banner Generator</h1>
+    
+    <!-- Desktop Banner (1920x256) -->
+    <div class="banner-container" id="desktop-banner">
+        <div class="glow-particles">
+            <div class="glow-particle"></div>
+            <div class="glow-particle"></div>
+            <div class="glow-particle"></div>
+            <div class="glow-particle"></div>
+            <div class="glow-particle"></div>
+        </div>
+        
+        <div class="left-section">
+            <div class="logo-section">
+                <div class="logo-circle">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <div class="app-name">DevToolsKitHub</div>
+                    <div class="tagline">9 Essential Developer Tools In One Platform</div>
+                </div>
+            </div>
+            <button class="cta-button">FREE</button>
+        </div>
+        
+        <div class="tools-section">
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div class="tool-name">JSON Formatter</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <div class="tool-name">Regex Tester</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <div class="tool-name">JWT Decoder</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <div class="tool-name">JSN Form</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                    <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <div class="tool-name">Image Compressor</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div class="tool-name">World Clock</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div class="tool-name">World Clock</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                    <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <div class="tool-name">Image Comp</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Banner (1600x480) -->
+    <div class="banner-container mobile-banner" id="mobile-banner">
+        <div class="glow-particles">
+            <div class="glow-particle"></div>
+            <div class="glow-particle"></div>
+            <div class="glow-particle"></div>
+            <div class="glow-particle"></div>
+            <div class="glow-particle"></div>
+        </div>
+        
+        <div class="left-section">
+            <div class="logo-section">
+                <div class="logo-circle">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <div class="app-name">DevToolsKitHub</div>
+                    <div class="tagline">9 Essential Developer Tools In One Platform</div>
+                </div>
+            </div>
+            <button class="cta-button">FREE</button>
+        </div>
+        
+        <div class="tools-section">
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div class="tool-name">JSON Formatter</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <div class="tool-name">Regex Tester</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <div class="tool-name">JWT Decoder</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <div class="tool-name">JSN Form</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                    <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <div class="tool-name">Image Compressor</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div class="tool-name">World Clock</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div class="tool-name">World Clock</div>
+            </div>
+            <div class="tool-card">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                    <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <div class="tool-name">Image Comp</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="download-section">
+        <h3>Download Your Reddit Banner</h3>
+        <button class="download-btn" onclick="downloadBanner('desktop')">Download Desktop Banner (1920x256)</button>
+        <button class="download-btn" onclick="downloadBanner('mobile')">Download Mobile Banner (1600x480)</button>
+        <div id="download-status"></div>
+        <div class="instructions">
+            <strong>Instructions:</strong><br>
+            1. Click the download button above to generate your banner image<br>
+            2. The image will automatically download as a PNG file<br>
+            3. Upload the desktop version (1920x256) to your Reddit profile<br>
+            4. Reddit will automatically optimize it for different screen sizes<br><br>
+            <strong>Note:</strong> The download process may take a few seconds to generate the high-quality image.
+        </div>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        async function downloadBanner(type) {
+            const statusDiv = document.getElementById('download-status');
+            statusDiv.innerHTML = '<div class="status">Generating image... Please wait...</div>';
+            
+            try {
+                let bannerElement;
+                let filename;
+                
+                if (type === 'desktop') {
+                    bannerElement = document.getElementById('desktop-banner');
+                    filename = 'DevToolsKitHub-Reddit-Banner-Desktop-1920x256.png';
+                } else {
+                    bannerElement = document.getElementById('mobile-banner');
+                    filename = 'DevToolsKitHub-Reddit-Banner-Mobile-1600x480.png';
+                }
+                
+                // Use html2canvas to convert the banner to an image
+                const canvas = await html2canvas(bannerElement, {
+                    backgroundColor: null,
+                    scale: 2, // Higher quality
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false
+                });
+                
+                // Convert canvas to blob and download
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    
+                    statusDiv.innerHTML = '<div class="status">✅ Banner downloaded successfully!</div>';
+                    
+                    // Clear status after 3 seconds
+                    setTimeout(() => {
+                        statusDiv.innerHTML = '';
+                    }, 3000);
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('Error generating banner:', error);
+                statusDiv.innerHTML = '<div class="error">❌ Error generating banner. Please try again.</div>';
+                
+                // Clear error after 5 seconds
+                setTimeout(() => {
+                    statusDiv.innerHTML = '';
+                }, 5000);
+            }
+        }
+        
+        // Check if html2canvas loaded successfully
+        window.addEventListener('load', function() {
+            if (typeof html2canvas === 'undefined') {
+                document.getElementById('download-status').innerHTML = 
+                    '<div class="error">❌ Image generation library failed to load. Please refresh the page.</div>';
+            }
+        });
+    </script>
+</body>
+</html>
