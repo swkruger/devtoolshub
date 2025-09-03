@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { X, Copy, Clock, MapPin, Sun, Moon, Briefcase, CheckCircle2, Edit3, Check, ChevronUp, ChevronDown, GripVertical } from 'lucide-react'
 import { CityTimezone, getTimeOfDay, formatDisplayTime, formatDisplayDate } from '../lib/timezone-utils'
+import { formatTemperature } from '../lib/weather-utils'
 
 interface TimezoneCardProps {
   cityTimezone: CityTimezone
@@ -20,6 +21,7 @@ interface TimezoneCardProps {
   className?: string
   canMoveUp?: boolean
   canMoveDown?: boolean
+  temperatureUnit?: 'C' | 'F'
 }
 
 export default function TimezoneCard({
@@ -33,7 +35,8 @@ export default function TimezoneCard({
   showWeather = false,
   className = '',
   canMoveUp = false,
-  canMoveDown = false
+  canMoveDown = false,
+  temperatureUnit = 'C'
 }: TimezoneCardProps) {
   const [isEditingLabel, setIsEditingLabel] = useState(false)
   const [editLabel, setEditLabel] = useState(cityTimezone.name)
@@ -273,7 +276,7 @@ export default function TimezoneCard({
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {cityTimezone.weather.temperature}°C
+                      {formatTemperature(cityTimezone.weather.temperature, temperatureUnit)}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
                       {cityTimezone.weather.description}

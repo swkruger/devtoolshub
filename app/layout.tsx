@@ -57,9 +57,9 @@ export const metadata: Metadata = {
     description: 'Your all-in-one developer toolkit. Format JSON, test regex patterns, decode JWTs, and more. All tools are free forever, no ads. Support the project to unlock advanced features.',
     images: [
       {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
+        url: '/icons/icon-512x512.png',
+        width: 512,
+        height: 512,
         alt: `${getMetadataApplicationName()} - Developer Tools Collection`,
       }
     ],
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `${getMetadataApplicationName()} - Essential Developer Tools Collection`,
     description: 'Your all-in-one developer toolkit. Format JSON, test regex patterns, decode JWTs, and more.',
-    images: ['/twitter-image.png'],
+    images: ['/icons/icon-512x512.png'],
     creator: '@devtoolshub',
     site: '@devtoolshub',
   },

@@ -84,9 +84,9 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
+        url: '/icons/icon-512x512.png',
+        width: 512,
+        height: 512,
         alt: `${getMetadataApplicationName()} - Developer Tools Collection`,
       }
     ],
@@ -95,7 +95,7 @@ export const metadata: Metadata = {
       card: 'summary_large_image',
       title: `${getMetadataApplicationName()} – Essential Developer Tools`,
       description: 'All-in-one developer toolkit with 11 powerful tools: JSON formatter, regex tester, JWT decoder/encoder, Base64 encoder/decoder, UUID generator, timestamp converter, XPath/CSS selector tester, image compressor, world clock, password generator, and PWA assets generator. All tools are free forever, no ads. Support the project to unlock advanced features.',
-    images: ['/og-image.png'],
+    images: ['/icons/icon-512x512.png'],
   },
 }
 

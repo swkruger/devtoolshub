@@ -90,10 +90,34 @@ export const getTimezoneAbbreviation = (timezone: string, date: Date): string =>
 // Get UTC offset in hours for a timezone
 export const getUTCOffset = (timezone: string, date: Date): number => {
   try {
-    const utcDate = new Date(date.getTime())
-    const zonedDate = toZonedTime(utcDate, timezone)
-    const utcTime = fromZonedTime(zonedDate, timezone)
-    return (zonedDate.getTime() - utcTime.getTime()) / (1000 * 60 * 60)
+    // Use Intl API for accurate timezone offset, including DST
+    const dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    })
+    const parts = dtf.formatToParts(date)
+    const map: Record<string, string> = {}
+    for (const p of parts) {
+      if (p.type !== 'literal') map[p.type] = p.value
+    }
+    const localAsUTC = Date.UTC(
+      Number(map.year),
+      Number(map.month) - 1,
+      Number(map.day),
+      Number(map.hour),
+      Number(map.minute),
+      Number(map.second)
+    )
+    const offsetMs = localAsUTC - date.getTime()
+    const hours = offsetMs / (1000 * 60 * 60)
+    // Round to 1 decimal place to capture half/quarter-hour offsets cleanly
+    return Math.round(hours * 10) / 10
   } catch {
     return 0
   }

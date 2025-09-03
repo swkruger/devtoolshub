@@ -31,6 +31,7 @@ interface UserPreferences {
   timezone: string
   theme: 'light' | 'dark' | 'system'
   language: string
+  temperature_unit?: 'C' | 'F'
   email_notifications: Record<string, boolean>
   developer_preferences: Record<string, any>
   bio?: string
@@ -51,6 +52,7 @@ interface FormData {
   timezone: string
   theme: 'light' | 'dark' | 'system'
   language: string
+  temperature_unit: 'C' | 'F'
 }
 
 interface FormErrors {
@@ -59,6 +61,7 @@ interface FormErrors {
   timezone?: string
   theme?: string
   language?: string
+  temperature_unit?: string
 }
 
 export default function ProfileForm({ user, profile, preferences, isBackerUser }: ProfileFormProps) {
@@ -69,7 +72,8 @@ export default function ProfileForm({ user, profile, preferences, isBackerUser }
     bio: preferences?.bio || '',
     timezone: preferences?.timezone || 'UTC',
     theme: preferences?.theme || 'dark',
-    language: preferences?.language || 'en'
+    language: preferences?.language || 'en',
+    temperature_unit: (preferences?.temperature_unit as 'C' | 'F') || (typeof navigator !== 'undefined' && navigator.language && navigator.language.includes('US') ? 'F' : 'C')
   })
 
   const [errors, setErrors] = useState<FormErrors>({})
@@ -86,7 +90,8 @@ export default function ProfileForm({ user, profile, preferences, isBackerUser }
       bio: preferences?.bio || '',
       timezone: preferences?.timezone || 'UTC',
       theme: preferences?.theme || 'dark',
-      language: preferences?.language || 'en'
+      language: preferences?.language || 'en',
+      temperature_unit: (preferences?.temperature_unit as 'C' | 'F') || (typeof navigator !== 'undefined' && navigator.language && navigator.language.includes('US') ? 'F' : 'C')
     })
   }, [profile, preferences])
 
@@ -194,6 +199,11 @@ export default function ProfileForm({ user, profile, preferences, isBackerUser }
       newErrors.language = 'Language is required'
     }
 
+    // Temperature unit validation
+    if (!['C', 'F'].includes(formData.temperature_unit)) {
+      newErrors.temperature_unit = 'Invalid temperature unit'
+    }
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -248,6 +258,7 @@ export default function ProfileForm({ user, profile, preferences, isBackerUser }
             timezone: formData.timezone,
             theme: formData.theme,
             language: formData.language,
+            temperature_unit: formData.temperature_unit,
             bio: formData.bio.trim(),
             email_notifications: preferences?.email_notifications || {},
             developer_preferences: preferences?.developer_preferences || {}
@@ -480,31 +491,55 @@ export default function ProfileForm({ user, profile, preferences, isBackerUser }
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="language">Language *</Label>
-            <Select 
-              value={formData.language} 
-              onValueChange={(value) => handleInputChange('language', value)}
-            >
-              <SelectTrigger className={errors.language ? 'border-red-500' : ''}>
-                <SelectValue placeholder="Select language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="es">Español</SelectItem>
-                <SelectItem value="fr">Français</SelectItem>
-                <SelectItem value="de">Deutsch</SelectItem>
-                <SelectItem value="ja">日本語</SelectItem>
-                <SelectItem value="zh">中文</SelectItem>
-                <SelectItem value="ko">한국어</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.language && (
-              <p className="text-sm text-red-500 flex items-center space-x-1">
-                <AlertCircle className="w-3 h-3" />
-                <span>{errors.language}</span>
-              </p>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="language">Language *</Label>
+              <Select 
+                value={formData.language} 
+                onValueChange={(value) => handleInputChange('language', value)}
+              >
+                <SelectTrigger className={errors.language ? 'border-red-500' : ''}>
+                  <SelectValue placeholder="Select language" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                  <SelectItem value="fr">Français</SelectItem>
+                  <SelectItem value="de">Deutsch</SelectItem>
+                  <SelectItem value="ja">日本語</SelectItem>
+                  <SelectItem value="zh">中文</SelectItem>
+                  <SelectItem value="ko">한국어</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.language && (
+                <p className="text-sm text-red-500 flex items-center space-x-1">
+                  <AlertCircle className="w-3 h-3" />
+                  <span>{errors.language}</span>
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="temperature">Temperature Unit *</Label>
+              <Select 
+                value={formData.temperature_unit}
+                onValueChange={(value) => handleInputChange('temperature_unit', value as 'C' | 'F')}
+              >
+                <SelectTrigger className={errors.temperature_unit ? 'border-red-500' : ''}>
+                  <SelectValue placeholder="Select unit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="C">Celsius (°C)</SelectItem>
+                  <SelectItem value="F">Fahrenheit (°F)</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.temperature_unit && (
+                <p className="text-sm text-red-500 flex items-center space-x-1">
+                  <AlertCircle className="w-3 h-3" />
+                  <span>{errors.temperature_unit}</span>
+                </p>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { HelpCircle, TestTube } from "lucide-react"
+import { HelpCircle } from "lucide-react"
 import { JsonEditor } from "./json-editor"
 import { HelpPanel } from "./help-panel"
 import { EnhancedTooltip, tooltipConfigs } from "./enhanced-tooltip"
 import { useKeyboardShortcuts, useShortcutToast } from "../hooks/use-keyboard-shortcuts"
-import Link from "next/link"
+ 
 
 interface JsonFormatterClientProps {
   isBackerUser: boolean
@@ -63,29 +63,6 @@ export function JsonFormatterClient({ isBackerUser, userId }: JsonFormatterClien
         </div>
         
         <div className="flex items-center gap-2">
-          {/* Test Suite Link */}
-          <Link href="/tools/json-formatter/test">
-            <EnhancedTooltip
-              title="Test Suite"
-              description="Run comprehensive tests to validate JSON formatter functionality"
-              examples={[
-                'Test various JSON structures',
-                'Validate format conversions',
-                'Check responsive design'
-              ]}
-              tips={[
-                'Use for debugging issues',
-                'Verify feature compatibility',
-                'Test performance with large files'
-              ]}
-            >
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
-                <TestTube className="w-4 h-4" />
-                Test Suite
-              </Button>
-            </EnhancedTooltip>
-          </Link>
-
           {/* Help Button */}
           <EnhancedTooltip
             title="Help & Documentation"

@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
         timezone: 'UTC',
         theme: 'system',
         language: 'en',
+        temperature_unit: 'C',
         email_notifications: {},
         developer_preferences: {}
       }
@@ -93,6 +94,7 @@ export async function PUT(request: NextRequest) {
             timezone: preferences.timezone,
             theme: preferences.theme,
             language: preferences.language,
+            temperature_unit: preferences.temperature_unit || 'C',
             email_notifications: preferences.email_notifications,
             developer_preferences: preferences.developer_preferences,
             bio: preferences.bio,
@@ -112,6 +114,7 @@ export async function PUT(request: NextRequest) {
             timezone: preferences.timezone || 'UTC',
             theme: preferences.theme || 'system',
             language: preferences.language || 'en',
+            temperature_unit: preferences.temperature_unit || 'C',
             email_notifications: preferences.email_notifications || {},
             developer_preferences: preferences.developer_preferences || {},
             bio: preferences.bio

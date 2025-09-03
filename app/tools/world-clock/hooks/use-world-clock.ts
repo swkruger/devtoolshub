@@ -22,6 +22,7 @@ export interface WorldClockState {
   isRealTimeEnabled: boolean
   maxCities: number
   isPremiumUser: boolean
+  temperatureUnit: 'C' | 'F'
 }
 
 export interface WorldClockActions {
@@ -57,6 +58,7 @@ export interface WorldClockActions {
   refreshTimezones: () => void
   copyTimeToClipboard: (cityId: string) => Promise<boolean>
   exportAsJSON: () => string
+  setTemperatureUnit: (unit: 'C' | 'F') => Promise<void>
 }
 
 export const useWorldClock = (isPremiumUser: boolean = false, userId?: string): [WorldClockState, WorldClockActions] => {
@@ -76,7 +78,8 @@ export const useWorldClock = (isPremiumUser: boolean = false, userId?: string): 
     viewMode: 'grid',
     isRealTimeEnabled: true,
     maxCities: isPremiumUser ? 100 : 5,
-    isPremiumUser
+    isPremiumUser,
+    temperatureUnit: 'C'
   })
   
   const [isInitialized, setIsInitialized] = useState(false)
@@ -90,14 +93,23 @@ export const useWorldClock = (isPremiumUser: boolean = false, userId?: string): 
       if (isInitialized) return
       
       let savedCities: City[] = []
+      let savedTempUnit: 'C' | 'F' = 'C'
       
       try {
         if (userId) {
           // Load from database for authenticated users
-          const response = await fetch('/api/world-clock-cities')
-          if (response.ok) {
-            const data = await response.json()
+          const [citiesRes, profileRes] = await Promise.all([
+            fetch('/api/world-clock-cities'),
+            fetch('/api/settings/profile')
+          ])
+          if (citiesRes.ok) {
+            const data = await citiesRes.json()
             savedCities = data.cities || []
+          }
+          if (profileRes.ok) {
+            const data = await profileRes.json()
+            const unit = (data?.preferences?.temperature_unit as 'C' | 'F') || null
+            if (unit === 'C' || unit === 'F') savedTempUnit = unit
           }
         } else {
           // Load from localStorage for non-authenticated users
@@ -105,11 +117,21 @@ export const useWorldClock = (isPremiumUser: boolean = false, userId?: string): 
           if (saved) {
             savedCities = JSON.parse(saved)
           }
+          const savedUnit = localStorage.getItem('worldClockTemperatureUnit') as 'C' | 'F' | null
+          if (savedUnit === 'C' || savedUnit === 'F') {
+            savedTempUnit = savedUnit
+          } else {
+            // Default by locale
+            if (typeof navigator !== 'undefined' && navigator.language && navigator.language.includes('US')) {
+              savedTempUnit = 'F'
+            }
+          }
         }
         
         setState(prev => ({
           ...prev,
-          selectedCities: savedCities
+          selectedCities: savedCities,
+          temperatureUnit: savedTempUnit
         }))
       } catch (error) {
         console.error('Error loading saved cities:', error)
@@ -135,6 +157,8 @@ export const useWorldClock = (isPremiumUser: boolean = false, userId?: string): 
       }
     }
   }, [userId])
+
+  
 
   // Real-time clock updates
   useEffect(() => {
@@ -612,7 +636,40 @@ export const useWorldClock = (isPremiumUser: boolean = false, userId?: string): 
       }
       
       return JSON.stringify(exportData, null, 2)
-    }, [state])
+    }, [state]),
+
+    setTemperatureUnit: useCallback(async (unit: 'C' | 'F') => {
+      setState(prev => ({ ...prev, temperatureUnit: unit }))
+      try {
+        if (userId) {
+          // Fetch current preferences to avoid overwriting with undefineds
+          const res = await fetch('/api/settings/profile')
+          if (res.ok) {
+            const data = await res.json()
+            const prefs = data?.preferences || {}
+            await fetch('/api/settings/profile', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                preferences: {
+                  timezone: prefs.timezone || 'UTC',
+                  theme: prefs.theme || 'system',
+                  language: prefs.language || 'en',
+                  temperature_unit: unit,
+                  email_notifications: prefs.email_notifications || {},
+                  developer_preferences: prefs.developer_preferences || {},
+                  bio: prefs.bio || ''
+                }
+              })
+            })
+          }
+        } else {
+          localStorage.setItem('worldClockTemperatureUnit', unit)
+        }
+      } catch (e) {
+        console.error('Failed to persist temperature unit', e)
+      }
+    }, [userId])
   }
 
   return [state, actions]

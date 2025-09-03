@@ -32,6 +32,7 @@ import HelpPanel from './help-panel'
 import MeetingPlanner from './meeting-planner'
 import { DatePicker } from './date-picker'
 import CollapsibleSection from './collapsible-section'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface WorldClockClientProps {
   isBackerUser: boolean
@@ -271,6 +272,23 @@ export default function WorldClockClient({ isBackerUser, userId }: WorldClockCli
             defaultExpanded={false}
           >
             <div className="pt-2 space-y-6">
+              {/* Temperature Unit */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                  Temperature Unit
+                </label>
+                <div className="max-w-xs">
+                  <Select value={state.temperatureUnit} onValueChange={(v) => actions.setTemperatureUnit(v as 'C' | 'F')}> 
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="C">Celsius (°C)</SelectItem>
+                      <SelectItem value="F">Fahrenheit (°F)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               {/* City Selector */}
               <div>
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
@@ -503,6 +521,7 @@ export default function WorldClockClient({ isBackerUser, userId }: WorldClockCli
                   canMoveDown={index < state.cityTimezones.length - 1}
                   isBackerUser={isBackerUser}
                   showWeather={true}
+                  temperatureUnit={state.temperatureUnit}
                 />
               ))}
             </div>
